@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+  FEID     String @unique
+  campusId Int?
+  classId  Int
+
+  roleId      Int
+  comments    Comment[]
+  Course      Course[]
+  submissions Submission[]
+  timetable   Timetable[]
+  campus      Campus?      @relation(fields: [campusId], references: [campusId])
+  CourseClass CourseClass  @relation(fields: [classId], references: [classId])
+  Role        Role         @relation(fields: [roleId], references: [roleId])
+}
+
+model Role {
+  roleId   Int    @id @default(autoincrement())
+  roleName String
+  users    User[]
+}
+
+model Campus {
+  campusId   Int    @id @default(autoincrement())
+  campusName String
+  users      User[]
+}
+
+model Semester {
+  semesterId   Int      @id @default(autoincrement())
+  semesterName String
+  year         String
+  courses      Course[]
+}
+
+model Course {
+  courseId     Int          @id @default(autoincrement())
+  courseName   String
+  description  String?
+  semesterId   Int
+  instructorId Int?
+  courseCode   String
+  meetingId    Int[]
+  instructor   User?        @relation(fields: [instructorId], references: [userId])
+  semester     Semester     @relation(fields: [semesterId], references: [semesterId])
+  Timetable    Timetable[]
+  Assignment   Assignment[]
+  Lesson       Lesson[]
+  Question     Question[]
+  Meeting      Meeting[]
+}
+
+model Meeting {
+  meetingId   Int    @id @default(autoincrement())
+  courseId    Int
+  meetingType String
+  meetingLink String
+  course      Course @relation(fields: [courseId], references: [courseId])
+}
+
+model Lesson {
+  lessonId    Int           @id @default(autoincrement())
+  courseId    Int
+  title       String
+  tagId       Int?
+  content     String?
+  deadline    DateTime?
+  course      Course        @relation(fields: [courseId], references: [courseId])
+  Question    Question[]
+  Tag         Tag?          @relation(fields: [tagId], references: [tagId])
+  LessonGroup LessonGroup[]
+}
+
+model LessonGroup {
+  lessonGroupId Int    @id @default(autoincrement())
+  lessonId      Int
+  userId        Int[]
+  lesson        Lesson @relation(fields: [lessonId], references: [lessonId])
+}
+
+model Question {
+  questionId  Int          @id @default(autoincrement())
+  lessonId    Int
+  courseId    Int
+  content     String
+  status      Boolean      @default(false)
+  submissions Submission[]
+  lesson      Lesson       @relation(fields: [lessonId], references: [lessonId])
+  Course      Course?      @relation(fields: [courseId], references: [courseId])
+}
+
+model Tag {
+  tagId   Int      @id @default(autoincrement())
+  tagName String
+  lessons Lesson[]
+}
+
+model Assignment {
+  assignmentId Int       @id @default(autoincrement())
+  courseId     Int
+  title        String
+  description  String?
+  startDate    DateTime?
+  dueDate      DateTime?
+  course       Course    @relation(fields: [courseId], references: [courseId])
+}
+
+model Submission {
+  submissionId      Int       @id @default(autoincrement())
+  userId            Int
+  questionId        Int
+  submissionContent String
+  submissionDate    DateTime? @default(now())
+  comments          Comment[]
+  user              User      @relation(fields: [userId], references: [userId])
+  Question          Question? @relation(fields: [questionId], references: [questionId])
+}
+
+model CourseClass {
+  classId   Int    @id @default(autoincrement())
+  className String
+  students  User[]
+}
+
+model Timetable {
+  timetableId Int      @id @default(autoincrement())
+  userId      Int
+  time        DateTime
+  courseId    Int
+  course      Course   @relation(fields: [courseId], references: [courseId])
+  user        User     @relation(fields: [userId], references: [userId])
+}
+
+model Comment {
+  commentId      Int         @id @default(autoincrement())
+  userId         Int
+  submissionId   Int?
+  commentContent String
+  commentDate    DateTime    @default(now())
+  submission     Submission? @relation(fields: [submissionId], references: [submissionId])
+  user           User        @relation(fields: [userId], references: [userId])
+}
