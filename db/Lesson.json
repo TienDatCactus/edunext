@@ -1,0 +1,26 @@
+[
+ {
+  "lessonId": "4",
+  "courseId": "1",
+  "title": "Variables and Data Types",
+  "tagId": "1",
+  "content": "Learn about variables.",
+  "deadline": "2024-12-01 00:00:00"
+ },
+ {
+  "lessonId": "5",
+  "courseId": "1",
+  "title": "Arrays",
+  "tagId": "2",
+  "content": "Learn about arrays.",
+  "deadline": "2025-01-15 00:00:00"
+ },
+ {
+  "lessonId": "6",
+  "courseId": "1",
+  "title": "Normalization",
+  "tagId": "3",
+  "content": "Learn about database normalization.",
+  "deadline": "2025-02-20 00:00:00"
+ }
+]

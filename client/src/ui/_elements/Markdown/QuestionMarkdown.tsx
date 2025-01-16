@@ -122,7 +122,8 @@ const QuestionMarkdown: React.FC = () => {
       setLoading(true);
       const resp = await postQuestionSubmission(
         Number(questionId),
-        values?.content
+        values?.content,
+        allSubmissions.length + 1
       );
       if (resp?.isOk) {
         setAllSubmissions(resp?.allSubmission);
@@ -145,6 +146,7 @@ const QuestionMarkdown: React.FC = () => {
       getSubmissions();
     };
   }, []);
+  console.log(allSubmissions);
   return (
     <Spin spinning={loading}>
       <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
@@ -235,7 +237,7 @@ const QuestionMarkdown: React.FC = () => {
                 key={index}
                 submissionContent={submission?.submissionContent}
                 submissionDate={submission?.submissionDate}
-                user={submission?.user}
+                userId={submission?.userId}
                 comments={submission?.comments}
                 setLoading={setLoading}
                 setAllSubmissions={setAllSubmissions}

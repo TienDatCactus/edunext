@@ -1,0 +1,37 @@
+[
+ {
+  "questionId": "6",
+  "lessonId": "4",
+  "courseId": "1",
+  "content": "What are variables and how are they used in programming?",
+  "status": "False"
+ },
+ {
+  "questionId": "7",
+  "lessonId": "4",
+  "courseId": "1",
+  "content": "Explain the difference between primitive and non-primitive data types.",
+  "status": "False"
+ },
+ {
+  "questionId": "8",
+  "lessonId": "4",
+  "courseId": "1",
+  "content": "What is an array, and how is it different from a linked list?",
+  "status": "False"
+ },
+ {
+  "questionId": "9",
+  "lessonId": "4",
+  "courseId": "1",
+  "content": "What is database normalization and why is it important?",
+  "status": "False"
+ },
+ {
+  "questionId": "10",
+  "lessonId": "4",
+  "courseId": "1",
+  "content": "Explain the differences between 1NF, 2NF, and 3NF.",
+  "status": "False"
+ }
+]

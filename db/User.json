@@ -1,0 +1,32 @@
+[
+ {
+  "userId": "1",
+  "name": "Dat",
+  "email": "alice@example.com",
+  "password": "$2y$10$ExNk9vKvAv/Ig/6N7vAuEeVXxHHY0oT/X7q2X8c0aeSopE6/.mj.O",
+  "FEID": "HE180013",
+  "campusId": "1",
+  "classId": "1",
+  "roleId": "1"
+ },
+ {
+  "userId": "2",
+  "name": "Bao",
+  "email": "bob@example.com",
+  "password": "$2y$10$ExNk9vKvAv/Ig/6N7vAuEeVXxHHY0oT/X7q2X8c0aeSopE6/.mj.O",
+  "FEID": "HE180034",
+  "campusId": "2",
+  "classId": "2",
+  "roleId": "2"
+ },
+ {
+  "userId": "3",
+  "name": "Nigga",
+  "email": "charlie@example.com",
+  "password": "$2y$10$ExNk9vKvAv/Ig/6N7vAuEeVXxHHY0oT/X7q2X8c0aeSopE6/.mj.O",
+  "FEID": "HE173352",
+  "campusId": "3",
+  "classId": "3",
+  "roleId": "3"
+ }
+]

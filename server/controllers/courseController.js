@@ -59,11 +59,12 @@ const viewCourseMeetings = async (req, res) => {
 
 const addQuestionSubmission = async (req, res) => {
   const { questionId } = req.params;
-  const { content, userId } = req.body;
+  const { content, submissionId, userId } = req.body;
   try {
     const newSubmission = await query.postQuestionSubmission(
       content,
       questionId,
+      submissionId,
       userId
     );
     if (newSubmission?.isOk === false) {

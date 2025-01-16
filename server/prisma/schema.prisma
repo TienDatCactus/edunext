@@ -3,19 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  userId   Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  FEID     String @unique
-  campusId Int?
-  classId  Int
-
+  userId      Int          @id @map("_id")
+  name        String
+  email       String       @unique
+  password    String
+  FEID        String       @unique
+  campusId    Int?
+  classId     Int
   roleId      Int
   comments    Comment[]
   Course      Course[]
@@ -27,43 +26,43 @@ model User {
 }
 
 model Role {
-  roleId   Int    @id @default(autoincrement())
+  roleId   Int    @id @map("_id")
   roleName String
   users    User[]
 }
 
 model Campus {
-  campusId   Int    @id @default(autoincrement())
+  campusId   Int    @id @map("_id")
   campusName String
   users      User[]
 }
 
 model Semester {
-  semesterId   Int      @id @default(autoincrement())
+  semesterId   Int      @id @map("_id")
   semesterName String
   year         String
   courses      Course[]
 }
 
 model Course {
-  courseId     Int          @id @default(autoincrement())
+  courseId     Int          @id @map("_id")
   courseName   String
   description  String?
   semesterId   Int
   instructorId Int?
   courseCode   String
   meetingId    Int[]
+  Assignment   Assignment[]
   instructor   User?        @relation(fields: [instructorId], references: [userId])
   semester     Semester     @relation(fields: [semesterId], references: [semesterId])
-  Timetable    Timetable[]
-  Assignment   Assignment[]
   Lesson       Lesson[]
-  Question     Question[]
   Meeting      Meeting[]
+  Question     Question[]
+  Timetable    Timetable[]
 }
 
 model Meeting {
-  meetingId   Int    @id @default(autoincrement())
+  meetingId   Int    @id @map("_id")
   courseId    Int
   meetingType String
   meetingLink String
@@ -71,44 +70,44 @@ model Meeting {
 }
 
 model Lesson {
-  lessonId    Int           @id @default(autoincrement())
+  lessonId    Int           @id @map("_id")
   courseId    Int
   title       String
   tagId       Int?
   content     String?
   deadline    DateTime?
   course      Course        @relation(fields: [courseId], references: [courseId])
-  Question    Question[]
   Tag         Tag?          @relation(fields: [tagId], references: [tagId])
   LessonGroup LessonGroup[]
+  Question    Question[]
 }
 
 model LessonGroup {
-  lessonGroupId Int    @id @default(autoincrement())
+  lessonGroupId Int    @id @map("_id")
   lessonId      Int
   userId        Int[]
   lesson        Lesson @relation(fields: [lessonId], references: [lessonId])
 }
 
 model Question {
-  questionId  Int          @id @default(autoincrement())
+  questionId  Int          @id @map("_id")
   lessonId    Int
   courseId    Int
   content     String
   status      Boolean      @default(false)
-  submissions Submission[]
+  Course      Course       @relation(fields: [courseId], references: [courseId])
   lesson      Lesson       @relation(fields: [lessonId], references: [lessonId])
-  Course      Course?      @relation(fields: [courseId], references: [courseId])
+  submissions Submission[]
 }
 
 model Tag {
-  tagId   Int      @id @default(autoincrement())
+  tagId   Int      @id @map("_id")
   tagName String
   lessons Lesson[]
 }
 
 model Assignment {
-  assignmentId Int       @id @default(autoincrement())
+  assignmentId Int       @id @map("_id")
   courseId     Int
   title        String
   description  String?
@@ -118,24 +117,24 @@ model Assignment {
 }
 
 model Submission {
-  submissionId      Int       @id @default(autoincrement())
+  submissionId      Int       @id @map("_id")
   userId            Int
   questionId        Int
   submissionContent String
   submissionDate    DateTime? @default(now())
   comments          Comment[]
+  Question          Question  @relation(fields: [questionId], references: [questionId])
   user              User      @relation(fields: [userId], references: [userId])
-  Question          Question? @relation(fields: [questionId], references: [questionId])
 }
 
 model CourseClass {
-  classId   Int    @id @default(autoincrement())
+  classId   Int    @id @map("_id")
   className String
   students  User[]
 }
 
 model Timetable {
-  timetableId Int      @id @default(autoincrement())
+  timetableId Int      @id @map("_id")
   userId      Int
   time        DateTime
   courseId    Int
@@ -144,7 +143,7 @@ model Timetable {
 }
 
 model Comment {
-  commentId      Int         @id @default(autoincrement())
+  commentId      Int         @id @map("_id")
   userId         Int
   submissionId   Int?
   commentContent String

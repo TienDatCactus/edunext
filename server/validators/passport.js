@@ -3,9 +3,8 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const PrismaClient = require("@prisma/client").PrismaClient;
 const dotenv = require("dotenv");
-const prisma = new PrismaClient({ log: ["info", "warn"] });
+const { User } = require("../db/model");
 dotenv.config();
 const config = {
   jwt: {
@@ -28,9 +27,8 @@ const initializePassport = () => {
   passport.use(
     new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
       try {
-        const user = await prisma.user.findUnique(
-          { where: { id: jwt_payload.id } },
-          { include: { campus: true } }
+        const user = await User.findOne({ id: jwt_payload.id }).populate(
+          "campus"
         );
         if (user) {
           return done(null, user);

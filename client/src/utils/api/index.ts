@@ -1,10 +1,10 @@
 import { getCurrentSeason } from "../customHooks";
 import { UserToken } from "../interfaces";
 import http from "./axios";
-import { courseApi, homeApi, loginApi } from "./urls";
+import { accessApi, courseApi, homeApi } from "./urls";
 const login = async (campus: string, email: string, password: string) => {
   try {
-    const resp = await http.post(`${loginApi}`, {
+    const resp = await http.post(`${accessApi}/login`, {
       campus,
       email,
       password,
@@ -64,7 +64,8 @@ const getCourseMeeting = async (courseId: number) => {
 };
 const postQuestionSubmission = async (
   questionId?: number,
-  content?: string
+  content?: string,
+  submissionId?: number
 ) => {
   try {
     const tokenString = localStorage.getItem("edu-token");
@@ -72,6 +73,7 @@ const postQuestionSubmission = async (
     const resp = await http.post(`${courseApi}/question/${questionId}`, {
       userId: user?.user?.userId,
       content,
+      submissionId,
     });
     if (resp?.data) return resp?.data;
     return null;
@@ -80,6 +82,15 @@ const postQuestionSubmission = async (
   }
 };
 
+const getCampuses = async () => {
+  try {
+    const resp = await http.get(`${accessApi}/campuses`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 const getQuestionSubmission = async (questionId?: number) => {
   try {
     const resp = await http.get(
@@ -112,6 +123,16 @@ const postSubmissionComment = async (
     return error;
   }
 };
+
+const getUserById = async (userId: number) => {
+  try {
+    const resp = await http.get(`${homeApi}/users/${userId}`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 export {
   getCourseDetail,
   getCourseMeeting,
@@ -121,4 +142,6 @@ export {
   login,
   postQuestionSubmission,
   postSubmissionComment,
+  getUserById,
+  getCampuses,
 };

@@ -1,0 +1,14 @@
+[
+ {
+  "timetableId": "1",
+  "userId": "1",
+  "time": "2024-11-01 10:00:00",
+  "courseId": "1"
+ },
+ {
+  "timetableId": "2",
+  "userId": "1",
+  "time": "2025-01-05 14:00:00",
+  "courseId": "1"
+ }
+]

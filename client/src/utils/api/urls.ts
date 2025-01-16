@@ -1,6 +1,7 @@
 const apiPort = process.env.REACT_APP_API_URL;
 
-const loginApi = `${apiPort}/auth/login`;
+const accessApi = `${apiPort}/auth`;
 const homeApi = `${apiPort}/home`;
+const usersApi = `${apiPort}/users`;
 const courseApi = `${apiPort}/course`;
-export { loginApi, homeApi, courseApi };
+export { accessApi, homeApi, courseApi, usersApi };

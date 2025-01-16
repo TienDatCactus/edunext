@@ -5,10 +5,7 @@ export interface LessonDetailProps {
   content?: string;
   lessonId?: number;
   questions?: Questions[];
-  tag?: {
-    tagName?: string;
-    tagId?: number;
-  };
+  tagName: string;
 }
 export interface ErrorHandlerOptions {
   redirectOnUnauthorized?: boolean;
@@ -54,16 +51,22 @@ export interface CourseLayoutProps {
 }
 
 export interface LessonItem {
-  content?: string;
-  courseId?: number;
-  deadline?: string;
-  lessonId?: number;
-  tagId?: number;
-  title?: string;
-  Question?: Questions[];
-  Tag?: {
-    tagName?: string;
+  lessons: {
+    content?: string;
+    courseId?: number;
+    deadline?: string;
+    lessonId?: number;
     tagId?: number;
+    title?: string;
+    Question?: Questions[];
+    Tag?: {
+      tagName?: string;
+      tagId?: number;
+    };
+  };
+  questions: Questions[];
+  tags: {
+    tagName: string;
   };
 }
 export interface Questions {
@@ -77,7 +80,21 @@ export interface CourseInfoProps {
   courseCode?: string;
   courseName?: string;
   description?: string;
-  lessons?: LessonItem[];
+  lessons?: {
+    content?: string;
+    courseId?: number;
+    deadline?: string;
+    lessonId?: number;
+    tagId?: number;
+    title?: string;
+    Question?: Questions[];
+    Tag?: {
+      tagName?: string;
+      tagId?: number;
+    };
+  }[];
+  tagName: string;
+  questions?: Questions[];
 }
 
 export interface UserToken {
@@ -98,10 +115,7 @@ export interface SubmissionItem {
   submissionId: number;
   submissionContent: string;
   submissionDate: string;
-  user: {
-    name: string;
-    userId: number;
-  };
+  userId: number;
   comments?: {
     submissionId: number;
     commentId: number;

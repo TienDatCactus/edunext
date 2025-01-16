@@ -1,0 +1,17 @@
+[
+ {
+  "semesterId": "1",
+  "semesterName": "Fall",
+  "year": "2025"
+ },
+ {
+  "semesterId": "2",
+  "semesterName": "SPRING",
+  "year": "2025"
+ },
+ {
+  "semesterId": "3",
+  "semesterName": "SUMMER",
+  "year": "2025"
+ }
+]

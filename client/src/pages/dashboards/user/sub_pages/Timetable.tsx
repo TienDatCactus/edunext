@@ -1,82 +1,92 @@
-import React from "react";
-import type { BadgeProps, CalendarProps } from "antd";
-import { Badge, Calendar } from "antd";
-import type { Dayjs } from "dayjs";
+import {
+  Bell,
+  MagnifyingGlass,
+  PencilLine,
+  ShareNetwork,
+  Trash,
+  UploadSimple,
+  UserCircleDashed,
+  UserCirclePlus,
+} from "@phosphor-icons/react";
+import { Avatar, Button, Divider, Input } from "antd";
+import React, { useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-
-const getListData = (value: Dayjs) => {
-  let listData: { type: string; content: string }[] = []; // Specify the type of listData
-  switch (value.date()) {
-    case 8:
-      listData = [
-        { type: "warning", content: "This is warning event." },
-        { type: "success", content: "This is usual event." },
-      ];
-      break;
-    case 10:
-      listData = [
-        { type: "warning", content: "This is warning event." },
-        { type: "success", content: "This is usual event." },
-        { type: "error", content: "This is error event." },
-      ];
-      break;
-    case 12:
-      listData = [
-        { type: "warning", content: "This is warning event" },
-        { type: "success", content: "This is very long usual event......" },
-        { type: "error", content: "This is error event 1." },
-        { type: "error", content: "This is error event 2." },
-        { type: "error", content: "This is error event 3." },
-        { type: "error", content: "This is error event 4." },
-      ];
-      break;
-    default:
-  }
-  return listData || [];
-};
-
-const getMonthData = (value: Dayjs) => {
-  if (value.month() === 8) {
-    return 1394;
-  }
-};
-
+import TimetableCalendar from "./sub_elements/TimetableCalendar";
+import { User } from "../../../../utils/interfaces";
+import dayjs from "dayjs";
 const Timetable: React.FC = () => {
-  const monthCellRender = (value: Dayjs) => {
-    const num = getMonthData(value);
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null;
-  };
-
-  const dateCellRender = (value: Dayjs) => {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge
-              status={item.type as BadgeProps["status"]}
-              text={item.content}
-            />
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  const cellRender: CalendarProps<Dayjs>["cellRender"] = (current, info) => {
-    if (info.type === "date") return dateCellRender(current);
-    if (info.type === "month") return monthCellRender(current);
-    return info.originNode;
-  };
-
+  const [user, setUser] = useState<User>();
+  const token = window.localStorage.getItem("edu-token");
+  const userToken = token ? JSON.parse(token) : null;
+  React.useEffect(() => {
+    if (userToken) {
+      setUser(userToken.user);
+    }
+  }, []);
   return (
     <DashboardLayout>
-      <Calendar cellRender={cellRender} />
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-[20px] font-bold">Thời khóa biểu</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-2">
+            <Button icon={<ShareNetwork size={22} />} className="border-none" />
+            <Button icon={<Bell size={22} />} className="border-none" />
+          </div>
+          <Divider className="m-0 border-[#ccc]" type="vertical" />
+          <div className="flex items-center gap-2">
+            <Avatar size="default" icon={<UserCircleDashed size={22} />} />
+            <div className="flex flex-col ">
+              <h1 className="text-[14px] font-semibold">{user?.name}</h1>
+              <p className="text-[12px] text-[#212121]">{user?.email}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Divider className="my-2 border-[#ddd]" />
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          <Button iconPosition="start" icon={<UploadSimple size={14} />}>
+            Xuất File
+          </Button>
+          <Button iconPosition="start" icon={<Trash size={14} />}>
+            Thời gian biểu đã xóa
+          </Button>
+        </div>
+        <Button
+          iconPosition="start"
+          icon={<UserCirclePlus size={14} />}
+          variant="outlined"
+          color="primary"
+        >
+          Mời
+        </Button>
+      </div>
+      <Divider className="my-2 border-[#ddd]" />
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-start gap-1">
+            <h1 className="text-[34px] font-semibold">
+              {dayjs().format("MMMM YYYY")}
+            </h1>
+            <Button icon={<PencilLine size={22} />} className="border-none" />
+          </div>
+          <p className="text-[14px] text-[#3d3d3d]">
+            {dayjs().format("MMMM d YYYY")} - {dayjs().format("MMMM d YYYY")}
+          </p>
+        </div>
+        <div className="flex items-center gap-1">
+          <Input
+            size="large"
+            className="*:quick-sand"
+            placeholder="Search"
+            prefix={<MagnifyingGlass size={16} />}
+          />
+          <Button type="primary">Thêm thời gian biểu</Button>
+        </div>
+      </div>
+      <TimetableCalendar />
     </DashboardLayout>
   );
 };

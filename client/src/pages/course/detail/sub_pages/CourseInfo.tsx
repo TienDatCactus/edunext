@@ -1,13 +1,14 @@
 import { Eye, Question } from "@phosphor-icons/react";
 import { Button, Empty } from "antd";
-import React from "react";
-import { useParams } from "react-router-dom";
-import { CourseInfoProps } from "../../../../utils/interfaces";
 import LessonDetail from "../../../../ui/_elements/Page/Course/LessonDetail";
+import { CourseInfoProps } from "../../../../utils/interfaces";
+import React from "react";
 const CourseInfo: React.FC<CourseInfoProps> = ({
   courseName,
   description,
+  questions,
   lessons,
+  tagName,
 }) => {
   return (
     <>
@@ -35,8 +36,8 @@ const CourseInfo: React.FC<CourseInfoProps> = ({
                   content={lesson?.content}
                   deadline={lesson?.deadline}
                   lessonId={lesson?.lessonId}
-                  questions={lesson?.Question}
-                  tag={lesson?.Tag}
+                  questions={questions}
+                  tagName={tagName || ""}
                   title={lesson?.title}
                 />
               );

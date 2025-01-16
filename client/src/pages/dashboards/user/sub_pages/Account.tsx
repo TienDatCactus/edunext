@@ -1,9 +1,22 @@
-import { PlusCircle } from "@phosphor-icons/react";
+import { GoogleChromeLogo, MetaLogo, PlusCircle } from "@phosphor-icons/react";
 import { Button, Divider, Form, Input } from "antd";
 import Password from "antd/es/input/Password";
+import { useEffect, useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
+import { User, UserToken } from "../../../../utils/interfaces";
 
 const Account = () => {
+  const [user, setUser] = useState<User>();
+  const token = localStorage.getItem("edu-token");
+  const userToken = token ? (JSON.parse(token) as UserToken) : null;
+  useEffect(() => {
+    return () => {
+      if (userToken) {
+        return setUser(userToken?.user);
+      }
+    };
+  }, []);
+  console.log(user);
   return (
     <DashboardLayout>
       <div className="flex flex-col justify-start py-2 leading-6">
@@ -37,10 +50,16 @@ const Account = () => {
         layout="vertical"
       >
         <Form.Item className="col-span-5" label="Họ">
-          <Input value={"tien dit"} className="py-2 shadow-md dm-sans" />
+          <Input
+            value={user?.name.split(" ")[1]}
+            className="py-2 shadow-md dm-sans"
+          />
         </Form.Item>
         <Form.Item label="Tên" className="col-span-5">
-          <Input value={"tien dit"} className="py-2 shadow-md dm-sans" />
+          <Input
+            value={user?.name.split(" ")[0]}
+            className="py-2 shadow-md dm-sans"
+          />
         </Form.Item>
         <Form.Item className="col-span-2 ">
           <Button block>Lưu</Button>
@@ -59,7 +78,7 @@ const Account = () => {
           layout="vertical"
         >
           <Form.Item label="Email" className="col-span-6">
-            <Input value={"tien dit"} className="py-2 shadow-md dm-sans" />
+            <Input className="py-2 shadow-md dm-sans" value={user?.email} />
           </Form.Item>
           <Form.Item className="col-span-6 text-end">
             <Button
@@ -84,10 +103,16 @@ const Account = () => {
           layout="vertical"
         >
           <Form.Item label="Mật khẩu cũ" className="col-span-5">
-            <Password className="py-2 shadow-md dm-sans" />
+            <Password
+              className="py-2 shadow-md dm-sans"
+              value={"Ấn thay đổi"}
+            />
           </Form.Item>
           <Form.Item label="Mật khẩu mới" className="col-span-5">
-            <Password className="py-2 shadow-md dm-sans" />
+            <Password
+              className="py-2 shadow-md dm-sans"
+              value={"để chuyển đến trang xác thực"}
+            />
           </Form.Item>
 
           <Form.Item className="col-span-2 text-end">
@@ -109,10 +134,9 @@ const Account = () => {
           <li className="flex items-center justify-between p-2 border rounded-md shadow-md">
             <div className="flex items-center gap-2">
               <div>
-                <img
-                  src="https://api.dicebear.com/9.x/notionists/svg?seed=Felix"
-                  alt="avatar"
-                  className="w-10 h-10 border rounded-md"
+                <MetaLogo
+                  size={22}
+                  className="w-10 h-10 p-1 border rounded-md"
                 />
               </div>
               <div>
@@ -131,10 +155,9 @@ const Account = () => {
           <li className="flex items-center justify-between p-2 border rounded-md shadow-md">
             <div className="flex items-center gap-2">
               <div>
-                <img
-                  src="https://api.dicebear.com/9.x/notionists/svg?seed=Felix"
-                  alt="avatar"
-                  className="w-10 h-10 border rounded-md"
+                <GoogleChromeLogo
+                  size={22}
+                  className="w-10 h-10 p-1 border rounded-md"
                 />
               </div>
               <div>

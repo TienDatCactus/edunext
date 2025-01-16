@@ -15,6 +15,10 @@ body {
 
   background-color: #f8f8f8;
 }
+.quick-sand {
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+}
 .play-fair {
   font-family: "Playfair Display", serif;
   font-optical-sizing: auto;

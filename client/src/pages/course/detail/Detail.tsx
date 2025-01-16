@@ -19,14 +19,14 @@ const Detail: React.FC = () => {
   const { courseId } = useParams();
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<CourseItem>();
-  const [lessons, setLesson] = useState<LessonItem[]>();
+  const [lesson, setLesson] = useState<LessonItem>();
   const getDetail = async () => {
     if (!courseId) return;
     try {
       setLoading(true);
       const resp = await getCourseDetail(Number(courseId));
       if (resp?.isOk) {
-        setDetail(resp?.course);
+        setDetail(resp?.course[0]);
         setLesson(resp?.lessons);
       }
     } catch (error) {
@@ -59,8 +59,10 @@ const Detail: React.FC = () => {
             <CourseInfo
               courseCode={detail?.courseCode}
               courseName={detail?.courseName}
+              questions={lesson?.questions || []}
               description={detail?.description}
-              lessons={lessons ? lessons : []}
+              lessons={Array.isArray(lesson?.lessons) ? lesson?.lessons : []}
+              tagName={lesson?.tags?.tagName || ""}
             />
           </CourseLayout>
         </Spin>
@@ -85,6 +87,7 @@ const Detail: React.FC = () => {
       icon: <Info size={16} />,
     },
   ];
+  console.log(lesson);
   return (
     <MainLayout>
       <div className="bg-[linear-gradient(to_top,_#ffffff_0%,_#bae5f5_100%)] min-h-[160px] py-4">

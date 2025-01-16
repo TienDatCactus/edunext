@@ -6,22 +6,26 @@ import {
 } from "@phosphor-icons/react";
 import { Button, Form, FormProps, Input, message } from "antd";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { SubmissionItem } from "../../../../../../utils/interfaces";
-import { postSubmissionComment } from "../../../../../../utils/api";
+import {
+  getUserById,
+  postSubmissionComment,
+} from "../../../../../../utils/api";
 
 const Answer: React.FC<SubmissionItem> = ({
   submissionId,
   submissionContent,
   submissionDate,
-  user,
+  userId,
   comments,
   setAllSubmissions,
   setLoading,
 }) => {
   const [form] = Form.useForm();
   const { questionId } = useParams();
+  const [user, setUser] = useState<string>();
   const [reply, setReply] = useState<Boolean>(false);
   const onFinish: FormProps<{ comment: string }>["onFinish"] = async (
     values
@@ -44,19 +48,38 @@ const Answer: React.FC<SubmissionItem> = ({
       form.resetFields();
     }
   };
+  const getUser = async () => {
+    try {
+      setLoading(true);
+      const resp = await getUserById(userId);
+      if (resp?.isOk) {
+        setUser(resp?.user?.name);
+      }
+    } catch (error) {
+      message.error("Gặp lỗi khi tải dữ liệu");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      getUser();
+    };
+  }, []);
+  console.log(user);
   return (
     <li>
       <div className="grid items-start grid-cols-12 gap-2">
         <div className="flex justify-center">
           <img
-            src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${user?.userId}`}
+            src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${userId}`}
             alt="avatar"
             className="w-10 col-span-1 mt-2 rounded-full"
           />
         </div>
         <div className="col-span-11 duration-200">
           <div className="flex items-start gap-2">
-            <p className="font-bold text-[20px]">{user?.name}</p>
+            <p className="font-bold text-[20px]">{user}</p>
             <p className="text-[12px] text-[#6a6a6a]">
               {dayjs(submissionDate).format("YYYY-MM-DD HH:mm")}
             </p>

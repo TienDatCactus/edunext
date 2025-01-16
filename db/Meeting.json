@@ -1,0 +1,32 @@
+[
+ {
+  "meetingId": "1",
+  "courseId": "1",
+  "meetingType": "Viber",
+  "meetingLink": "https://viber.meeting/course1"
+ },
+ {
+  "meetingId": "2",
+  "courseId": "1",
+  "meetingType": "Meet",
+  "meetingLink": "https://meet.google.com/course1"
+ },
+ {
+  "meetingId": "3",
+  "courseId": "1",
+  "meetingType": "Teams",
+  "meetingLink": "https://teams.microsoft.com/course2"
+ },
+ {
+  "meetingId": "4",
+  "courseId": "1",
+  "meetingType": "Discord",
+  "meetingLink": "https://discord.gg/course3"
+ },
+ {
+  "meetingId": "5",
+  "courseId": "1",
+  "meetingType": "Meet",
+  "meetingLink": "https://meet.google.com/course3"
+ }
+]

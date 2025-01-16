@@ -41,6 +41,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       const resp = await getCourseMeeting(Number(courseId));
       if (resp?.isOk) {
         setMeeting(resp?.meetings);
+        console.log(resp);
         setRemainQuestions(resp?.remainQuestions);
       }
     } catch (error) {

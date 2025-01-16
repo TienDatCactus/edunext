@@ -1,337 +1,374 @@
-const PrismaClient = require("@prisma/client").PrismaClient;
-const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 const dayjs = require("dayjs");
+const {
+  User,
+  Semester,
+  Course,
+  Lesson,
+  Question,
+  Submission,
+  Meeting,
+  Tag,
+  Comment,
+  Campus,
+} = require("./model");
+const { mongoose } = require("mongoose");
 
 const loginWithEmail = async (campus, email, password) => {
-  const user = await prisma.user.findFirst({
-    where: { email: email, campusId: Number(campus) },
-    include: { campus: true },
-  });
-  if (user !== null) {
-    const match = await bcrypt.compare(password, user.password);
-    if (match === true) {
+  try {
+    const user = await User.findOne({
+      email: email,
+      campus: new mongoose.Types.ObjectId(campus), // must be done by this
+    }).select("password");
+    console.log(user);
+    if (!user) {
       return {
-        user: user,
-        isOk: true,
+        error: "Tài khoản hoặc mật khẩu không đúng",
+        isOk: false,
       };
     }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return {
+        error: "Tài khoản hoặc mật khẩu không đúng",
+        isOk: false,
+      };
+    }
+    const userObject = user.toObject();
+    delete userObject.password;
+    return { user: userObject, isOk: true };
+  } catch (error) {
+    return {
+      error: "Lỗi đăng nhập" + error,
+      isOk: false,
+    };
   }
-  return {
-    error: "Tài khoản hoặc mật khẩu không đúng",
-    isOk: false,
-  };
 };
 
 const loginWithId = async (campus, id) => {
-  const user = await prisma.user.findUnique({
-    where: { id: id },
-  });
-  if (user) {
+  try {
+    const user = await User.findOne({
+      FEID: id,
+      "campus.campusName": campus,
+    });
+
+    if (!user) {
+      return {
+        error: "Tài khoản hoặc mật khẩu không đúng",
+        isOk: false,
+      };
+    }
+
+    return { user: user.toObject(), isOk: true };
+  } catch (error) {
     return {
-      user: user,
-      isOk: true,
+      error: "Lỗi đăng nhập",
+      isOk: false,
     };
   }
-
-  return {
-    error: "Tài khoản hoặc mật khẩu không đúng",
-    isOk: false,
-  };
 };
 
 const getCurrentSemester = async (year, month) => {
-  const semester = await prisma.semester.findFirst({
-    where: {
-      AND: [
-        {
-          year: year,
-        },
-        {
-          semesterName: month.toUpperCase(),
-        },
-      ],
-    },
-  });
-  if (semester) {
-    return semester;
+  try {
+    const semester = await Semester.findOne({
+      year,
+      semesterName: month.toUpperCase(),
+    });
+
+    if (!semester) {
+      return {
+        error: "Học kì không hợp lệ",
+        isOk: false,
+      };
+    }
+
+    return semester.toObject();
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin học kỳ",
+      isOk: false,
+    };
   }
-  return {
-    error: "Học kì không hợp lệ",
-    isOk: false,
-  };
 };
 
 const getCurrentCourses = async (year, month) => {
-  const semester = await getCurrentSemester(year, month);
-  if (semester?.isOk === false) {
+  try {
+    const semester = await getCurrentSemester(year, month);
+    if (!semester || semester.isOk === false) {
+      return {
+        error: semester?.error || "Học kì không hợp lệ",
+        isOk: false,
+      };
+    }
+
+    const courses = await Course.find({
+      "semester.semesterName": semester.semesterName,
+      "semester.year": semester.year,
+      status: "active",
+    });
+
+    if (!courses.length) {
+      return {
+        error: "Không có khóa học nào",
+        isOk: false,
+      };
+    }
+
+    return { courses: courses.map((course) => course.toObject()), isOk: true };
+  } catch (error) {
     return {
-      error: semester?.error,
-      isOk: semester?.isOk,
+      error: "Lỗi lấy danh sách khóa học",
+      isOk: false,
     };
   }
-  const courses = await prisma.course.findMany({
-    where: {
-      semesterId: semester.semesterId,
-    },
-  });
-  if (courses) {
-    return {
-      courses: courses,
-      isOk: true,
-    };
-  }
-  return {
-    error: "Không có khóa học nào",
-    isOk: false,
-  };
 };
 
 const getCourseDetail = async (courseId) => {
-  const course = await prisma.course.findUnique({
-    where: {
-      courseId: Number(courseId),
-    },
-  });
-  if (course) {
-    return { course: course, isOk: true };
+  try {
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return {
+        error: "Không tìm thấy khóa học",
+        isOk: false,
+      };
+    }
+
+    return { course: course.toObject(), isOk: true };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin khóa học",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không tìm thấy khóa học",
-    isOk: false,
-  };
 };
 
 const getCourseLessons = async (courseId) => {
-  const lessons = await prisma.lesson.findMany({
-    where: {
-      courseId: Number(courseId),
-    },
-    select: {
-      lessonId: true,
-      title: true,
-      content: true,
-      deadline: true,
-      Tag: true,
-      Question: {
-        select: {
-          questionId: true,
-        },
+  try {
+    // Since lessons are embedded in course, first get the course
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return {
+        error: "Không tìm thấy khóa học",
+        isOk: false,
+      };
+    }
+
+    // Get all lessons for this course
+    const lessons = await Lesson.find({
+      "course.courseCode": course.courseCode,
+    });
+
+    if (!lessons.length) {
+      return {
+        error: "Không tìm thấy bài học",
+        isOk: false,
+      };
+    }
+
+    // Get questions and tags for the first lesson
+    const questions = await Question.find({
+      "lesson.title": lessons[0].title,
+    }).select("content");
+
+    const tags = await Tag.find({
+      "lessons.title": lessons[0].title,
+    }).select("tagName");
+
+    return {
+      lessons: {
+        lessons: lessons.map((lesson) => lesson.toObject()),
+        questions: questions.map((question) => question.toObject()),
+        tags: tags.map((tag) => tag.toObject()),
       },
-    },
-  });
-  if (lessons) {
-    return { lessons: lessons, isOk: true };
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy danh sách bài học",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không tìm thấy bài học",
-    isOk: false,
-  };
 };
 
 const getQuestionById = async (questionId) => {
-  const question = await prisma.question.findUnique({
-    where: {
-      questionId: Number(questionId),
-    },
-    select: {
-      content: true,
-      questionId: true,
-    },
-  });
-  if (question) {
-    return { question: question, isOk: true };
+  try {
+    const question = await Question.findById(questionId).select("content");
+
+    if (!question) {
+      return {
+        error: "Không tìm thấy câu hỏi",
+        isOk: false,
+      };
+    }
+
+    return { question: question.toObject(), isOk: true };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin câu hỏi",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không tìm thấy câu hỏi",
-    isOk: false,
-  };
 };
 
 const getSubmissionsByQuestion = async (questionId) => {
-  const submissions = await prisma.submission.findMany({
-    where: {
-      questionId: Number(questionId),
-    },
-    select: {
-      submissionId: true,
-      submissionContent: true,
-      submissionDate: true,
-      user: {
-        select: {
-          name: true,
-          userId: true,
-        },
-      },
-      comments: {
-        select: {
-          submissionId: true,
-          commentId: true,
-          commentContent: true,
-          commentDate: true,
-          user: {
-            select: {
-              name: true,
-              userId: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  if (submissions) {
-    return { submissions: submissions, isOk: true };
+  try {
+    const submissions = await Submission.find({
+      "question._id": questionId,
+    });
+    if (!submissions.length) {
+      return {
+        error: "Không tìm thấy bài nộp",
+        isOk: false,
+      };
+    }
+
+    return {
+      submissions: submissions.map((submission) => submission.toObject()),
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy danh sách bài nộp",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không tìm thấy bài nộp",
-    isOk: false,
-  };
 };
 
+const getCampuses = async () => {
+  try {
+    const campuses = await Campus.find();
+    if (!campuses.length) {
+      return {
+        error: "Không tìm thấy trường",
+        isOk: false,
+      };
+    }
+    return { campuses, isOk: true };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin trường",
+      isOk: false,
+    };
+  }
+};
 const getMeetingByCourse = async (courseId) => {
-  const meetings = await prisma.meeting.findMany({
-    where: {
-      courseId: Number(courseId),
-    },
-    select: {
-      meetingId: true,
-      meetingType: true,
-      meetingLink: true,
-    },
-  });
-  const remainQuestions = await prisma.question.findMany({
-    where: {
-      lessonId: 1,
-    },
-    select: {
-      questionId: true,
-      status: true,
-    },
-  });
-  if (meetings) {
-    return { meetings: meetings, remainQuestions: remainQuestions, isOk: true };
+  try {
+    const meetings = await Meeting.find({
+      "course._id": courseId,
+    }).select("meetingType meetingLink");
+
+    const remainQuestions = await Question.find({
+      "course._id": courseId,
+      status: false,
+    }).select("status");
+
+    if (!meetings.length) {
+      return {
+        error: "Không tìm thấy thông tin cuộc họp",
+        isOk: false,
+      };
+    }
+
+    return {
+      meetings: meetings.map((meeting) => meeting.toObject()),
+      remainQuestions: remainQuestions.map((question) => question.toObject()),
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin cuộc họp",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không tìm thấy thông tin cuộc họp",
-    isOk: false,
-  };
 };
 
-const postQuestionSubmission = async (content, questionId, userId) => {
-  const submission = await prisma.submission.create({
-    data: {
+const postQuestionSubmission = async (content, question, user) => {
+  try {
+    const submission = new Submission({
       submissionContent: content,
-      submissionDate: dayjs().toISOString(),
-      Question: {
-        connect: {
-          questionId: Number(questionId),
-        },
-      },
-      user: {
-        connect: {
-          userId: Number(userId),
-        },
-      },
-    },
-  });
-  const allSubmission = await prisma.submission.findMany({
-    where: {
-      questionId: Number(questionId),
-    },
-    select: {
-      submissionId: true,
-      submissionContent: true,
-      submissionDate: true,
-      user: {
-        select: {
-          name: true,
-          userId: true,
-        },
-      },
-      comments: {
-        select: {
-          submissionId: true,
-          commentId: true,
-          commentContent: true,
-          commentDate: true,
-          user: {
-            select: {
-              name: true,
-              userId: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  if (submission) {
-    return { submission: submission, allSubmission: allSubmission, isOk: true };
+      submissionDate: new Date(),
+      question, // Embedding full question object
+      user, // Embedding full user object
+      comments: [],
+    });
+
+    await submission.save();
+
+    const allSubmissions = await Submission.find({
+      "question._id": question._id,
+    });
+
+    return {
+      submission: submission.toObject(),
+      allSubmissions: allSubmissions.map((sub) => sub.toObject()),
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Không thể tạo bài nộp",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không thể tạo bài nộp",
-    isOk: false,
-  };
 };
 
 const postSubmissionComment = async (
   questionId,
-  submissionId,
-  comment,
-  userId
+  submission,
+  commentContent,
+  user
 ) => {
-  const newComment = await prisma.comment.create({
-    data: {
-      commentContent: comment,
-      commentDate: dayjs().toISOString(),
-      submission: {
-        connect: {
-          submissionId: Number(submissionId),
-        },
-      },
-      user: {
-        connect: {
-          userId: Number(userId),
-        },
-      },
-    },
-  });
-  const allSubmission = await prisma.submission.findMany({
-    where: {
-      questionId: Number(questionId),
-    },
-    select: {
-      submissionId: true,
-      submissionContent: true,
-      submissionDate: true,
-      user: {
-        select: {
-          name: true,
-          userId: true,
-        },
-      },
-      comments: {
-        select: {
-          submissionId: true,
-          commentId: true,
-          commentContent: true,
-          commentDate: true,
-          user: {
-            select: {
-              name: true,
-              userId: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  if (newComment) {
-    return { newComment: newComment, allSubmission: allSubmission, isOk: true };
+  try {
+    const newComment = new Comment({
+      commentContent,
+      commentDate: new Date(),
+      submission, // Embedding full submission object
+      user, // Embedding full user object
+    });
+
+    await newComment.save();
+
+    // Update the submission with the new comment
+    await Submission.findByIdAndUpdate(submission._id, {
+      $push: { comments: newComment.toObject() },
+    });
+
+    const allSubmissions = await Submission.find({
+      "question._id": questionId,
+    });
+
+    return {
+      comment: newComment.toObject(),
+      allSubmissions: allSubmissions.map((sub) => sub.toObject()),
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Không thể tạo bình luận",
+      isOk: false,
+    };
   }
-  return {
-    error: "Không thể tạo bình luận",
-    isOk: false,
-  };
+};
+
+const getUserById = async (id) => {
+  try {
+    const user = await User.findOne({ FEID: id });
+
+    if (!user) {
+      return {
+        error: "Không tìm thấy người dùng",
+        isOk: false,
+      };
+    }
+
+    return { user: user.toObject(), isOk: true };
+  } catch (error) {
+    return {
+      error: "Lỗi lấy thông tin người dùng",
+      isOk: false,
+    };
+  }
 };
 
 module.exports = {
@@ -345,4 +382,6 @@ module.exports = {
   postQuestionSubmission,
   getSubmissionsByQuestion,
   postSubmissionComment,
+  getUserById,
+  getCampuses,
 };

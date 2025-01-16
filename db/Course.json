@@ -1,0 +1,29 @@
+[
+ {
+  "courseId": "1",
+  "courseName": "Introduction to Programming",
+  "description": "Learn basic programming concepts.",
+  "semesterId": "2",
+  "instructorId": "2",
+  "courseCode": "CS101",
+  "meetingId": "NULL"
+ },
+ {
+  "courseId": "2",
+  "courseName": "Data Structures",
+  "description": "Learn about data structures and algorithms.",
+  "semesterId": "2",
+  "instructorId": "2",
+  "courseCode": "CS102",
+  "meetingId": "NULL"
+ },
+ {
+  "courseId": "3",
+  "courseName": "Database Systems",
+  "description": "Introduction to databases.",
+  "semesterId": "2",
+  "instructorId": "2",
+  "courseCode": "CS201",
+  "meetingId": "NULL"
+ }
+]

@@ -2,7 +2,7 @@ const getCurrentSeason = () => {
   const month = new Date().getMonth() + 1; // getMonth() returns 0-11
 
   // Spring: March (3) - May (5)
-  if (month >= 3 && month <= 5) {
+  if (month >= 1 && month <= 5) {
     return "spring";
   }
   // Summer: June (6) - August (8)

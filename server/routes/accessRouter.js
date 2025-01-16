@@ -4,7 +4,9 @@ const accessController = require("../controllers/accessController");
 const passportConfig = require("../validators/passport");
 const jwt = require("jsonwebtoken");
 
+accessRouter.get("/campuses", accessController.getCampuses);
 accessRouter.post("/login", accessController.loginControl);
+accessRouter.post("/logout", accessController.logoutControl);
 accessRouter.get("/login/google", passportConfig.authenticateGoogle);
 accessRouter.get(
   "/google/callback",

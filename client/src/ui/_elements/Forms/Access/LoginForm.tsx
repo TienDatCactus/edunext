@@ -9,12 +9,21 @@ import {
   message,
 } from "antd";
 import { useEffect, useState } from "react";
-import { login } from "../../../../utils/api";
 import { useNavigate } from "react-router-dom";
+import { getCampuses, login } from "../../../../utils/api";
 import { getCurrentSeason } from "../../../../utils/customHooks";
 const { Password } = Input;
 const { Option } = Select;
 
+interface Campus {
+  campusName: string;
+  createdAt: string;
+  id: string;
+  updatedAt: string;
+  users: Array<any>;
+  __v: number;
+  _id: string;
+}
 type FieldType = {
   campus: string;
   email: string;
@@ -24,8 +33,23 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [campuses, setCampuses] = useState<Campus[]>([]);
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
+  const loginCampuses = async () => {
+    try {
+      setLoading(true);
+      const data = await getCampuses();
+      if (data?.isOk === true) {
+        setCampuses(data?.campuses);
+      }
+    } catch (error) {
+      message.error("Gặp lỗi khi tải dữ liệu");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   const onFinish: FormProps<FieldType>["onFinish"] = async (props) => {
     const { campus, email, password } = props;
     try {
@@ -46,7 +70,11 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
-
+  useEffect(() => {
+    return () => {
+      loginCampuses();
+    };
+  }, []);
   return (
     <>
       <Spin spinning={loading}>
@@ -74,11 +102,12 @@ const LoginForm = () => {
               placeholder="Chọn cơ sở"
               className="[&_.ant-select-selector]:py-5 flex items-center font-light"
             >
-              <Option value="1">Đà Nẵng</Option>
-              <Option value="2">Hòa Lạc</Option>
-              <Option value="3">Quy Nhơn</Option>
-              <Option value="4">Cần Thơ</Option>
-              <Option value="5">Hồ Chí Minh</Option>
+              {!!campuses?.length &&
+                campuses?.map((campus, index) => (
+                  <Option key={index} value={campus?._id}>
+                    {campus?.campusName}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
           <Form.Item

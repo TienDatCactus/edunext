@@ -10,7 +10,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
   deadline,
   lessonId,
   questions,
-  tag,
+  tagName,
   title,
 }) => {
   return (
@@ -18,7 +18,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
       <Collapse
         className="bg-[#f9fafc] shadow-md [&_.ant-collapse-expand-icon]:bg-[#fefefc] [&_.ant-collapse-expand-icon]:px-2 [&_.ant-collapse-expand-icon]:py-4 [&_.ant-collapse-expand-icon]:rounded-md [&_.ant-collapse-expand-icon]:shadow-md animate-zoomInUp
   [&_.ant-collapse-header]:flex  [&_.ant-collapse-header]:items-center"
-        expandIconPosition="right"
+        expandIconPosition="end"
         size="small"
         items={[
           {
@@ -43,7 +43,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
                       color="#ffffff"
                       className="border border-[#8f8f8f] rounded-md text-[#393939] shadow-md"
                     >
-                      {tag?.tagName}
+                      {tagName}
                     </Tag>
                   </div>
                   <p className="text-[#334155]">{content}</p>

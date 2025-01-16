@@ -58,5 +58,33 @@ const logoutControl = (req, res) => {
   res.clearCookie("jwt");
   res.status(204).json({ message: "Logout successful" });
 };
-
-module.exports = { loginControl };
+const getCampuses = async (req, res) => {
+  try {
+    const campuses = await query.getCampuses();
+    console.log(campuses)
+    if (campuses?.isOk === false) {
+      return res
+        .status(400)
+        .json({ error: campuses?.error, isOk: campuses?.isOk });
+    }
+    
+    res.json({ campuses: campuses?.campuses, isOk: true });
+  } catch (error) {
+    console.error("Campuses fetch error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+const getUserById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await query.getUserById(id);
+    if (user?.isOk === false) {
+      return res.status(400).json({ error: user?.error, isOk: user?.isOk });
+    }
+    res.json({ user: user?.user, isOk: true });
+  } catch (error) {
+    console.error("User fetch error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+module.exports = { loginControl, logoutControl, getUserById, getCampuses };
