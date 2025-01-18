@@ -10,7 +10,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
   deadline,
   lessonId,
   questions,
-  tagName,
+  tag,
   title,
 }) => {
   return (
@@ -43,7 +43,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
                       color="#ffffff"
                       className="border border-[#8f8f8f] rounded-md text-[#393939] shadow-md"
                     >
-                      {tagName}
+                      {tag}
                     </Tag>
                   </div>
                   <p className="text-[#334155]">{content}</p>
@@ -68,7 +68,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
                     {!!questions?.length &&
                       questions?.map((question: any, index: number) => (
                         <QuestionItem
-                          questionId={question?.questionId}
+                          questionId={index + 1}
                           status={question?.status}
                           lessonId={lessonId}
                         />

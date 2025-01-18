@@ -2,8 +2,8 @@ const query = require("../db/queries");
 
 const viewCourses = async (req, res) => {
   try {
-    const { year, month } = req.params;
-    const courses = await query.getCurrentCourses(year, month);
+    const { FEID } = req.params;
+    const courses = await query.getCurrentCourses(FEID);
     if (courses?.isOk === false) {
       return res.json({ error: courses?.error, isOk: courses?.isOk });
     } else if (courses?.isOk === true) {

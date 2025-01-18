@@ -61,7 +61,6 @@ const logoutControl = (req, res) => {
 const getCampuses = async (req, res) => {
   try {
     const campuses = await query.getCampuses();
-    console.log(campuses)
     if (campuses?.isOk === false) {
       return res
         .status(400)

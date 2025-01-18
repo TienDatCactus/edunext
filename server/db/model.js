@@ -72,7 +72,6 @@ const CourseSchema = new Schema(
     semester: { type: Schema.Types.Mixed, ref: "Semester", index: true },
     lessons: [{ type: Schema.Types.Mixed, ref: "Lesson" }],
     meetings: [{ type: Schema.Types.Mixed, ref: "Meeting" }],
-    questions: [{ type: Schema.Types.Mixed, ref: "Question" }],
     timetables: [{ type: Schema.Types.Mixed, ref: "Timetable" }],
     status: {
       type: String,

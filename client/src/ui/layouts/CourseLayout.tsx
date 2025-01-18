@@ -8,7 +8,6 @@ const { Paragraph } = Typography;
 
 const CourseLayout: React.FC<React.PropsWithChildren<CourseLayoutProps>> = ({
   children,
-  id,
   code,
   name,
   instructor,
@@ -19,10 +18,7 @@ const CourseLayout: React.FC<React.PropsWithChildren<CourseLayoutProps>> = ({
       <div className="col-span-4 max-h-[650px]  animate-lightSpeedInRight">
         <div className="px-6 py-4">
           <div>
-            <Tag color="#d6edff" className="text-black code">
-              #{id}
-            </Tag>
-            <Tag color="#d3f8e3" className="text-black  code">
+            <Tag color="#d3f8e3" className="text-black code">
               #{code}
             </Tag>
           </div>

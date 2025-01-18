@@ -16,18 +16,18 @@ const Detail: React.FC = () => {
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { courseId } = useParams();
+  const { courseCode } = useParams();
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<CourseItem>();
   const [lesson, setLesson] = useState<LessonItem>();
   const getDetail = async () => {
-    if (!courseId) return;
+    if (!courseCode) return;
     try {
       setLoading(true);
-      const resp = await getCourseDetail(Number(courseId));
+      const resp = await getCourseDetail(courseCode);
       if (resp?.isOk) {
-        setDetail(resp?.course[0]);
-        setLesson(resp?.lessons);
+        setDetail(resp?.course);
+        setLesson(resp?.course.lessons);
       }
     } catch (error) {
       message.error("Gặp lỗi khi tải dữ liệu");
@@ -51,18 +51,16 @@ const Detail: React.FC = () => {
       children: (
         <Spin spinning={loading}>
           <CourseLayout
-            id={detail?.courseId}
             code={detail?.courseCode}
             name={detail?.courseName}
             instructor="dat"
           >
             <CourseInfo
+              meetings={detail?.meetings}
               courseCode={detail?.courseCode}
               courseName={detail?.courseName}
-              questions={lesson?.questions || []}
               description={detail?.description}
-              lessons={Array.isArray(lesson?.lessons) ? lesson?.lessons : []}
-              tagName={lesson?.tags?.tagName || ""}
+              lessons={Array.isArray(lesson) ? lesson : []}
             />
           </CourseLayout>
         </Spin>
@@ -75,7 +73,6 @@ const Detail: React.FC = () => {
       children: (
         <Spin spinning={loading}>
           <CourseLayout
-            id={detail?.courseId}
             code={detail?.courseCode}
             name={detail?.courseName}
             instructor="dat"
@@ -87,7 +84,6 @@ const Detail: React.FC = () => {
       icon: <Info size={16} />,
     },
   ];
-  console.log(lesson);
   return (
     <MainLayout>
       <div className="bg-[linear-gradient(to_top,_#ffffff_0%,_#bae5f5_100%)] min-h-[160px] py-4">

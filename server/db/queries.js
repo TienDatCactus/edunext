@@ -19,8 +19,7 @@ const loginWithEmail = async (campus, email, password) => {
     const user = await User.findOne({
       email: email,
       campus: new mongoose.Types.ObjectId(campus), // must be done by this
-    }).select("password");
-    console.log(user);
+    }).select("_id name email FEID password");
     if (!user) {
       return {
         error: "Tài khoản hoặc mật khẩu không đúng",
@@ -40,7 +39,10 @@ const loginWithEmail = async (campus, email, password) => {
     return { user: userObject, isOk: true };
   } catch (error) {
     return {
-      error: "Lỗi đăng nhập" + error,
+      error:
+        "Lỗi đăng nhập " +
+        error.toString().split(":")[1] +
+        error.toString().split(":")[2],
       isOk: false,
     };
   }
@@ -92,105 +94,50 @@ const getCurrentSemester = async (year, month) => {
   }
 };
 
-const getCurrentCourses = async (year, month) => {
+const getCurrentCourses = async (FEID) => {
   try {
-    const semester = await getCurrentSemester(year, month);
-    if (!semester || semester.isOk === false) {
-      return {
-        error: semester?.error || "Học kì không hợp lệ",
-        isOk: false,
-      };
-    }
-
-    const courses = await Course.find({
-      "semester.semesterName": semester.semesterName,
-      "semester.year": semester.year,
-      status: "active",
-    });
-
+    let courses = null;
+    const user = await User.findOne({
+      FEID: FEID,
+    }).select("courses");
+    courses = user?.courses;
     if (!courses.length) {
       return {
         error: "Không có khóa học nào",
         isOk: false,
       };
     }
-
-    return { courses: courses.map((course) => course.toObject()), isOk: true };
+    return { courses: courses, isOk: true };
   } catch (error) {
     return {
-      error: "Lỗi lấy danh sách khóa học",
+      error: "Lỗi lấy danh sách khóa học " + error,
       isOk: false,
     };
   }
 };
 
-const getCourseDetail = async (courseId) => {
+const getCourseDetail = async (courseCode) => {
   try {
-    const course = await Course.findById(courseId);
-
+    const course = await Course.findOne({
+      courseCode: courseCode,
+    }).select("courseName description courseCode lessons status ");
     if (!course) {
       return {
-        error: "Không tìm thấy khóa học",
+        error: "Lỗi lấy thông tin khóa học" ,
         isOk: false,
       };
     }
 
-    return { course: course.toObject(), isOk: true };
+    return { course: course, isOk: true };
   } catch (error) {
     return {
-      error: "Lỗi lấy thông tin khóa học",
+      error: "Lỗi lấy thông tin khóa học " + error,
       isOk: false,
     };
   }
 };
 
-const getCourseLessons = async (courseId) => {
-  try {
-    // Since lessons are embedded in course, first get the course
-    const course = await Course.findById(courseId);
-    if (!course) {
-      return {
-        error: "Không tìm thấy khóa học",
-        isOk: false,
-      };
-    }
 
-    // Get all lessons for this course
-    const lessons = await Lesson.find({
-      "course.courseCode": course.courseCode,
-    });
-
-    if (!lessons.length) {
-      return {
-        error: "Không tìm thấy bài học",
-        isOk: false,
-      };
-    }
-
-    // Get questions and tags for the first lesson
-    const questions = await Question.find({
-      "lesson.title": lessons[0].title,
-    }).select("content");
-
-    const tags = await Tag.find({
-      "lessons.title": lessons[0].title,
-    }).select("tagName");
-
-    return {
-      lessons: {
-        lessons: lessons.map((lesson) => lesson.toObject()),
-        questions: questions.map((question) => question.toObject()),
-        tags: tags.map((tag) => tag.toObject()),
-      },
-      isOk: true,
-    };
-  } catch (error) {
-    return {
-      error: "Lỗi lấy danh sách bài học",
-      isOk: false,
-    };
-  }
-};
 
 const getQuestionById = async (questionId) => {
   try {
@@ -212,12 +159,13 @@ const getQuestionById = async (questionId) => {
   }
 };
 
-const getSubmissionsByQuestion = async (questionId) => {
+const getSubmissionsByQuestion = async (courseCode) => {
   try {
-    const submissions = await Submission.find({
-      "question._id": questionId,
-    });
-    if (!submissions.length) {
+    const submissions = await Question.findOne({
+      course: courseCode,
+    }).select("submissions");
+    console.log(submissions);
+    if (!submissions) {
       return {
         error: "Không tìm thấy bài nộp",
         isOk: false,
@@ -225,7 +173,7 @@ const getSubmissionsByQuestion = async (questionId) => {
     }
 
     return {
-      submissions: submissions.map((submission) => submission.toObject()),
+      submissions: submissions?.submissions,
       isOk: true,
     };
   } catch (error) {
@@ -253,27 +201,23 @@ const getCampuses = async () => {
     };
   }
 };
-const getMeetingByCourse = async (courseId) => {
+const getMeetingByCourse = async (courseCode) => {
   try {
-    const meetings = await Meeting.find({
-      "course._id": courseId,
-    }).select("meetingType meetingLink");
-
-    const remainQuestions = await Question.find({
-      "course._id": courseId,
-      status: false,
-    }).select("status");
-
-    if (!meetings.length) {
+    const meetings = await Course.findOne({
+      courseCode: courseCode,
+    }).select("meetings");
+    const remainQuestions = await Lesson.findOne({
+      course: courseCode,
+    }).select("questions");
+    if (!meetings) {
       return {
         error: "Không tìm thấy thông tin cuộc họp",
         isOk: false,
       };
     }
-
     return {
-      meetings: meetings.map((meeting) => meeting.toObject()),
-      remainQuestions: remainQuestions.map((question) => question.toObject()),
+      meetings: meetings?.meetings,
+      remainQuestions: remainQuestions?.questions,
       isOk: true,
     };
   } catch (error) {
@@ -376,7 +320,6 @@ module.exports = {
   loginWithId,
   getCurrentCourses,
   getCourseDetail,
-  getCourseLessons,
   getQuestionById,
   getMeetingByCourse,
   postQuestionSubmission,

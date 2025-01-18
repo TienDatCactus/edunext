@@ -10,7 +10,6 @@ import { getCurrentSeason } from "../utils/customHooks";
 const LandingPage = () => {
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
-  console.log(month);
   const navigate = useNavigate();
   const menuItems: Array<{
     label: string;

@@ -40,7 +40,7 @@ const router = createBrowserRouter([
     path: "/course",
     children: [
       {
-        path: ":courseId",
+        path: ":courseCode",
         children: [
           {
             path: "lesson/:lessonId/question/:questionId",

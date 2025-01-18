@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const authenticateToken = require("../validators/authenticate");
 
 homeRouter.get(
-  "/home/:year/:month",
+  "/home/:FEID",
   authenticateToken,
   homeController.viewCourses
 );

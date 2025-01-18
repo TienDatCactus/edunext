@@ -45,7 +45,6 @@ const LoginForm = () => {
       }
     } catch (error) {
       message.error("Gặp lỗi khi tải dữ liệu");
-      console.error(error);
     } finally {
       setLoading(false);
     }

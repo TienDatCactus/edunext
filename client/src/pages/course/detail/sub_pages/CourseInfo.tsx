@@ -8,7 +8,6 @@ const CourseInfo: React.FC<CourseInfoProps> = ({
   description,
   questions,
   lessons,
-  tagName,
 }) => {
   return (
     <>
@@ -33,11 +32,11 @@ const CourseInfo: React.FC<CourseInfoProps> = ({
               return (
                 <LessonDetail
                   key={index}
+                  lessonId={index + 1}
                   content={lesson?.content}
                   deadline={lesson?.deadline}
-                  lessonId={lesson?.lessonId}
-                  questions={questions}
-                  tagName={tagName || ""}
+                  questions={lesson?.questions}
+                  tag={lesson?.tag || ""}
                   title={lesson?.title}
                 />
               );

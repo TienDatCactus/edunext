@@ -9,7 +9,7 @@ const QuestionItem: React.FC<{
   lessonId?: number;
 }> = ({ questionId, status, lessonId }) => {
   const navigate = useNavigate();
-  const { courseId } = useParams();
+  const { courseCode } = useParams();
   return (
     <li className="flex items-center justify-between p-2 rounded-md cursor-pointer animate-slideInLeft group ">
       <div className="flex items-center gap-2">
@@ -36,7 +36,7 @@ const QuestionItem: React.FC<{
         <Button
           onClick={() =>
             navigate(
-              `/course/${courseId}/lesson/${lessonId}/question/${questionId}`
+              `/course/${courseCode}/lesson/${lessonId}/question/${questionId}`
             )
           }
         >

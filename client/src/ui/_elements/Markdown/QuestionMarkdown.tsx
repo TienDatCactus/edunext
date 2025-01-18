@@ -2,25 +2,25 @@ import {
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CodeToggle,
-  CreateLink,
-  InsertImage,
-  InsertTable,
-  InsertThematicBreak,
-  ListsToggle,
-  MDXEditor,
-  MDXEditorMethods,
   diffSourcePlugin,
   headingsPlugin,
   imagePlugin,
+  InsertImage,
+  InsertTable,
+  InsertThematicBreak,
   linkDialogPlugin,
   linkPlugin,
   listsPlugin,
+  ListsToggle,
+  MDXEditor,
+  MDXEditorMethods,
   quotePlugin,
   tablePlugin,
   thematicBreakPlugin,
   toolbarPlugin,
 } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
+import { ArrowsDownUp, CaretCircleDown } from "@phosphor-icons/react";
 import {
   Button,
   Divider,
@@ -39,18 +39,10 @@ import {
   getQuestionSubmission,
   postQuestionSubmission,
 } from "../../../utils/api";
-import {
-  ArrowsDownUp,
-  CaretCircleDown,
-  ChatDots,
-  DotsThree,
-  ThumbsDown,
-  ThumbsUp,
-} from "@phosphor-icons/react";
-import Answer from "../Page/Course/Lesson/Question/Answer";
 import { SubmissionItem } from "../../../utils/interfaces";
+import Answer from "../Page/Course/Lesson/Question/Answer";
 const QuestionMarkdown: React.FC = () => {
-  const { questionId } = useParams();
+  const { courseCode } = useParams();
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>("");
 
@@ -105,7 +97,7 @@ const QuestionMarkdown: React.FC = () => {
   const getSubmissions = async () => {
     try {
       setLoading(true);
-      const resp = await getQuestionSubmission(Number(questionId));
+      const resp = await getQuestionSubmission(courseCode || "");
       if (resp?.isOk) {
         setAllSubmissions(resp?.submissions);
       }
@@ -121,7 +113,7 @@ const QuestionMarkdown: React.FC = () => {
     try {
       setLoading(true);
       const resp = await postQuestionSubmission(
-        Number(questionId),
+        courseCode,
         values?.content,
         allSubmissions.length + 1
       );
@@ -233,7 +225,6 @@ const QuestionMarkdown: React.FC = () => {
           {!!allSubmissions.length &&
             allSubmissions?.map((submission, index) => (
               <Answer
-                submissionId={submission?.submissionId}
                 key={index}
                 submissionContent={submission?.submissionContent}
                 submissionDate={submission?.submissionDate}

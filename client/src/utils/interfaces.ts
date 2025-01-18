@@ -1,11 +1,12 @@
+import React from "react";
+
 export interface LessonDetailProps {
   title?: string;
-  tagId?: number;
   deadline?: string;
   content?: string;
   lessonId?: number;
   questions?: Questions[];
-  tagName: string;
+  tag?: string;
 }
 export interface ErrorHandlerOptions {
   redirectOnUnauthorized?: boolean;
@@ -34,12 +35,15 @@ export interface CourseModalProps {
 }
 export interface CourseItem {
   courseCode?: string;
-  courseId?: number;
   courseName?: string;
   description?: string;
   endDate?: string;
   instructorId?: number;
-  meetingId?: number[];
+  meetings?: {
+    courseId?: number;
+    meetingLink?: string;
+    meetingType?: string;
+  }[];
   semesterId?: number;
   startDate?: string;
 }
@@ -51,23 +55,12 @@ export interface CourseLayoutProps {
 }
 
 export interface LessonItem {
-  lessons: {
-    content?: string;
-    courseId?: number;
-    deadline?: string;
-    lessonId?: number;
-    tagId?: number;
-    title?: string;
-    Question?: Questions[];
-    Tag?: {
-      tagName?: string;
-      tagId?: number;
-    };
-  };
-  questions: Questions[];
-  tags: {
-    tagName: string;
-  };
+  title?: string;
+  content?: string;
+  courseId?: number;
+  deadline?: string;
+  tag?: string;
+  Question?: Questions[];
 }
 export interface Questions {
   content?: string;
@@ -77,6 +70,11 @@ export interface Questions {
 }
 
 export interface CourseInfoProps {
+  meetings?: {
+    courseId?: number;
+    meetingLink?: string;
+    meetingType?: string;
+  }[];
   courseCode?: string;
   courseName?: string;
   description?: string;
@@ -85,15 +83,10 @@ export interface CourseInfoProps {
     courseId?: number;
     deadline?: string;
     lessonId?: number;
-    tagId?: number;
+    tag?: string;
     title?: string;
-    Question?: Questions[];
-    Tag?: {
-      tagName?: string;
-      tagId?: number;
-    };
+    questions?: Questions[];
   }[];
-  tagName: string;
   questions?: Questions[];
 }
 
@@ -103,7 +96,6 @@ export interface UserToken {
   user?: User;
 }
 export interface User {
-  userId: number;
   name: string;
   email: string;
   FEID: string;

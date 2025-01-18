@@ -22,7 +22,7 @@ const CourseCard: React.FC<{ item: CourseItem }> = ({ item }) => {
           <Button
             icon={<ArrowFatLineRight size={22} />}
             block
-            onClick={() => navigate(`/course/${item?.courseId}/detail`)}
+            onClick={() => navigate(`/course/${item?.courseCode}/detail`)}
           />
         </div>
       </div>

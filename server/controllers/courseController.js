@@ -1,22 +1,17 @@
 const query = require("../db/queries");
 
 const viewCourseDetail = async (req, res) => {
-  const { courseId } = req.params;
+  const { courseCode } = req.params;
   try {
-    const [course, lessons] = await Promise.all([
-      query.getCourseDetail(courseId),
-      query.getCourseLessons(courseId),
-    ]);
-
-    if (course?.isOk === false || lessons?.isOk === false) {
+    const course = await query.getCourseDetail(courseCode);
+    if (course?.isOk === false ) {
       return res.status(400).json({
-        error: course?.error || lessons?.error,
+        error: course?.error ,
         isOk: false,
       });
     }
     res.json({
       course: course?.course,
-      lessons: lessons?.lessons,
       isOk: true,
     });
   } catch (error) {
@@ -40,9 +35,9 @@ const viewQuestionDetail = async (req, res) => {
 };
 
 const viewCourseMeetings = async (req, res) => {
-  const { courseId } = req.params;
+  const { courseCode } = req.params;
   try {
-    const meetings = await query.getMeetingByCourse(courseId);
+    const meetings = await query.getMeetingByCourse(courseCode);
     if (meetings?.isOk === false) {
       return res.status(400).json({ error: meetings?.error, isOk: false });
     }
@@ -82,9 +77,9 @@ const addQuestionSubmission = async (req, res) => {
 };
 
 const viewQuestionSubmissions = async (req, res) => {
-  const { questionId } = req.params;
+  const { courseCode } = req.params;
   try {
-    const submissions = await query.getSubmissionsByQuestion(questionId);
+    const submissions = await query.getSubmissionsByQuestion(courseCode);
     if (submissions?.isOk === false) {
       return res.status(400).json({ error: submissions?.error, isOk: false });
     }

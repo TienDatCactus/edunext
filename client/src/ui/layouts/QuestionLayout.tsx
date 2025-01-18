@@ -9,9 +9,9 @@ import { getCurrentSeason } from "../../utils/customHooks";
 const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { questionId, courseId } = useParams<{
+  const { questionId, courseCode } = useParams<{
     questionId?: string;
-    courseId?: string;
+    courseCode?: string;
   }>();
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
@@ -23,7 +23,6 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const [meeting, setMeeting] = useState<
     {
       courseId?: number;
-      meetingId?: number;
       meetingType?: string;
       meetingLink?: string;
     }[]
@@ -38,10 +37,9 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
     if (!questionId) return;
     try {
       setLoading(true);
-      const resp = await getCourseMeeting(Number(courseId));
+      const resp = await getCourseMeeting(courseCode || "");
       if (resp?.isOk) {
         setMeeting(resp?.meetings);
-        console.log(resp);
         setRemainQuestions(resp?.remainQuestions);
       }
     } catch (error) {

@@ -4,7 +4,7 @@ const courseController = require("../controllers/courseController");
 const authenticateToken = require("../validators/authenticate");
 
 courseRouter.get(
-  "/:courseId",
+  "/:courseCode",
   authenticateToken,
   courseController.viewCourseDetail
 );
@@ -14,7 +14,7 @@ courseRouter.get(
   courseController.viewQuestionDetail
 );
 courseRouter.get(
-  "/question/:questionId/submissions",
+  "/question/:courseCode/submissions",
   authenticateToken,
   courseController.viewQuestionSubmissions
 );
@@ -24,12 +24,12 @@ courseRouter.post(
   courseController.addQuestionSubmission
 );
 courseRouter.post(
-  "/question/:questionId/submission/:submissionId/comment",
+  "/question/:courseCode/submission/:submissionId/comment",
   authenticateToken,
   courseController.addSubmissionComment
 );
 courseRouter.get(
-  "/:courseId/meetings",
+  "/:courseCode/meetings",
   authenticateToken,
   courseController.viewCourseMeetings
 );

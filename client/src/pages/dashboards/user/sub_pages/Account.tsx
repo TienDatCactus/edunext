@@ -16,7 +16,6 @@ const Account = () => {
       }
     };
   }, []);
-  console.log(user);
   return (
     <DashboardLayout>
       <div className="flex flex-col justify-start py-2 leading-6">
