@@ -104,18 +104,21 @@ export interface User {
   roleId: number;
 }
 export interface SubmissionItem {
-  submissionId: number;
+  _id: string;
   submissionContent: string;
   submissionDate: string;
-  userId: number;
+  user: {
+    _id: string;
+    name: string;
+  };
   comments?: {
-    submissionId: number;
+    _id: string;
     commentId: number;
     commentContent: string;
     commentDate: string;
     user: {
+      _id: string;
       name: string;
-      userId: number;
     };
   }[];
   setAllSubmissions: React.Dispatch<React.SetStateAction<SubmissionItem[]>>;

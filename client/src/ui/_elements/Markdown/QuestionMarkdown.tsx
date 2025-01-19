@@ -42,7 +42,7 @@ import {
 import { SubmissionItem } from "../../../utils/interfaces";
 import Answer from "../Page/Course/Lesson/Question/Answer";
 const QuestionMarkdown: React.FC = () => {
-  const { courseCode } = useParams();
+  const { questionId } = useParams();
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>("");
 
@@ -97,7 +97,7 @@ const QuestionMarkdown: React.FC = () => {
   const getSubmissions = async () => {
     try {
       setLoading(true);
-      const resp = await getQuestionSubmission(courseCode || "");
+      const resp = await getQuestionSubmission(questionId || "");
       if (resp?.isOk) {
         setAllSubmissions(resp?.submissions);
       }
@@ -113,7 +113,7 @@ const QuestionMarkdown: React.FC = () => {
     try {
       setLoading(true);
       const resp = await postQuestionSubmission(
-        courseCode,
+        questionId,
         values?.content,
         allSubmissions.length + 1
       );
@@ -138,7 +138,6 @@ const QuestionMarkdown: React.FC = () => {
       getSubmissions();
     };
   }, []);
-  console.log(allSubmissions);
   return (
     <Spin spinning={loading}>
       <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
@@ -191,7 +190,7 @@ const QuestionMarkdown: React.FC = () => {
         </div>
       </Form>
       <Divider className="border-[#ccc] text-[12px] font-light m-0" />
-      <div className="min-h-[300px] pt-6 pb-6 flex flex-col gap-10">
+      <div className="min-h-[200px] pt-6 pb-6 flex flex-col gap-10">
         <div className="flex justify-between">
           <div className="flex gap-2 place-items-start">
             <p className="text-[20px] font-bold">Các câu trả lời</p>
@@ -207,8 +206,8 @@ const QuestionMarkdown: React.FC = () => {
             </div>
           </Dropdown>
         </div>
-        <ul className="flex flex-col gap-6">
-          {allSubmissions.length == 0 && (
+        <ul className="flex flex-col gap-4">
+          {allSubmissions?.length == 0 && (
             <Empty
               image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
               imageStyle={{
@@ -225,10 +224,11 @@ const QuestionMarkdown: React.FC = () => {
           {!!allSubmissions.length &&
             allSubmissions?.map((submission, index) => (
               <Answer
+                _id={submission?._id}
                 key={index}
                 submissionContent={submission?.submissionContent}
                 submissionDate={submission?.submissionDate}
-                userId={submission?.userId}
+                user={submission?.user}
                 comments={submission?.comments}
                 setLoading={setLoading}
                 setAllSubmissions={setAllSubmissions}

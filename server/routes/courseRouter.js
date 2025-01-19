@@ -14,7 +14,7 @@ courseRouter.get(
   courseController.viewQuestionDetail
 );
 courseRouter.get(
-  "/question/:courseCode/submissions",
+  "/question/:questionId/submissions",
   authenticateToken,
   courseController.viewQuestionSubmissions
 );

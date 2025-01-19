@@ -77,18 +77,36 @@ const addQuestionSubmission = async (req, res) => {
 };
 
 const viewQuestionSubmissions = async (req, res) => {
-  const { courseCode } = req.params;
+  const { questionId } = req.params;
   try {
-    const submissions = await query.getSubmissionsByQuestion(courseCode);
+    const submissions = await query.getSubmissionsByQuestion(questionId);
     if (submissions?.isOk === false) {
       return res.status(400).json({ error: submissions?.error, isOk: false });
     }
-    res.json({ submissions: submissions?.submissions, isOk: true });
+
+    const formattedSubmissions = await Promise.all(
+      submissions?.submissions.map(async (submission) => ({
+        ...submission,
+        _id: submission._id.toString(),
+        user: await query.getUserById(submission.user), // Replace user with user details
+        comments: await Promise.all(
+          submission.comments.map(async (comment) => ({
+            ...comment,
+            user: await query.getUserById(comment.user), // Replace comment user with user details
+            _id: comment._id.toString(),
+          }))
+        ),
+      }))
+    );
+
+
+    res.json({ submissions: formattedSubmissions, isOk: true });
   } catch (error) {
     console.error("Submission fetch error:", error);
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
+
 
 const addSubmissionComment = async (req, res) => {
   const { questionId, submissionId } = req.params;

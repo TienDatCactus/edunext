@@ -141,7 +141,9 @@ const getCourseDetail = async (courseCode) => {
 
 const getQuestionById = async (questionId) => {
   try {
-    const question = await Question.findById(questionId).select("content");
+    const question = await Question.findOne({
+      _id : new mongoose.Types.ObjectId(questionId)
+    }).select("_id content status course");
 
     if (!question) {
       return {
@@ -159,12 +161,11 @@ const getQuestionById = async (questionId) => {
   }
 };
 
-const getSubmissionsByQuestion = async (courseCode) => {
+const getSubmissionsByQuestion = async (questionId) => {
   try {
     const submissions = await Question.findOne({
-      course: courseCode,
+      _id: new mongoose.Types.ObjectId(questionId),
     }).select("submissions");
-    console.log(submissions);
     if (!submissions) {
       return {
         error: "Không tìm thấy bài nộp",
@@ -297,7 +298,7 @@ const postSubmissionComment = async (
 
 const getUserById = async (id) => {
   try {
-    const user = await User.findOne({ FEID: id });
+    const user = await User.findOne({ _id: new mongoose.Types.ObjectId(id) }).select('name FEID email role _id');
 
     if (!user) {
       return {
@@ -306,7 +307,7 @@ const getUserById = async (id) => {
       };
     }
 
-    return { user: user.toObject(), isOk: true };
+    return user
   } catch (error) {
     return {
       error: "Lỗi lấy thông tin người dùng",

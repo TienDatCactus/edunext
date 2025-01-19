@@ -1,8 +1,4 @@
-import {
-  ArrowFatLineRight,
-  BookBookmark,
-  Question,
-} from "@phosphor-icons/react";
+import { BookBookmark, Question } from "@phosphor-icons/react";
 import { Kanban } from "@phosphor-icons/react/dist/ssr";
 import { Badge, Button, Divider, Select } from "antd";
 import React, { useState } from "react";
@@ -12,15 +8,15 @@ const QuestionSidebar: React.FC<{
   meetings: {
     meetingType?: string;
     meetingLink?: string;
-    meetingId?: number;
+    _id?: string;
   }[];
   remainQuestions: {
-    questionId?: number;
+    _id?: string;
     status?: boolean;
   }[];
 }> = ({ meetings, remainQuestions }) => {
   const navigate = useNavigate();
-  const { courseId, lessonId } = useParams();
+  const { courseCode, lessonId } = useParams();
   const [value, setValue] = useState<string>("none");
   const handleJoinMeeting = () => {
     if (value != "none") {
@@ -107,13 +103,13 @@ const QuestionSidebar: React.FC<{
                 className="[&_.ant-ribbon-text]:text-[#333a43] [&_.ant-ribbon-text]:text-[12px]"
               >
                 <a
-                  href={`/course/${courseId}/lesson/${lessonId}/question/${question?.questionId}`}
+                  href={`/course/${courseCode}/lesson/${lessonId}/question/${question?._id}`}
                 >
                   <li className="hover:shadow-lg hover:bg-[#ededed]">
                     <div className="flex items-center gap-2">
                       <BookBookmark size={26} />
                       <h1 className="text-[16px]">
-                        Câu hỏi #{question?.questionId}
+                        Câu hỏi #{question?._id?.slice(20, -1)}
                       </h1>
                     </div>
                   </li>

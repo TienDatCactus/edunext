@@ -42,7 +42,7 @@ const getCourseDetail = async (courseCode: string) => {
   }
 };
 
-const getQuestionDetail = async (questionId: number) => {
+const getQuestionDetail = async (questionId: string) => {
   try {
     const resp = await http.get(`${courseApi}/question/${questionId}`);
     if (resp?.data) return resp?.data;
@@ -62,14 +62,14 @@ const getCourseMeeting = async (courseCode: string) => {
   }
 };
 const postQuestionSubmission = async (
-  courseCode?: string,
+  questionId?: string,
   content?: string,
   submissionId?: number
 ) => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.post(`${courseApi}/question/${courseCode}`, {
+    const resp = await http.post(`${courseApi}/question/${questionId}`, {
       userId: user?.user?.FEID,
       content,
       submissionId,
@@ -90,10 +90,10 @@ const getCampuses = async () => {
     return error;
   }
 };
-const getQuestionSubmission = async (courseCode: string) => {
+const getQuestionSubmission = async (questionId: string) => {
   try {
     const resp = await http.get(
-      `${courseApi}/question/${courseCode}/submissions`
+      `${courseApi}/question/${questionId}/submissions`
     );
     if (resp?.data) return resp?.data;
     return null;

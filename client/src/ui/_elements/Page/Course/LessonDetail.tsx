@@ -13,6 +13,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
   tag,
   title,
 }) => {
+  console.log(content, deadline, lessonId, questions, tag, title);
   return (
     <>
       <Collapse
@@ -68,7 +69,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
                     {!!questions?.length &&
                       questions?.map((question: any, index: number) => (
                         <QuestionItem
-                          questionId={index + 1}
+                          questionId={question?._id}
                           status={question?.status}
                           lessonId={lessonId}
                         />

@@ -34,7 +34,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
     }[]
   >();
   const getMeeting = async () => {
-    if (!questionId) return;
+    if (!courseCode) return;
     try {
       setLoading(true);
       const resp = await getCourseMeeting(courseCode || "");
@@ -52,7 +52,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
     if (!questionId) return;
     try {
       setLoading(true);
-      const resp = await getQuestionDetail(Number(questionId));
+      const resp = await getQuestionDetail(questionId);
       if (resp?.isOk) {
         setQuestion(resp?.question);
       }
@@ -68,6 +68,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       getMeeting();
     };
   }, []);
+  console.log(question, meeting, remainQuestions);
   return (
     <MainLayout>
       <Spin spinning={loading}>
@@ -89,7 +90,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
               />
               <div className="p-4 my-4 bg-white border rounded-md shadow-md animate-fadeInLeft">
                 <h1 className="font-semibold text-[20px]">
-                  Câu hỏi #{question?.questionId}
+                  Câu hỏi #{questionId}
                 </h1>
                 <Divider className="border-[#868686]  my-3" />
                 <p className="font-light">{question?.content}</p>
