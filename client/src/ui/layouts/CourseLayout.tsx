@@ -15,7 +15,7 @@ const CourseLayout: React.FC<React.PropsWithChildren<CourseLayoutProps>> = ({
   return (
     <div className="grid grid-cols-12 gap-4 py-6 bg-white px-14 *:border *:border-[#ccc] *:rounded-lg *:shadow-md *:min-h-[500px]">
       <div className="col-span-8">{children}</div>
-      <div className="col-span-4 max-h-[650px]  animate-lightSpeedInRight">
+      <div className="col-span-4 max-h-[650px]   -lightSpeedInRight">
         <div className="px-6 py-4">
           <div>
             <Tag color="#d3f8e3" className="text-black code">

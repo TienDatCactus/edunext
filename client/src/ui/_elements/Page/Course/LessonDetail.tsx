@@ -17,7 +17,7 @@ const LessonDetail: React.FC<LessonDetailProps> = ({
   return (
     <>
       <Collapse
-        className="bg-[#f9fafc] shadow-md [&_.ant-collapse-expand-icon]:bg-[#fefefc] [&_.ant-collapse-expand-icon]:px-2 [&_.ant-collapse-expand-icon]:py-4 [&_.ant-collapse-expand-icon]:rounded-md [&_.ant-collapse-expand-icon]:shadow-md animate-zoomInUp
+        className="bg-[#f9fafc] shadow-md [&_.ant-collapse-expand-icon]:bg-[#fefefc] [&_.ant-collapse-expand-icon]:px-2 [&_.ant-collapse-expand-icon]:py-4 [&_.ant-collapse-expand-icon]:rounded-md [&_.ant-collapse-expand-icon]:shadow-md  -zoomInUp
   [&_.ant-collapse-header]:flex  [&_.ant-collapse-header]:items-center"
         expandIconPosition="end"
         size="small"

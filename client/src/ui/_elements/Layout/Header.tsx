@@ -4,22 +4,24 @@ import { User, UserToken } from "../../../utils/interfaces";
 import { getCurrentSeason } from "../../../utils/customHooks";
 import { Button, Divider, Popover } from "antd";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../../utils/api";
 
 const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
   const navigate = useNavigate();
-  const opts: Array<{
-    label: string;
-    link: string;
-  }> = [
-    {
-      label: "Settings",
-      link: "/dashboard/account",
-    },
-    {
-      label: "Log out",
-      link: "/auth/logout",
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const doLogout = async () => {
+    try {
+      setLoading(true);
+      const resp = await logout();
+      if (resp) {
+        console.log("Logout success");
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-w-[200px]">
       <div className="p-2 px-4 pb-0">
@@ -30,18 +32,24 @@ const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
       </div>
       <Divider className="my-2 border-[#ccc]" />
       <ul className="p-2 pt-0">
-        {!!opts.length &&
-          opts?.map((opt, index) => (
-            <li key={index}>
-              <Button
-                className="border-none shadow-none hover:bg-[#ededed]"
-                block
-                onClick={() => navigate(`${opt?.link}`)}
-              >
-                {opt?.label}
-              </Button>
-            </li>
-          ))}
+        <li>
+          <Button
+            className="border-none shadow-none hover:bg-[#ededed]"
+            block
+            onClick={() => navigate("/dashboard/account")}
+          >
+            Cài đặt
+          </Button>
+        </li>
+        <li>
+          <Button
+            className="border-none shadow-none hover:bg-[#ededed]"
+            block
+            onClick={doLogout}
+          >
+            Đăng xuất
+          </Button>
+        </li>
       </ul>
     </div>
   );
@@ -67,7 +75,7 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between p-6">
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 animate-jackInTheBox animate-fast">
+        <div className="flex items-center gap-2">
           <Kanban size={32} />
           <h1 className="font-bold text-[20px]">FPT Edunext</h1>
         </div>
@@ -75,10 +83,7 @@ const Header = () => {
           {!!navItems.length &&
             navItems?.map((item, index) => {
               return (
-                <li
-                  key={index}
-                  className="inline-block mx-4 hover:animate-heartBeat animate-slow"
-                >
+                <li key={index} className="inline-block mx-4 ">
                   <a
                     href={item.link}
                     className={`${item.active ? "font-bold" : ""} `}
@@ -93,7 +98,7 @@ const Header = () => {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <p className="font-semibold">
-            {user?.name}#{user?.FEID}
+            {user?.name} #{user?.FEID}
           </p>
           <Popover
             overlayInnerStyle={{ padding: 0 }}

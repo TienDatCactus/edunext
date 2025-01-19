@@ -99,9 +99,7 @@ export interface User {
   name: string;
   email: string;
   FEID: string;
-  campusId: number;
-  classId: number;
-  roleId: number;
+  _id: string;
 }
 export interface SubmissionItem {
   _id: string;

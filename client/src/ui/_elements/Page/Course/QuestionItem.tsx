@@ -11,7 +11,7 @@ const QuestionItem: React.FC<{
   const navigate = useNavigate();
   const { courseCode } = useParams();
   return (
-    <li className="flex items-center justify-between p-2 rounded-md cursor-pointer animate-slideInLeft group ">
+    <li className="flex items-center justify-between p-2 rounded-md cursor-pointer  -slideInLeft group ">
       <div className="flex items-center gap-2">
         <SealQuestion size={22} />
         <h1>Câu hỏi #{questionId}</h1>
@@ -20,12 +20,9 @@ const QuestionItem: React.FC<{
         <Tag
           icon={
             !status ? (
-              <ExclamationMark
-                size={22}
-                className="group-hover:animate-bounce"
-              />
+              <ExclamationMark size={22} className="group-hover: -bounce" />
             ) : (
-              <Check size={22} className="group-hover:animate-rubberBand" />
+              <Check size={22} className="group-hover: -rubberBand" />
             )
           }
           color={!status ? "red" : "green"}

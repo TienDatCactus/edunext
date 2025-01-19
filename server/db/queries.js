@@ -123,7 +123,7 @@ const getCourseDetail = async (courseCode) => {
     }).select("courseName description courseCode lessons status ");
     if (!course) {
       return {
-        error: "Lỗi lấy thông tin khóa học" ,
+        error: "Lỗi lấy thông tin khóa học",
         isOk: false,
       };
     }
@@ -137,12 +137,10 @@ const getCourseDetail = async (courseCode) => {
   }
 };
 
-
-
 const getQuestionById = async (questionId) => {
   try {
     const question = await Question.findOne({
-      _id : new mongoose.Types.ObjectId(questionId)
+      _id: new mongoose.Types.ObjectId(questionId),
     }).select("_id content status course");
 
     if (!question) {
@@ -163,21 +161,30 @@ const getQuestionById = async (questionId) => {
 
 const getSubmissionsByQuestion = async (questionId) => {
   try {
-    const submissions = await Question.findOne({
-      _id: new mongoose.Types.ObjectId(questionId),
-    }).select("submissions");
+    const submissions = await Submission.find({
+      question: questionId,
+    });
     if (!submissions) {
       return {
         error: "Không tìm thấy bài nộp",
         isOk: false,
       };
     }
-
+    const submissionsWithUsers = await Promise.all(
+      submissions.map(async (submission) => {
+        const user = await User.findOne({
+          _id: submission.user,
+        }).select("name FEID email role");
+        return { ...submission?._doc, user: user };
+      })
+    );
+    console.log("modified" + submissionsWithUsers);
     return {
-      submissions: submissions?.submissions,
+      submissions: submissionsWithUsers,
       isOk: true,
     };
   } catch (error) {
+    console.log(error);
     return {
       error: "Lỗi lấy danh sách bài nộp",
       isOk: false,
@@ -234,20 +241,14 @@ const postQuestionSubmission = async (content, question, user) => {
     const submission = new Submission({
       submissionContent: content,
       submissionDate: new Date(),
-      question, // Embedding full question object
-      user, // Embedding full user object
+      question,
+      user,
       comments: [],
     });
-
     await submission.save();
-
-    const allSubmissions = await Submission.find({
-      "question._id": question._id,
-    });
-
+    const allSubmissions = await getSubmissionsByQuestion(question);
     return {
-      submission: submission.toObject(),
-      allSubmissions: allSubmissions.map((sub) => sub.toObject()),
+      allSubmissions: allSubmissions?.submissions,
       isOk: true,
     };
   } catch (error) {
@@ -298,7 +299,9 @@ const postSubmissionComment = async (
 
 const getUserById = async (id) => {
   try {
-    const user = await User.findOne({ _id: new mongoose.Types.ObjectId(id) }).select('name FEID email role _id');
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    }).select("name FEID email role _id");
 
     if (!user) {
       return {
@@ -307,7 +310,7 @@ const getUserById = async (id) => {
       };
     }
 
-    return user
+    return user;
   } catch (error) {
     return {
       error: "Lỗi lấy thông tin người dùng",

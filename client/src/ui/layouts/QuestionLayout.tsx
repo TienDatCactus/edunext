@@ -68,7 +68,6 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       getMeeting();
     };
   }, []);
-  console.log(question, meeting, remainQuestions);
   return (
     <MainLayout>
       <Spin spinning={loading}>
@@ -88,7 +87,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                   },
                 ]}
               />
-              <div className="p-4 my-4 bg-white border rounded-md shadow-md animate-fadeInLeft">
+              <div className="p-4 my-4 bg-white border rounded-md shadow-md -fadeInLeft">
                 <h1 className="font-semibold text-[20px]">
                   Câu hỏi #{questionId}
                 </h1>
@@ -96,7 +95,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                 <p className="font-light">{question?.content}</p>
               </div>
             </div>
-            <main className="animate-fadeInLeft">{children}</main>
+            <main className=" -fadeInLeft">{children}</main>
           </div>
           <QuestionSidebar
             meetings={meeting || []}

@@ -63,16 +63,14 @@ const getCourseMeeting = async (courseCode: string) => {
 };
 const postQuestionSubmission = async (
   questionId?: string,
-  content?: string,
-  submissionId?: number
+  content?: string
 ) => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
     const resp = await http.post(`${courseApi}/question/${questionId}`, {
-      userId: user?.user?.FEID,
+      userId: user?.user?._id,
       content,
-      submissionId,
     });
     if (resp?.data) return resp?.data;
     return null;
@@ -132,6 +130,22 @@ const getUserById = async (userId: number) => {
     return error;
   }
 };
+
+const logout = async () => {
+  try {
+    const tokenString = localStorage.getItem("edu-token");
+    const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
+    const resp = await http.post(`${accessApi}/logout`, {
+      token: user?.accessToken,
+    });
+    if (resp?.data && resp?.data?.isOk == true) {
+      localStorage.removeItem("edu-token");
+      window.location.replace("/");
+    }
+  } catch (error) {
+    return error;
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -143,4 +157,5 @@ export {
   login,
   postQuestionSubmission,
   postSubmissionComment,
+  logout,
 };

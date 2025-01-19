@@ -15,7 +15,6 @@ const QuestionSidebar: React.FC<{
     status?: boolean;
   }[];
 }> = ({ meetings, remainQuestions }) => {
-  const navigate = useNavigate();
   const { courseCode, lessonId } = useParams();
   const [value, setValue] = useState<string>("none");
   const handleJoinMeeting = () => {
@@ -24,7 +23,7 @@ const QuestionSidebar: React.FC<{
     }
   };
   return (
-    <div className="animate-fadeInUp col-span-4 border rounded-md shadow-lg  max-h-[620px]">
+    <div className=" -fadeInUp col-span-4 border rounded-md shadow-lg  max-h-[620px]">
       <div className="flex items-center justify-between px-2 py-3 ">
         <div className="flex items-center gap-2">
           <Kanban size={22} />

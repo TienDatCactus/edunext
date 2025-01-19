@@ -95,7 +95,7 @@ const LandingPage = () => {
           <Button
             icon={<ArrowBendRightUp size={18} />}
             iconPosition="end"
-            className="justify-center shadow-lg items-center flex gap-2 bg-[#d0cdc6] py-5 rounded-full border-[1.5px] border-[#193719] cursor-pointer hover:text-[#000]  hover:animate-swing"
+            className="justify-center shadow-lg items-center flex gap-2 bg-[#d0cdc6] py-5 rounded-full border-[1.5px] border-[#193719] cursor-pointer hover:text-[#000]  "
             onClick={handleNavigate}
           >
             Trải nghiệm ngay

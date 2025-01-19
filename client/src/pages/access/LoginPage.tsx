@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
         <div className="flex flex-col px-10 justify-evenly">
           <div className="px-8">
             <div>
-              <Kanban size={32} weight="fill" className="hover:animate-flip" />
+              <Kanban size={32} weight="fill" className="" />
             </div>
             <div className="flex flex-col items-center gap-6 pb-0">
               <div className="text-center">

@@ -66,18 +66,18 @@ const Answer: React.FC<SubmissionItem> = ({
           </div>
           <div className="flex gap-4 *:flex *:place-items-center *:gap-1 *:text-[16px] ">
             <div className="cursor-pointer group">
-              <ThumbsUp className="group-hover:animate-bounceIn" size={20} />
+              <ThumbsUp className="group-hover: -bounceIn" size={20} />
               <p>2</p>
             </div>
             <div className="cursor-pointer group">
-              <ThumbsDown className="group-hover:animate-bounceIn" size={20} />
+              <ThumbsDown className="group-hover: -bounceIn" size={20} />
               <p>2</p>
             </div>
             <div
               className="cursor-pointer group"
               onClick={() => setReply(!reply)}
             >
-              <ChatDots size={20} className="group-hover:animate-bounceIn" />
+              <ChatDots size={20} className="group-hover: -bounceIn" />
               <p>Phản hồi</p>
             </div>
             <div>
@@ -116,14 +116,14 @@ const Answer: React.FC<SubmissionItem> = ({
                     <div className="flex gap-4 *:flex *:place-items-center *:gap-1 *:text-[16px] ">
                       <div className="cursor-pointer group">
                         <ThumbsUp
-                          className="group-hover:animate-bounceIn"
+                          className="group-hover: -bounceIn"
                           size={20}
                         />
                         <p>25</p>
                       </div>
                       <div className="cursor-pointer group">
                         <ThumbsDown
-                          className="group-hover:animate-bounceIn"
+                          className="group-hover: -bounceIn"
                           size={20}
                         />
                         <p>20</p>
@@ -139,7 +139,7 @@ const Answer: React.FC<SubmissionItem> = ({
         </ul>
       )}
       {reply && (
-        <div className="mt-2 duration-500 ml-14 animate-bounceInDown">
+        <div className="mt-2 duration-500 ml-14 -bounceInDown">
           <Form onFinish={onFinish} className="flex w-full gap-2" form={form}>
             <Form.Item
               className="w-full"

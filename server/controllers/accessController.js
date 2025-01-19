@@ -1,3 +1,4 @@
+const { trusted } = require("mongoose");
 const query = require("../db/queries");
 const jwt = require("jsonwebtoken");
 
@@ -29,13 +30,10 @@ const loginControl = async (req, res) => {
           accessToken: accessToken,
           refreshToken: refreshToken,
           user: {
-            userId: user?.user?.userId,
+            _id: user?.user?._id,
             name: user?.user?.name,
             email: user?.user?.email,
             FEID: user?.user?.FEID,
-            campusId: user?.user?.campusId,
-            classId: user?.user?.classId,
-            roleId: user?.user?.roleId,
           },
         },
       });
@@ -54,9 +52,12 @@ function generateAccessToken(user) {
 }
 
 const logoutControl = (req, res) => {
-  refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
-  res.clearCookie("jwt");
-  res.status(204).json({ message: "Logout successful" });
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "Token is required", isOk: false });
+  }
+  refreshTokens = refreshTokens.filter((t) => t !== token);
+  res.status(200).json({ message: "Logout successful", isOk: true });
 };
 const getCampuses = async (req, res) => {
   try {

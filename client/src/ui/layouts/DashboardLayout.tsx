@@ -109,7 +109,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}
           mode="inline"
-          items={user?.roleId === 2 ? teacherItems : studentItems}
+          items={studentItems}
           selectedKeys={[ROUTE_KEYS?.dashboard[DASHBOARD_LOCATION]?.key]}
         />
         <Divider className="my-2" />

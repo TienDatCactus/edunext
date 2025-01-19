@@ -112,11 +112,7 @@ const QuestionMarkdown: React.FC = () => {
   }>["onFinish"] = async (values) => {
     try {
       setLoading(true);
-      const resp = await postQuestionSubmission(
-        questionId,
-        values?.content,
-        allSubmissions.length + 1
-      );
+      const resp = await postQuestionSubmission(questionId, values?.content);
       if (resp?.isOk) {
         setAllSubmissions(resp?.allSubmission);
       }
@@ -138,6 +134,7 @@ const QuestionMarkdown: React.FC = () => {
       getSubmissions();
     };
   }, []);
+  console.log(allSubmissions);
   return (
     <Spin spinning={loading}>
       <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
