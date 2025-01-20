@@ -1,0 +1,65 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1db2"
+  },
+  "campusName": "Đà Nẵng",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.978Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "678902c1eab34bd3c41b5946"
+  },
+  "campusName": "Hòa Lạc",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.978Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "678902daeab34bd3c41b5949"
+  },
+  "campusName": "Quy Nhơn",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.978Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "678902e7eab34bd3c41b594b"
+  },
+  "campusName": "Cần Thơ",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.978Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "678902efeab34bd3c41b594d"
+  },
+  "campusName": "TP. HCM",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.964Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.978Z"
+  },
+  "__v": 1
+}]

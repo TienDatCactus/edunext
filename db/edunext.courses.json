@@ -1,0 +1,75 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "courseName": "Advanced Programming",
+  "description": "Advanced concepts in software development",
+  "courseCode": "CS401",
+  "assignments": [
+    {
+      "$oid": "6788be800862e875d6ac1dd0"
+    }
+  ],
+  "instructor": {
+    "$oid": "6788be800862e875d6ac1dba"
+  },
+  "semester": {
+    "$oid": "6788be800862e875d6ac1dc0"
+  },
+  "lessons": [
+    {
+      "title": "Introduction to Design Patterns",
+      "content": "This lesson covers the fundamental design patterns...",
+      "deadline": {
+        "$date": "2025-02-01T00:00:00.000Z"
+      },
+      "course": {
+        "$oid": "6788be800862e875d6ac1dc4"
+      },
+      "tag": "Programming",
+      "lessonGroups": [],
+      "questions": [
+        {
+          "content": "Explain the Observer pattern and its use cases.",
+          "status": false,
+          "course": {
+            "$oid": "6788be800862e875d6ac1dc4"
+          },
+          "lesson": {
+            "$oid": "6788be800862e875d6ac1dca"
+          },
+          "submissions": [],
+          "_id": {
+            "$oid": "6788be800862e875d6ac1dce"
+          },
+          "createdAt": {
+            "$date": "2025-01-16T08:08:32.990Z"
+          },
+          "updatedAt": {
+            "$date": "2025-01-16T08:08:32.990Z"
+          },
+          "__v": 0
+        }
+      ],
+      "_id": {
+        "$oid": "6788be800862e875d6ac1dca"
+      },
+      "createdAt": {
+        "$date": "2025-01-16T08:08:32.988Z"
+      },
+      "updatedAt": {
+        "$date": "2025-01-16T08:08:32.988Z"
+      },
+      "__v": 0
+    }
+  ],
+  "status": "active",
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.983Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.996Z"
+  },
+  "__v": 1,
+  "forMajor": "IT"
+}]

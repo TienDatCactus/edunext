@@ -1,0 +1,40 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1dd6"
+  },
+  "commentContent": "Excellent implementation of the Observer pattern!",
+  "commentDate": {
+    "$date": "2025-01-29T00:00:00.000Z"
+  },
+  "submission": {
+    "$oid": "6788be800862e875d6ac1dd2"
+  },
+  "user": {
+    "$oid": "6788be800862e875d6ac1dba"
+  },
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.994Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.994Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "678da1d810818f145e83f5b6"
+  },
+  "commentContent": "dấdasdad",
+  "commentDate": {
+    "$date": "2025-01-20T01:07:36.797Z"
+  },
+  "submission": "undefined",
+  "user": "PROF001",
+  "createdAt": {
+    "$date": "2025-01-20T01:07:36.798Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-20T01:07:36.798Z"
+  },
+  "__v": 0
+}]

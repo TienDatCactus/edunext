@@ -1,0 +1,65 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1dce"
+  },
+  "content": [
+    {
+      "title": "day la cau 1",
+      "answer": [
+        "cau 1 phai ko ? ",
+        "cau 2 phjai ko ?",
+        "cau 3 phai ko ?",
+        "cau 4 phai khong ? "
+      ],
+      "correctAnswer": 2
+    }
+  ],
+  "status": false,
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  },
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "__v": 0,
+  "type": "quiz"
+},
+{
+  "_id": {
+    "$oid": "678dbd1119f8e7aa81ffdeb4"
+  },
+  "content": "day la code",
+  "status": false,
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  },
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "__v": 0,
+  "type": "code"
+},
+{
+  "_id": {
+    "$oid": "678dbd3319f8e7aa81ffdeb6"
+  },
+  "content": "Day la tu luan",
+  "status": false,
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  },
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.990Z"
+  },
+  "__v": 0,
+  "type": "response"
+}]

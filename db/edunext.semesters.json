@@ -1,0 +1,19 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1dc0"
+  },
+  "semesterName": "Spring 2025",
+  "year": "2025",
+  "courses": [
+    {
+      "$oid": "6788be800862e875d6ac1dc4"
+    }
+  ],
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.980Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.985Z"
+  },
+  "__v": 1
+}]

@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "6788be800862e875d6ac1dc8"
+  },
+  "courseId": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "createdAt": {
+    "$date": "2025-01-16T08:08:32.986Z"
+  },
+  "updatedAt": {
+    "$date": "2025-01-16T08:08:32.986Z"
+  },
+  "__v": 0,
+  "meetings": [
+    {
+      "type": "Meet",
+      "link": "meet.vn"
+    }
+  ]
+}]
