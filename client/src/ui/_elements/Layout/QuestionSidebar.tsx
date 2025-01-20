@@ -27,7 +27,7 @@ const QuestionSidebar: React.FC<{
       <div className="flex items-center justify-between px-2 py-3 ">
         <div className="flex items-center gap-2">
           <Kanban size={22} />
-          <h1 className="text-[14px] text-[#4a4a4a]">Edunext Resource</h1>
+          <h1 className="text-[14px] text-[#4a4a4a]">Sphere's Resource</h1>
         </div>
         <div>
           <Question size={20} />

@@ -11,33 +11,28 @@ const commonOptions = {
 // User Schema - Optimized
 const UserSchema = new Schema(
   {
-    name: { type: String, required: true, index: true },
+    name: { type: Schema.Types.String, required: true, index: true },
     email: {
-      type: String,
+      type: Schema.Types.String,
       required: true,
       unique: true,
       lowercase: true,
       trim: true,
       index: true,
     },
-    password: { type: String, required: true, select: false },
-    FEID: { type: String, required: true, unique: true, index: true },
-    comments: [{ type: Schema.Types.Mixed, ref: "Comment" }],
-    courses: [{ type: Schema.Types.Mixed, ref: "Course" }],
-    submissions: [{ type: Schema.Types.Mixed, ref: "Submission" }],
+    password: { type: Schema.Types.String, required: true, select: false },
+    FEID: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+      index: true,
+    },
     timetable: [{ type: Schema.Types.Mixed, ref: "Timetable" }],
     campus: { type: Schema.Types.Mixed, ref: "Campus" },
     courseClass: { type: Schema.Types.Mixed, ref: "CourseClass" },
     role: { type: Schema.Types.Mixed, ref: "Role" },
-  },
-  commonOptions
-);
-
-// Role Schema - Optimized
-const RoleSchema = new Schema(
-  {
-    roleName: { type: String, required: true, unique: true, index: true },
-    users: [{ type: Schema.Types.Mixed, ref: "User" }],
+    major: { type: Schema.Types.Mixed },
+    semester: { type: Schema.Types.Mixed, ref: "Semester" },
   },
   commonOptions
 );
@@ -45,8 +40,12 @@ const RoleSchema = new Schema(
 // Campus Schema - Optimized
 const CampusSchema = new Schema(
   {
-    campusName: { type: String, required: true, unique: true, index: true },
-    users: [{ type: Schema.Types.Mixed, ref: "User" }],
+    campusName: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+      index: true,
+    },
   },
   commonOptions
 );
@@ -54,8 +53,8 @@ const CampusSchema = new Schema(
 // Semester Schema - Optimized
 const SemesterSchema = new Schema(
   {
-    semesterName: { type: String, required: true, index: true },
-    year: { type: String, required: true, index: true },
+    semesterName: { type: Schema.Types.String, required: true, index: true },
+    year: { type: Schema.Types.String, required: true, index: true },
     courses: [{ type: Schema.Types.Mixed, ref: "Course" }],
   },
   commonOptions
@@ -64,19 +63,28 @@ const SemesterSchema = new Schema(
 // Course Schema - Optimized
 const CourseSchema = new Schema(
   {
-    courseName: { type: String, required: true, index: true },
-    description: { type: String },
-    courseCode: { type: String, required: true, unique: true, index: true },
+    courseName: { type: Schema.Types.String, required: true, index: true },
+    description: { type: Schema.Types.String },
+    courseCode: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+      index: true,
+    },
     assignments: [{ type: Schema.Types.Mixed, ref: "Assignment" }],
     instructor: { type: Schema.Types.Mixed, ref: "User", index: true },
     semester: { type: Schema.Types.Mixed, ref: "Semester", index: true },
     lessons: [{ type: Schema.Types.Mixed, ref: "Lesson" }],
-    meetings: [{ type: Schema.Types.Mixed, ref: "Meeting" }],
-    timetables: [{ type: Schema.Types.Mixed, ref: "Timetable" }],
     status: {
       type: String,
       enum: ["active", "inactive", "archived"],
       default: "active",
+      index: true,
+    },
+    forMajor: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
       index: true,
     },
   },
@@ -92,12 +100,19 @@ const MeetingSchema = new Schema(
       required: true,
       index: true,
     },
-    meetingType: {
-      type: String,
-      required: true,
-      enum: ["lecture", "lab", "tutorial", "other"],
-    },
-    meetingLink: { type: String, required: true },
+    meetings: [
+      {
+        type: {
+          type: Schema.Types.String,
+          required: true,
+          enum: ["Google Meet", "Discord", "Zoom", "Teams"],
+        },
+        link: {
+          type: Schema.Types.String,
+          required: true,
+        },
+      },
+    ],
     course: { type: Schema.Types.Mixed, ref: "Course" },
   },
   commonOptions
@@ -106,13 +121,11 @@ const MeetingSchema = new Schema(
 // Lesson Schema - Optimized
 const LessonSchema = new Schema(
   {
-    title: { type: String, required: true, index: true },
-    content: { type: String },
-    deadline: { type: Date, index: true },
+    title: { type: Schema.Types.String, required: true, index: true },
+    content: { type: Schema.Types.String },
+    deadline: { type: Schema.Types.Date, index: true },
     course: { type: Schema.Types.Mixed, ref: "Course", index: true },
-    tag: { type: Schema.Types.Mixed, ref: "Tag" },
-    lessonGroups: [{ type: Schema.Types.Mixed, ref: "LessonGroup" }],
-    questions: [{ type: Schema.Types.Mixed, ref: "Question" }],
+    tag: { type: Schema.Types.Mixed },
   },
   commonOptions
 );
@@ -121,7 +134,7 @@ const LessonSchema = new Schema(
 const LessonGroupSchema = new Schema(
   {
     userId: [{ type: Schema.Types.Mixed, ref: "User", index: true }],
-    lesson: { type: Schema.Types.Mixed, ref: "Lesson", index: true },
+    course: { type: Schema.Types.Mixed, ref: "Course", index: true },
   },
   commonOptions
 );
@@ -129,21 +142,14 @@ const LessonGroupSchema = new Schema(
 // Question Schema - Optimized
 const QuestionSchema = new Schema(
   {
-    content: { type: String, required: true },
-    status: { type: Boolean, default: false, index: true },
-    course: { type: Schema.Types.Mixed, ref: "Course", index: true },
+    content: { type: Schema.Types.Mixed, required: true },
+    status: { type: Schema.Types.Boolean, default: false, index: true },
     lesson: { type: Schema.Types.Mixed, ref: "Lesson", index: true },
-    submissions: [{ type: Schema.Types.Mixed, ref: "Submission" }],
-  },
-  commonOptions
-);
-
-// Tag Schema - Optimized
-const TagSchema = new Schema(
-  {
-    tagId: { type: String, required: true, unique: true, index: true },
-    tagName: { type: String, required: true, index: true },
-    lessons: [{ type: Schema.Types.Mixed, ref: "Lesson" }],
+    type: {
+      type: Schema.Types.String,
+      required: true,
+      enum: ["quiz", "code", "response"],
+    },
   },
   commonOptions
 );
@@ -151,17 +157,22 @@ const TagSchema = new Schema(
 // Assignment Schema - Optimized
 const AssignmentSchema = new Schema(
   {
-    assignmentId: { type: String, required: true, unique: true, index: true },
+    assignmentId: {
+      type: Schema.Types.String,
+      required: true,
+      unique: true,
+      index: true,
+    },
     courseId: {
       type: Schema.Types.Mixed,
       ref: "Course",
       required: true,
       index: true,
     },
-    title: { type: String, required: true, index: true },
-    description: { type: String },
-    startDate: { type: Date, index: true },
-    dueDate: { type: Date, index: true },
+    title: { type: Schema.Types.String, required: true, index: true },
+    description: { type: Schema.Types.String },
+    startDate: { type: Schema.Types.Date, index: true },
+    dueDate: { type: Schema.Types.Date, index: true },
     course: { type: Schema.Types.Mixed, ref: "Course" },
   },
   commonOptions
@@ -170,8 +181,8 @@ const AssignmentSchema = new Schema(
 // Submission Schema - Optimized
 const SubmissionSchema = new Schema(
   {
-    submissionContent: { type: String, required: true },
-    submissionDate: { type: Date, default: Date.now, index: true },
+    submissionContent: { type: Schema.Types.String, required: true },
+    submissionDate: { type: Schema.Types.Date, default: Date.now, index: true },
     comments: [{ type: Schema.Types.Mixed, ref: "Comment" }],
     question: { type: Schema.Types.Mixed, ref: "Question", index: true },
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
@@ -182,7 +193,7 @@ const SubmissionSchema = new Schema(
 // CourseClass Schema - Optimized
 const CourseClassSchema = new Schema(
   {
-    className: { type: String, required: true, index: true },
+    className: { type: Schema.Types.String, required: true, index: true },
     students: [{ type: Schema.Types.Mixed, ref: "User" }],
   },
   commonOptions
@@ -191,9 +202,13 @@ const CourseClassSchema = new Schema(
 // Timetable Schema - Optimized
 const TimetableSchema = new Schema(
   {
-    time: { type: Date, required: true, index: true },
-    course: { type: Schema.Types.Mixed, ref: "Course", index: true },
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
+    timeline: [
+      {
+        time: { type: Schema.Types.String, required: true },
+        content: { type: Schema.Types.Array, required: true },
+      },
+    ],
   },
   commonOptions
 );
@@ -212,7 +227,6 @@ const CommentSchema = new Schema(
 // Export models
 module.exports = {
   User: mongoose.model("User", UserSchema),
-  Role: mongoose.model("Role", RoleSchema),
   Campus: mongoose.model("Campus", CampusSchema),
   Semester: mongoose.model("Semester", SemesterSchema),
   Course: mongoose.model("Course", CourseSchema),
@@ -220,7 +234,6 @@ module.exports = {
   Lesson: mongoose.model("Lesson", LessonSchema),
   LessonGroup: mongoose.model("LessonGroup", LessonGroupSchema),
   Question: mongoose.model("Question", QuestionSchema),
-  Tag: mongoose.model("Tag", TagSchema),
   Assignment: mongoose.model("Assignment", AssignmentSchema),
   Submission: mongoose.model("Submission", SubmissionSchema),
   CourseClass: mongoose.model("CourseClass", CourseClassSchema),

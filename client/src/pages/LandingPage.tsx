@@ -65,7 +65,7 @@ const LandingPage = () => {
         <div className="flex items-center justify-between p-6 text-white rounded-xl backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <Kanban size={32} />
-            FPT Edunext
+            Sphere
           </div>
           <ul className="flex gap-10">
             {!!menuItems.length &&
@@ -88,7 +88,7 @@ const LandingPage = () => {
       </div>
       <div className="px-20">
         <div className="leading-[60px] text-white">
-          <h1 className="dm-sans text-[40px]">FPT Edunext</h1>
+          <h1 className="dm-sans text-[40px]">Sphere</h1>
           <p className="italic play-fair text-[60px]">Nền tảng học tập mới</p>
         </div>
         <div className="flex pt-6 ">
@@ -105,9 +105,9 @@ const LandingPage = () => {
       <div className="grid grid-cols-2 px-20 pt-16 text-white">
         <div>
           <p className="leading-5 text-[14px] w-[90%]">
-            FPTU EduNext là nền tảng quản lý học tập trực tuyến hiện đại của Đại
-            học FPT, được thiết kế nhằm nâng cao hiệu quả học tập và trải nghiệm
-            giáo dục cho sinh viên. EduNext cung cấp các tính năng toàn diện, từ
+            Sphere là nền tảng quản lý học tập trực tuyến hiện đại của Đại học
+            FPT, được thiết kế nhằm nâng cao hiệu quả học tập và trải nghiệm
+            giáo dục cho sinh viên. Sphere cung cấp các tính năng toàn diện, từ
             quản lý thông tin sinh viên, cập nhật lịch học, đăng ký môn học đến
             việc theo dõi tiến độ học tập và đánh giá kết quả học tập, cho phép
             sinh viên truy cập tài liệu học tập, nộp bài tập, tham gia các hoạt

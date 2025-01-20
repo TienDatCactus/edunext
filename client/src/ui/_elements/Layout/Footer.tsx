@@ -20,7 +20,7 @@ const Footer = () => {
         <div>
           <div className="flex items-center gap-2">
             <Kanban size={32} />
-            <h1 className="font-semibold text-[20px]">FPT Edunext</h1>
+            <h1 className="font-semibold text-[20px]">Sphere</h1>
           </div>
           <ul className="text-[14px] text-[#4c4c4c] pt-4 flex items-center gap-6 transition-all duration-1000">
             {!!footerItems.length &&
