@@ -24,7 +24,7 @@ const getCourses = async () => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.get(`${homeApi}/${user?.user?.FEID}`);
+    const resp = await http.get(`${homeApi}/${user?.user?._id}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {

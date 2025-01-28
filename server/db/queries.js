@@ -94,19 +94,35 @@ const getCurrentSemester = async (year, month) => {
   }
 };
 
-const getCurrentCourses = async (FEID) => {
+const getCurrentCourses = async (id) => {
   try {
-    let courses = null;
     const user = await User.findOne({
-      FEID: FEID,
-    }).select("courses");
-    courses = user?.courses;
-    if (!courses.length) {
+      _id: new mongoose.Types.ObjectId(id),
+    }).select("semester");
+    if (!user) {
       return {
         error: "Không có khóa học nào",
         isOk: false,
       };
     }
+    const coursesId = await Semester.findOne({
+      _id: new mongoose.Types.ObjectId(user?.semester),
+    }).select("courses");
+
+    if (coursesId === null) {
+      return {
+        error: "Không có khóa học nào",
+        isOk: false,
+      };
+    }
+    const courses = await Promise.all(
+      coursesId?.courses?.map(async (id) => {
+        const resp = await Course.findOne({
+          _id: new mongoose.Types.ObjectId(id),
+        });
+        return resp;
+      })
+    );
     return { courses: courses, isOk: true };
   } catch (error) {
     return {
@@ -118,16 +134,47 @@ const getCurrentCourses = async (FEID) => {
 
 const getCourseDetail = async (courseCode) => {
   try {
-    const course = await Course.findOne({
+    let course = await Course.findOne({
       courseCode: courseCode,
-    }).select("courseName description courseCode lessons status ");
+    });
     if (!course) {
       return {
         error: "Lỗi lấy thông tin khóa học",
         isOk: false,
       };
     }
+    if (course?.instructor) {
+      const instructor = await User.findOne({
+        _id: new mongoose.Types.ObjectId(course.instructor),
+      }).select("name");
+      if (instructor) {
+        course.instructor = instructor?.name;
+      }
+    }
+    if (course?.lessons?.length > 0) {
+      const courseWithLesson = await Promise.all(
+        course?.lessons?.map(async (id) => {
+          let resp = await Lesson.findOne({
+            _id: new mongoose.Types.ObjectId(id),
+          }).lean();
+          if (resp) {
+            const lessonWithQuestions = await Question.find({
+              lesson: new mongoose.Types.ObjectId(resp?._id),
+            }).lean();
+            resp = {
+              ...resp._doc,
+              questions: lessonWithQuestions,
+            };
+          }
+          return resp;
+        })
+      );
 
+      course = {
+        ...course._doc,
+        lessons: courseWithLesson,
+      };
+    }
     return { course: course, isOk: true };
   } catch (error) {
     return {
@@ -178,7 +225,6 @@ const getSubmissionsByQuestion = async (questionId) => {
         return { ...submission?._doc, user: user };
       })
     );
-    console.log("modified" + submissionsWithUsers);
     return {
       submissions: submissionsWithUsers,
       isOk: true,

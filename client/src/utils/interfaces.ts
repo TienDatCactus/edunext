@@ -1,4 +1,21 @@
+import { error } from "console";
 import React from "react";
+export interface CourseSlice {
+  error?: string;
+  loading?: boolean;
+  courses?: Array<{
+    courseName: string;
+    description?: string;
+    courseCode: string;
+    assignments?: Array<any>;
+    instructor?: any;
+    semester?: any;
+    lessons?: Array<any>;
+    status?: "active" | "inactive" | "archived";
+    forMajor: string;
+  }>;
+  getCurrentCourses: () => void;
+}
 
 export interface LessonDetailProps {
   title?: string;
@@ -34,18 +51,15 @@ export interface CourseModalProps {
   isModalOpen?: boolean;
 }
 export interface CourseItem {
+  _id?: string;
   courseCode?: string;
+  instructor?: string;
   courseName?: string;
   description?: string;
-  endDate?: string;
-  instructorId?: number;
-  meetings?: {
-    courseId?: number;
-    meetingLink?: string;
-    meetingType?: string;
-  }[];
-  semesterId?: number;
-  startDate?: string;
+  assignments?: string[];
+  lessons?: LessonItem[];
+  status?: string;
+  forMajor?: string;
 }
 export interface CourseLayoutProps {
   id?: number;
@@ -53,13 +67,29 @@ export interface CourseLayoutProps {
   name?: string;
   instructor?: string;
 }
+export interface CourseState {
+  courses: CourseItem[];
+  detail: CourseItem;
+  selectedCourse: CourseItem | null;
+  loading: boolean;
+  error: string | null;
 
+  // Actions
+  fetchCourses: () => Promise<void>;
+  fetchCourseById: (courseCode: string) => Promise<void>;
+  createCourse: (
+    course: Omit<CourseItem, "_id" | "cwreatedAt" | "updatedAt" | "__v">
+  ) => Promise<void>;
+  updateCourse: (id: string, updatedData: Partial<CourseItem>) => Promise<void>;
+  deleteCourse: (id: string) => Promise<void>;
+}
 export interface LessonItem {
   title?: string;
   content?: string;
-  courseId?: number;
   deadline?: string;
+  course?: string;
   tag?: string;
+  lessonGroups?: string[];
   Question?: Questions[];
 }
 export interface Questions {

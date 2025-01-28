@@ -10,13 +10,12 @@ import {
   Spin,
   Tag,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CourseCard from "../../../ui/_elements/Page/Home/CourseCard";
 import CourseProgress from "../../../ui/_elements/Page/Home/CourseProgress";
 import TimeTable from "../../../ui/_elements/Page/Home/TimeTable";
 import MainLayout from "../../../ui/layouts/MainLayout";
-import { getCourses } from "../../../utils/api";
-import { CourseItem } from "../../../utils/interfaces";
+import { useCourseStore } from "../../../utils/zustand/Store";
 const currentYear = new Date().getFullYear().toString();
 const items: MenuProps["items"] = [
   {
@@ -46,27 +45,14 @@ const items: MenuProps["items"] = [
 ];
 
 const HomePage: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const getHomeCourse = async () => {
-    try {
-      setLoading(true);
-      const data = await getCourses();
-      if (data?.isOk === true) {
-        setCourses(data?.courses);
-      }
-    } catch (error) {
-      message.error("Gặp lỗi khi tải dữ liệu");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const { courses, error, loading, fetchCourses } = useCourseStore();
   useEffect(() => {
+    if (error) message.error(error);
     return () => {
-      getHomeCourse();
+      fetchCourses();
     };
   }, []);
+
   return (
     <MainLayout>
       <div className="p-6 mx-10 mb-6 bg-white rounded-lg shadow-lg min-h-[300px]">

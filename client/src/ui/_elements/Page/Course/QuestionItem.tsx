@@ -7,14 +7,15 @@ const QuestionItem: React.FC<{
   questionId?: number;
   status?: boolean;
   lessonId?: number;
-}> = ({ questionId, status, lessonId }) => {
+  index?: number;
+}> = ({ questionId, status, lessonId, index }) => {
   const navigate = useNavigate();
   const { courseCode } = useParams();
   return (
-    <li className="flex items-center justify-between p-2 rounded-md cursor-pointer  -slideInLeft group ">
+    <li className="flex items-center justify-between p-2 rounded-md cursor-pointer -slideInLeft group ">
       <div className="flex items-center gap-2">
         <SealQuestion size={22} />
-        <h1>Câu hỏi #{questionId}</h1>
+        <h1>Câu hỏi #{index}</h1>
       </div>
       <div className="flex items-center gap-2 ">
         <Tag

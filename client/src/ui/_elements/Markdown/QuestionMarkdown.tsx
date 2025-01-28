@@ -45,7 +45,6 @@ const QuestionMarkdown: React.FC = () => {
   const { questionId } = useParams();
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>("");
-
   const items: MenuProps["items"] = [
     {
       key: "1",
