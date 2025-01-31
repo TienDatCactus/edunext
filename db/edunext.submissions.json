@@ -1,76 +1,30 @@
 [{
   "_id": {
-    "$oid": "678d08390796fc291f19a074"
+    "$oid": "679c9fef835f5cba9c2708d1"
   },
-  "submissionContent": "cac",
-  "submissionDate": {
-    "$date": "2025-01-19T14:12:09.890Z"
-  },
-  "comments": [],
+  "content": "dat",
   "question": "6788be800862e875d6ac1dce",
   "user": "6788be800862e875d6ac1dba",
   "createdAt": {
-    "$date": "2025-01-19T14:12:09.896Z"
+    "$date": "2025-01-31T10:03:27.532Z"
   },
   "updatedAt": {
-    "$date": "2025-01-19T14:12:09.896Z"
+    "$date": "2025-01-31T10:03:27.532Z"
   },
   "__v": 0
 },
 {
   "_id": {
-    "$oid": "678d08b9ec5e58e923ab5124"
+    "$oid": "679ca35436b0c2e55c0bab02"
   },
-  "submissionContent": "dasdasdasd",
-  "submissionDate": {
-    "$date": "2025-01-19T14:14:17.639Z"
-  },
-  "comments": [],
+  "content": "cacto",
   "question": "6788be800862e875d6ac1dce",
   "user": "6788be800862e875d6ac1dba",
   "createdAt": {
-    "$date": "2025-01-19T14:14:17.651Z"
+    "$date": "2025-01-31T10:17:56.627Z"
   },
   "updatedAt": {
-    "$date": "2025-01-19T14:14:17.651Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "678d0b015c66b009a5f856b3"
-  },
-  "submissionContent": "asdadasd",
-  "submissionDate": {
-    "$date": "2025-01-19T14:24:01.429Z"
-  },
-  "comments": [],
-  "question": "6788be800862e875d6ac1dce",
-  "user": "6788be800862e875d6ac1dba",
-  "createdAt": {
-    "$date": "2025-01-19T14:24:01.441Z"
-  },
-  "updatedAt": {
-    "$date": "2025-01-19T14:24:01.441Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "678da1d510818f145e83f5af"
-  },
-  "submissionContent": "sdfsfsdf",
-  "submissionDate": {
-    "$date": "2025-01-20T01:07:33.959Z"
-  },
-  "comments": [],
-  "question": "6788be800862e875d6ac1dce",
-  "user": "6788be800862e875d6ac1dba",
-  "createdAt": {
-    "$date": "2025-01-20T01:07:33.965Z"
-  },
-  "updatedAt": {
-    "$date": "2025-01-20T01:07:33.965Z"
+    "$date": "2025-01-31T10:17:56.627Z"
   },
   "__v": 0
 }]

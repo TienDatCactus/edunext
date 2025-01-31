@@ -6,25 +6,22 @@ import {
 } from "@phosphor-icons/react";
 import { Button, Form, FormProps, Input, message } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { postSubmissionComment } from "../../../../../../utils/api";
 import { SubmissionItem } from "../../../../../../utils/interfaces";
-import {
-  getUserById,
-  postSubmissionComment,
-} from "../../../../../../utils/api";
 
 const Answer: React.FC<SubmissionItem> = ({
   _id,
-  submissionContent,
-  submissionDate,
+  content,
+  createdAt,
   user,
   comments,
   setAllSubmissions,
   setLoading,
 }) => {
   const [form] = Form.useForm();
-  const { questionId } = useParams();
+  const { questionId } = useLocation().state;
   const [reply, setReply] = useState<Boolean>(false);
   const onFinish: FormProps<{ comment: string }>["onFinish"] = async (
     values
@@ -32,7 +29,7 @@ const Answer: React.FC<SubmissionItem> = ({
     try {
       setLoading(true);
       const { comment } = values;
-      const newComment = await postSubmissionComment(comment, questionId);
+      const newComment = await postSubmissionComment(comment, questionId, _id);
       if (newComment?.isOk) {
         setAllSubmissions(newComment?.allSubmission);
       }
@@ -43,7 +40,6 @@ const Answer: React.FC<SubmissionItem> = ({
       form.resetFields();
     }
   };
-
   return (
     <li>
       <div className="grid items-start grid-cols-12 gap-2">
@@ -58,11 +54,11 @@ const Answer: React.FC<SubmissionItem> = ({
           <div className="flex items-start gap-2">
             <p className="font-bold text-[20px]">{user?.name}</p>
             <p className="text-[12px] text-[#6a6a6a]">
-              {dayjs(submissionDate).format("YYYY-MM-DD HH:mm")}
+              {dayjs(createdAt).format("YYYY-MM-DD HH:mm")}
             </p>
           </div>
           <div className="mb-2">
-            <p className="text-[16px] leading-6">{submissionContent}</p>
+            <p className="text-[16px] leading-6">{content}</p>
           </div>
           <div className="flex gap-4 *:flex *:place-items-center *:gap-1 *:text-[16px] ">
             <div className="cursor-pointer group">
@@ -105,12 +101,12 @@ const Answer: React.FC<SubmissionItem> = ({
                         {comment?.user?.name}
                       </p>
                       <p className="text-[12px] text-[#6a6a6a]">
-                        {dayjs(comment?.commentDate).format("YYYY-MM-DD HH:mm")}
+                        {dayjs(comment?.createdAt).format("YYYY-MM-DD HH:mm")}
                       </p>
                     </div>
                     <div className="mb-2">
                       <p className="text-[16px] leading-6">
-                        {comment?.commentContent}
+                        {comment?.content}
                       </p>
                     </div>
                     <div className="flex gap-4 *:flex *:place-items-center *:gap-1 *:text-[16px] ">

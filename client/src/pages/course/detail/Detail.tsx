@@ -66,7 +66,6 @@ const Detail: React.FC = () => {
       icon: <Info size={16} />,
     },
   ];
-  console.log(detail);
   return (
     <MainLayout>
       <div className="bg-[linear-gradient(to_top,_#ffffff_0%,_#bae5f5_100%)] min-h-[160px] py-4">

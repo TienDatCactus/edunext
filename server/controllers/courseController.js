@@ -90,20 +90,20 @@ const viewQuestionSubmissions = async (req, res) => {
 
 const addSubmissionComment = async (req, res) => {
   const { questionId, submissionId } = req.params;
-  const { comment, userId } = req.body;
+  const { content, user } = req.body;
+  console.log(questionId, submissionId, content, user);
   try {
     const cmt = await query.postSubmissionComment(
       questionId,
       submissionId,
-      comment,
-      userId
+      content,
+      user
     );
     if (cmt?.isOk === false) {
       return res.status(400).json({ error: cmt?.error, isOk: false });
     }
     res.json({
-      comment: cmt?.newComment,
-      allSubmission: cmt?.allSubmission,
+      allSubmission: cmt?.allSubmissions,
       isOk: true,
     });
   } catch (error) {

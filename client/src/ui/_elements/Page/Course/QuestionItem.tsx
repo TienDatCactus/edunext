@@ -1,29 +1,37 @@
 import { Check, ExclamationMark, SealQuestion } from "@phosphor-icons/react";
 import { Button, Tag } from "antd";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const QuestionItem: React.FC<{
   questionId?: number;
   status?: boolean;
   lessonId?: number;
   index?: number;
-}> = ({ questionId, status, lessonId, index }) => {
-  const navigate = useNavigate();
+  type?: "quiz" | "code" | "response";
+}> = ({ questionId, status, lessonId, index, type = "response" }) => {
   const { courseCode } = useParams();
+  const swapper = {
+    quiz: "Trắc nghiệm",
+    code: "Lập trình",
+    response: "Tự luận",
+  };
   return (
     <li className="flex items-center justify-between p-2 rounded-md cursor-pointer -slideInLeft group ">
       <div className="flex items-center gap-2">
         <SealQuestion size={22} />
         <h1>Câu hỏi #{index}</h1>
+        <Tag color="cyan" className="quick-sand">
+          {swapper[type]}
+        </Tag>
       </div>
-      <div className="flex items-center gap-2 ">
+      <div className="flex items-center gap-2">
         <Tag
           icon={
             !status ? (
-              <ExclamationMark size={22} className="group-hover: -bounce" />
+              <ExclamationMark size={22} className="" />
             ) : (
-              <Check size={22} className="group-hover: -rubberBand" />
+              <Check size={22} className="" />
             )
           }
           color={!status ? "red" : "green"}
@@ -31,15 +39,14 @@ const QuestionItem: React.FC<{
         >
           {!status ? "chưa hoàn thành" : "đã hoàn thành"}
         </Tag>
-        <Button
-          onClick={() =>
-            navigate(
-              `/course/${courseCode}/lesson/${lessonId}/question/${questionId}`
-            )
-          }
+        <Link
+          to={`/course/${courseCode}/lesson/${lessonId}/question`}
+          state={{
+            questionId: questionId,
+          }}
         >
-          Xem
-        </Button>
+          <Button>Xem</Button>
+        </Link>
       </div>
     </li>
   );

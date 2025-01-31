@@ -24,7 +24,7 @@ courseRouter.post(
   courseController.addQuestionSubmission
 );
 courseRouter.post(
-  "/question/:courseCode/submission/:submissionId/comment",
+  "/question/:questionId/submission/:submissionId/comment",
   authenticateToken,
   courseController.addSubmissionComment
 );

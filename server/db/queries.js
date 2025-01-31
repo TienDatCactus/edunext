@@ -115,11 +115,13 @@ const getCurrentCourses = async (id) => {
         isOk: false,
       };
     }
+
     const courses = await Promise.all(
       coursesId?.courses?.map(async (id) => {
         const resp = await Course.findOne({
           _id: new mongoose.Types.ObjectId(id),
         });
+
         return resp;
       })
     );
@@ -143,6 +145,7 @@ const getCourseDetail = async (courseCode) => {
         isOk: false,
       };
     }
+
     if (course?.instructor) {
       const instructor = await User.findOne({
         _id: new mongoose.Types.ObjectId(course.instructor),
@@ -156,25 +159,31 @@ const getCourseDetail = async (courseCode) => {
         course?.lessons?.map(async (id) => {
           let resp = await Lesson.findOne({
             _id: new mongoose.Types.ObjectId(id),
-          }).lean();
+          });
           if (resp) {
             const lessonWithQuestions = await Question.find({
               lesson: new mongoose.Types.ObjectId(resp?._id),
-            }).lean();
+            });
+
             resp = {
               ...resp._doc,
               questions: lessonWithQuestions,
             };
           }
+
           return resp;
         })
       );
-
+      const courseMeetings = await Meeting.findOne({
+        courseId: new mongoose.Types.ObjectId(course?._id),
+      });
       course = {
         ...course._doc,
         lessons: courseWithLesson,
+        meetings: courseMeetings?.meetings,
       };
     }
+
     return { course: course, isOk: true };
   } catch (error) {
     return {
@@ -188,7 +197,7 @@ const getQuestionById = async (questionId) => {
   try {
     const question = await Question.findOne({
       _id: new mongoose.Types.ObjectId(questionId),
-    }).select("_id content status course");
+    });
 
     if (!question) {
       return {
@@ -217,16 +226,31 @@ const getSubmissionsByQuestion = async (questionId) => {
         isOk: false,
       };
     }
-    const submissionsWithUsers = await Promise.all(
+    const extractSubmissions = await Promise.all(
       submissions.map(async (submission) => {
-        const user = await User.findOne({
+        const comments = await Comment.find({
+          submission: submission._id.toString(),
+        }).select("content date user");
+        const submissionsWithUsers = await User.findOne({
           _id: submission.user,
         }).select("name FEID email role");
-        return { ...submission?._doc, user: user };
+        const commentsWithUsers = await Promise.all(
+          comments.map(async (comment) => {
+            const user = await User.findOne({
+              _id: comment?.user,
+            }).select("name FEID email role");
+            return { ...comment?._doc, user: user };
+          })
+        );
+        return {
+          ...submission?._doc,
+          comments: commentsWithUsers,
+          user: submissionsWithUsers,
+        };
       })
     );
     return {
-      submissions: submissionsWithUsers,
+      submissions: extractSubmissions,
       isOk: true,
     };
   } catch (error) {
@@ -283,10 +307,10 @@ const getMeetingByCourse = async (courseCode) => {
 };
 
 const postQuestionSubmission = async (content, question, user) => {
+  console.log(content, question, user);
   try {
     const submission = new Submission({
-      submissionContent: content,
-      submissionDate: new Date(),
+      content: content,
       question,
       user,
       comments: [],
@@ -299,45 +323,28 @@ const postQuestionSubmission = async (content, question, user) => {
     };
   } catch (error) {
     return {
-      error: "Không thể tạo bài nộp",
+      error: "Không thể tạo bài nộp " + error,
       isOk: false,
     };
   }
 };
 
-const postSubmissionComment = async (
-  questionId,
-  submission,
-  commentContent,
-  user
-) => {
+const postSubmissionComment = async (question, submission, content, user) => {
   try {
     const newComment = new Comment({
-      commentContent,
-      commentDate: new Date(),
-      submission, // Embedding full submission object
-      user, // Embedding full user object
+      content: content,
+      submission: submission,
+      user: user,
     });
-
     await newComment.save();
-
-    // Update the submission with the new comment
-    await Submission.findByIdAndUpdate(submission._id, {
-      $push: { comments: newComment.toObject() },
-    });
-
-    const allSubmissions = await Submission.find({
-      "question._id": questionId,
-    });
-
+    const allSubmissions = await getSubmissionsByQuestion(question);
     return {
-      comment: newComment.toObject(),
-      allSubmissions: allSubmissions.map((sub) => sub.toObject()),
+      allSubmissions: allSubmissions?.submissions,
       isOk: true,
     };
   } catch (error) {
     return {
-      error: "Không thể tạo bình luận",
+      error: "Không thể tạo bình luận " + error,
       isOk: false,
     };
   }

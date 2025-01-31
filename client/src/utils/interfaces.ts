@@ -1,5 +1,5 @@
 import { error } from "console";
-import React from "react";
+import { title } from "process";
 export interface CourseSlice {
   error?: string;
   loading?: boolean;
@@ -22,7 +22,7 @@ export interface LessonDetailProps {
   deadline?: string;
   content?: string;
   lessonId?: number;
-  questions?: Questions[];
+  questions?: Question[];
   tag?: string;
 }
 export interface ErrorHandlerOptions {
@@ -59,6 +59,11 @@ export interface CourseItem {
   assignments?: string[];
   lessons?: LessonItem[];
   status?: string;
+  meetings?: Array<{
+    _id?: string;
+    type: string;
+    link?: string;
+  }>;
   forMajor?: string;
 }
 export interface CourseLayoutProps {
@@ -90,15 +95,21 @@ export interface LessonItem {
   course?: string;
   tag?: string;
   lessonGroups?: string[];
-  Question?: Questions[];
+  question?: Question[];
 }
-export interface Questions {
-  content?: string;
-  courseId?: number;
+export interface Question {
+  _id?: string;
+  content?:
+    | string
+    | {
+        title?: string;
+        answer?: string[];
+        correctAnswer?: number;
+      };
   lessonId?: number;
-  questionId?: number;
+  status?: boolean;
+  type?: "quiz" | "code" | "response";
 }
-
 export interface CourseInfoProps {
   meetings?: {
     courseId?: number;
@@ -115,9 +126,9 @@ export interface CourseInfoProps {
     lessonId?: number;
     tag?: string;
     title?: string;
-    questions?: Questions[];
+    questions?: Question[];
   }[];
-  questions?: Questions[];
+  question?: Question[];
 }
 
 export interface UserToken {
@@ -133,17 +144,16 @@ export interface User {
 }
 export interface SubmissionItem {
   _id: string;
-  submissionContent: string;
-  submissionDate: string;
+  content: string;
+  createdAt: string;
   user: {
     _id: string;
     name: string;
   };
   comments?: {
     _id: string;
-    commentId: number;
-    commentContent: string;
-    commentDate: string;
+    content: string;
+    createdAt: string;
     user: {
       _id: string;
       name: string;

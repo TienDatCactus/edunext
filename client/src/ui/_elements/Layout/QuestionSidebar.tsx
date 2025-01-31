@@ -6,8 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 const { Ribbon } = Badge;
 const QuestionSidebar: React.FC<{
   meetings: {
-    meetingType?: string;
-    meetingLink?: string;
+    type?: string;
+    link?: string;
     _id?: string;
   }[];
   remainQuestions: {
@@ -50,8 +50,8 @@ const QuestionSidebar: React.FC<{
               className: "text-[#4b4b4b] bg-[#eaeaea]",
             },
             ...meetings.map((meet) => ({
-              value: meet.meetingLink,
-              label: meet.meetingType,
+              value: meet?.link,
+              label: meet.type,
             })),
           ]}
         />

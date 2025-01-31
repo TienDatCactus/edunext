@@ -102,7 +102,7 @@ const getQuestionSubmission = async (questionId: string) => {
 const postSubmissionComment = async (
   comment?: string,
   questionId?: string,
-  submissionId?: number
+  submissionId?: string
 ) => {
   try {
     const tokenString = localStorage.getItem("edu-token");
@@ -110,8 +110,8 @@ const postSubmissionComment = async (
     const resp = await http.post(
       `${courseApi}/question/${questionId}/submission/${submissionId}/comment`,
       {
-        userId: user?.user?.FEID,
-        comment,
+        content: comment,
+        user: user?.user?._id,
       }
     );
     if (resp?.data) return resp?.data;
