@@ -9,7 +9,6 @@ import { CodeEditor } from "../../../ui/_elements/Markdown/CodeEditor";
 const Question = () => {
   const { question } = useQuestionStore();
   const type = question?.type;
-  console.log(type);
   const items: TabsProps["items"] = [
     {
       key: "1",

@@ -146,6 +146,7 @@ const logout = async () => {
     return error;
   }
 };
+
 export {
   getCampuses,
   getCourseDetail,
@@ -155,7 +156,7 @@ export {
   getQuestionSubmission,
   getUserById,
   login,
+  logout,
   postQuestionSubmission,
   postSubmissionComment,
-  logout,
 };

@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { postSubmissionComment } from "../../../../../../utils/api";
 import { SubmissionItem } from "../../../../../../utils/interfaces";
+import Markdown from "react-markdown";
 
 const Answer: React.FC<SubmissionItem> = ({
   _id,
@@ -58,15 +59,17 @@ const Answer: React.FC<SubmissionItem> = ({
             </p>
           </div>
           <div className="mb-2">
-            <p className="text-[16px] leading-6">{content}</p>
+            <p className="text-[16px] leading-6">
+              <Markdown>{content}</Markdown>
+            </p>
           </div>
           <div className="flex gap-4 *:flex *:place-items-center *:gap-1 *:text-[16px] ">
             <div className="cursor-pointer group">
-              <ThumbsUp className="group-hover: -bounceIn" size={20} />
+              <ThumbsUp className="" size={20} />
               <p>2</p>
             </div>
             <div className="cursor-pointer group">
-              <ThumbsDown className="group-hover: -bounceIn" size={20} />
+              <ThumbsDown className="" size={20} />
               <p>2</p>
             </div>
             <div

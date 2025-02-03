@@ -4,10 +4,8 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import router from "./utils/routes";
 import LoadingScreen from "./ui/_elements/Loading/LoadingScreen";
-import { observe } from "./pages/chess/Game";
-import Board from "./pages/chess/Board";
+import router from "./utils/routes";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
