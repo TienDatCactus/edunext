@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { CourseState } from "../interfaces";
-import { getCourseDetail, getCourses } from "../api";
+import { CourseState, QuestionState } from "../interfaces";
+import { getCourseDetail, getCourses, getQuestionDetail } from "../api";
 
 export const useCourseStore = create<CourseState>((set, get) => ({
   courses: [],
@@ -102,4 +102,70 @@ export const useCourseStore = create<CourseState>((set, get) => ({
       set({ error: `Failed to delete course with id ${id}`, loading: false });
     }
   },
+}));
+
+export const useQuestionStore = create<QuestionState>((set, get) => ({
+  question: {},
+  selectedQuestion: null,
+  loading: false,
+  error: null,
+
+  // Fetch a single question by ID
+  fetchQuestionById: async (questionId) => {
+    set({ loading: true, error: null });
+    try {
+      const resp = await getQuestionDetail(questionId);
+      if (!!resp && resp?.isOk === true) set({ question: resp?.question });
+    } catch (error) {
+      set({
+        error: `Failed to fetch question with id ${questionId}`,
+      });
+    } finally {
+      set({
+        loading: false,
+      });
+    }
+  },
+
+  // Create a new question
+  createQuestion: async (question) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch("/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(question),
+      });
+
+      const newQuestion = await response.json();
+      set((state) => ({
+        loading: false,
+      }));
+    } catch (error) {
+      set({ error: "Failed to create question", loading: false });
+    }
+  },
+
+  // Update an existing question
+  updateQuestion: async (id, updatedData) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(`/api/questions/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const updatedQuestion = await response.json();
+    } catch (error) {
+      set({
+        error: `Failed to update question`,
+      });
+    }
+  },
+  deleteQuestion: async (id) => {},
 }));

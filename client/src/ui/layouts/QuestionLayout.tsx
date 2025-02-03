@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { getQuestionDetail } from "../../utils/api";
 import { getCurrentSeason } from "../../utils/customHooks";
-import { useCourseStore } from "../../utils/zustand/Store";
+import { useCourseStore, useQuestionStore } from "../../utils/zustand/Store";
 import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
 import MainLayout from "./MainLayout";
 import { Question } from "../../utils/interfaces";
@@ -15,9 +15,9 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const month = getCurrentSeason();
   const { detail } = useCourseStore();
   const [loading, setLoading] = useState(false);
-  const [question, setQuestion] = useState<Question>();
   const location = useLocation();
   const questionId = location.state?.questionId;
+  const { fetchQuestionById, question } = useQuestionStore();
   const [remainQuestions, setRemainQuestions] = useState<
     {
       questionId?: number;
@@ -29,23 +29,10 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
     code: "Lập trình",
     response: "Tự luận",
   };
-  const getQuestion = async () => {
-    if (!questionId) return;
-    try {
-      setLoading(true);
-      const resp = await getQuestionDetail(questionId);
-      if (resp?.isOk) {
-        setQuestion(resp?.question);
-      }
-    } catch (error) {
-      message.error("Gặp lỗi khi tải dữ liệu");
-    } finally {
-      setLoading(false);
-    }
-  };
+
   useEffect(() => {
     return () => {
-      getQuestion();
+      fetchQuestionById(questionId);
     };
   }, []);
   return (
@@ -79,7 +66,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                 </p>
               </div>
             </div>
-            <main className=" -fadeInLeft">{children}</main>
+            <main className="">{children}</main>
           </div>
           <QuestionSidebar
             meetings={detail?.meetings || []}

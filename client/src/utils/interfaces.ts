@@ -88,6 +88,19 @@ export interface CourseState {
   updateCourse: (id: string, updatedData: Partial<CourseItem>) => Promise<void>;
   deleteCourse: (id: string) => Promise<void>;
 }
+export interface QuestionState {
+  question: Question;
+  selectedQuestion: Question | null;
+  loading: boolean;
+  error: string | null;
+
+  fetchQuestionById: (questionId: string) => Promise<void>;
+  createQuestion: (
+    question: Omit<Question, "_id" | "createdAt" | "updatedAt" | "__v">
+  ) => Promise<void>;
+  updateQuestion: (id: string, updatedData: Partial<Question>) => Promise<void>;
+  deleteQuestion: (id: string) => Promise<void>;
+}
 export interface LessonItem {
   title?: string;
   content?: string;
