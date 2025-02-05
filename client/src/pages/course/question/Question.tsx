@@ -1,16 +1,24 @@
-import React from "react";
 import QuestionMarkdown from "../../../ui/_elements/Markdown/QuestionMarkdown";
 import QuestionLayout from "../../../ui/layouts/QuestionLayout";
 
 import { Tabs, TabsProps } from "antd";
 import Group from "./sub_elements/Group";
+import { useQuestionStore } from "../../../utils/zustand/Store";
+import { CodeEditor } from "../../../ui/_elements/Markdown/CodeEditor";
 
 const Question = () => {
+  const { question } = useQuestionStore();
+  const type = question?.type;
   const items: TabsProps["items"] = [
     {
       key: "1",
       label: "Trả lời câu hỏi",
-      children: <QuestionMarkdown />,
+      children:
+        type == "response" ? (
+          <QuestionMarkdown />
+        ) : type == "code" ? (
+          <CodeEditor />
+        ) : null,
     },
     {
       key: "2",

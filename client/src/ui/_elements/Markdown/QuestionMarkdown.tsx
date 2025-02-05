@@ -34,7 +34,7 @@ import {
   Tag,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import {
   getQuestionSubmission,
   postQuestionSubmission,
@@ -42,10 +42,8 @@ import {
 import { SubmissionItem } from "../../../utils/interfaces";
 import Answer from "../Page/Course/Lesson/Question/Answer";
 const QuestionMarkdown: React.FC = () => {
-  const { questionId } = useParams();
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>("");
-
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -92,6 +90,8 @@ const QuestionMarkdown: React.FC = () => {
       label: "a danger item",
     },
   ];
+  const location = useLocation();
+  const questionId = location.state?.questionId as string;
   const [allSubmissions, setAllSubmissions] = useState<SubmissionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const getSubmissions = async () => {
@@ -134,7 +134,6 @@ const QuestionMarkdown: React.FC = () => {
       getSubmissions();
     };
   }, []);
-  console.log(allSubmissions);
   return (
     <Spin spinning={loading}>
       <Form onFinish={onFinish} onFinishFailed={onFinishFailed}>
@@ -223,8 +222,8 @@ const QuestionMarkdown: React.FC = () => {
               <Answer
                 _id={submission?._id}
                 key={index}
-                submissionContent={submission?.submissionContent}
-                submissionDate={submission?.submissionDate}
+                content={submission?.content}
+                createdAt={submission?.createdAt}
                 user={submission?.user}
                 comments={submission?.comments}
                 setLoading={setLoading}

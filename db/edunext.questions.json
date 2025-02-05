@@ -15,9 +15,6 @@
     }
   ],
   "status": false,
-  "lesson": {
-    "$oid": "6788be800862e875d6ac1dca"
-  },
   "createdAt": {
     "$date": "2025-01-16T08:08:32.990Z"
   },
@@ -25,7 +22,10 @@
     "$date": "2025-01-16T08:08:32.990Z"
   },
   "__v": 0,
-  "type": "quiz"
+  "type": "quiz",
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  }
 },
 {
   "_id": {
@@ -33,9 +33,6 @@
   },
   "content": "day la code",
   "status": false,
-  "lesson": {
-    "$oid": "6788be800862e875d6ac1dca"
-  },
   "createdAt": {
     "$date": "2025-01-16T08:08:32.990Z"
   },
@@ -43,7 +40,10 @@
     "$date": "2025-01-16T08:08:32.990Z"
   },
   "__v": 0,
-  "type": "code"
+  "type": "code",
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  }
 },
 {
   "_id": {
@@ -51,9 +51,6 @@
   },
   "content": "Day la tu luan",
   "status": false,
-  "lesson": {
-    "$oid": "6788be800862e875d6ac1dca"
-  },
   "createdAt": {
     "$date": "2025-01-16T08:08:32.990Z"
   },
@@ -61,5 +58,8 @@
     "$date": "2025-01-16T08:08:32.990Z"
   },
   "__v": 0,
-  "type": "response"
+  "type": "response",
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  }
 }]

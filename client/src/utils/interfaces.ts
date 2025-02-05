@@ -1,11 +1,28 @@
-import React from "react";
+import { error } from "console";
+import { title } from "process";
+export interface CourseSlice {
+  error?: string;
+  loading?: boolean;
+  courses?: Array<{
+    courseName: string;
+    description?: string;
+    courseCode: string;
+    assignments?: Array<any>;
+    instructor?: any;
+    semester?: any;
+    lessons?: Array<any>;
+    status?: "active" | "inactive" | "archived";
+    forMajor: string;
+  }>;
+  getCurrentCourses: () => void;
+}
 
 export interface LessonDetailProps {
   title?: string;
   deadline?: string;
   content?: string;
   lessonId?: number;
-  questions?: Questions[];
+  questions?: Question[];
   tag?: string;
 }
 export interface ErrorHandlerOptions {
@@ -34,18 +51,20 @@ export interface CourseModalProps {
   isModalOpen?: boolean;
 }
 export interface CourseItem {
+  _id?: string;
   courseCode?: string;
+  instructor?: string;
   courseName?: string;
   description?: string;
-  endDate?: string;
-  instructorId?: number;
-  meetings?: {
-    courseId?: number;
-    meetingLink?: string;
-    meetingType?: string;
-  }[];
-  semesterId?: number;
-  startDate?: string;
+  assignments?: string[];
+  lessons?: LessonItem[];
+  status?: string;
+  meetings?: Array<{
+    _id?: string;
+    type: string;
+    link?: string;
+  }>;
+  forMajor?: string;
 }
 export interface CourseLayoutProps {
   id?: number;
@@ -53,22 +72,61 @@ export interface CourseLayoutProps {
   name?: string;
   instructor?: string;
 }
+export interface CourseState {
+  courses: CourseItem[];
+  detail: CourseItem;
+  selectedCourse: CourseItem | null;
+  loading: boolean;
+  error: string | null;
 
+  // Actions
+  fetchCourses: () => Promise<void>;
+  fetchCourseById: (courseCode: string) => Promise<void>;
+  createCourse: (
+    course: Omit<CourseItem, "_id" | "cwreatedAt" | "updatedAt" | "__v">
+  ) => Promise<void>;
+  updateCourse: (id: string, updatedData: Partial<CourseItem>) => Promise<void>;
+  deleteCourse: (id: string) => Promise<void>;
+}
+export interface QuestionState {
+  question: Question;
+  selectedQuestion: Question | null;
+  loading: boolean;
+  error: string | null;
+
+  fetchQuestionById: (questionId: string) => Promise<void>;
+  createQuestion: (
+    question: Omit<Question, "_id" | "createdAt" | "updatedAt" | "__v">
+  ) => Promise<void>;
+  updateQuestion: (id: string, updatedData: Partial<Question>) => Promise<void>;
+  deleteQuestion: (id: string) => Promise<void>;
+}
+export interface UserState {
+  user?: User;
+  setUser: (user: User) => void;
+}
 export interface LessonItem {
   title?: string;
   content?: string;
-  courseId?: number;
   deadline?: string;
+  course?: string;
   tag?: string;
-  Question?: Questions[];
+  lessonGroups?: string[];
+  question?: Question[];
 }
-export interface Questions {
-  content?: string;
-  courseId?: number;
+export interface Question {
+  _id?: string;
+  content?:
+    | string
+    | {
+        title?: string;
+        answer?: string[];
+        correctAnswer?: number;
+      };
   lessonId?: number;
-  questionId?: number;
+  status?: boolean;
+  type?: "quiz" | "code" | "response";
 }
-
 export interface CourseInfoProps {
   meetings?: {
     courseId?: number;
@@ -85,9 +143,9 @@ export interface CourseInfoProps {
     lessonId?: number;
     tag?: string;
     title?: string;
-    questions?: Questions[];
+    questions?: Question[];
   }[];
-  questions?: Questions[];
+  question?: Question[];
 }
 
 export interface UserToken {
@@ -95,25 +153,35 @@ export interface UserToken {
   refreshToken: string;
   user?: User;
 }
+export interface TimelineEvent {
+  time: {
+    day: string;
+    month: string;
+    year: string;
+  };
+  content: string;
+  type: string;
+}
 export interface User {
   name: string;
   email: string;
   FEID: string;
   _id: string;
+  role: string;
+  timetable: TimelineEvent[];
 }
 export interface SubmissionItem {
   _id: string;
-  submissionContent: string;
-  submissionDate: string;
+  content: string;
+  createdAt: string;
   user: {
     _id: string;
     name: string;
   };
   comments?: {
     _id: string;
-    commentId: number;
-    commentContent: string;
-    commentDate: string;
+    content: string;
+    createdAt: string;
     user: {
       _id: string;
       name: string;

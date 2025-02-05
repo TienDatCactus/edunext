@@ -11,6 +11,7 @@ const {
   Tag,
   Comment,
   Campus,
+  Timetable,
 } = require("./model");
 const { mongoose } = require("mongoose");
 
@@ -19,14 +20,16 @@ const loginWithEmail = async (campus, email, password) => {
     const user = await User.findOne({
       email: email,
       campus: new mongoose.Types.ObjectId(campus), // must be done by this
-    }).select("_id name email FEID password");
+    }).select("_id name email FEID password role");
     if (!user) {
       return {
         error: "Tài khoản hoặc mật khẩu không đúng",
         isOk: false,
       };
     }
-
+    const timetable = await Timetable.findOne({
+      user: new mongoose.Types.ObjectId(user._id),
+    }).select("timeline");
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return {
@@ -36,6 +39,9 @@ const loginWithEmail = async (campus, email, password) => {
     }
     const userObject = user.toObject();
     delete userObject.password;
+    if (timetable) {
+      userObject.timetable = timetable.timeline;
+    }
     return { user: userObject, isOk: true };
   } catch (error) {
     return {
@@ -94,19 +100,37 @@ const getCurrentSemester = async (year, month) => {
   }
 };
 
-const getCurrentCourses = async (FEID) => {
+const getCurrentCourses = async (id) => {
   try {
-    let courses = null;
     const user = await User.findOne({
-      FEID: FEID,
-    }).select("courses");
-    courses = user?.courses;
-    if (!courses.length) {
+      _id: new mongoose.Types.ObjectId(id),
+    }).select("semester");
+    if (!user) {
       return {
         error: "Không có khóa học nào",
         isOk: false,
       };
     }
+    const coursesId = await Semester.findOne({
+      _id: new mongoose.Types.ObjectId(user?.semester),
+    }).select("courses");
+
+    if (coursesId === null) {
+      return {
+        error: "Không có khóa học nào",
+        isOk: false,
+      };
+    }
+
+    const courses = await Promise.all(
+      coursesId?.courses?.map(async (id) => {
+        const resp = await Course.findOne({
+          _id: new mongoose.Types.ObjectId(id),
+        });
+
+        return resp;
+      })
+    );
     return { courses: courses, isOk: true };
   } catch (error) {
     return {
@@ -118,13 +142,51 @@ const getCurrentCourses = async (FEID) => {
 
 const getCourseDetail = async (courseCode) => {
   try {
-    const course = await Course.findOne({
+    let course = await Course.findOne({
       courseCode: courseCode,
-    }).select("courseName description courseCode lessons status ");
+    });
     if (!course) {
       return {
         error: "Lỗi lấy thông tin khóa học",
         isOk: false,
+      };
+    }
+
+    if (course?.instructor) {
+      const instructor = await User.findOne({
+        _id: new mongoose.Types.ObjectId(course.instructor),
+      }).select("name");
+      if (instructor) {
+        course.instructor = instructor?.name;
+      }
+    }
+    if (course?.lessons?.length > 0) {
+      const courseWithLesson = await Promise.all(
+        course?.lessons?.map(async (id) => {
+          let resp = await Lesson.findOne({
+            _id: new mongoose.Types.ObjectId(id),
+          });
+          if (resp) {
+            const lessonWithQuestions = await Question.find({
+              lesson: new mongoose.Types.ObjectId(resp?._id),
+            });
+
+            resp = {
+              ...resp._doc,
+              questions: lessonWithQuestions,
+            };
+          }
+
+          return resp;
+        })
+      );
+      const courseMeetings = await Meeting.findOne({
+        courseId: new mongoose.Types.ObjectId(course?._id),
+      });
+      course = {
+        ...course._doc,
+        lessons: courseWithLesson,
+        meetings: courseMeetings?.meetings,
       };
     }
 
@@ -141,7 +203,7 @@ const getQuestionById = async (questionId) => {
   try {
     const question = await Question.findOne({
       _id: new mongoose.Types.ObjectId(questionId),
-    }).select("_id content status course");
+    });
 
     if (!question) {
       return {
@@ -170,17 +232,31 @@ const getSubmissionsByQuestion = async (questionId) => {
         isOk: false,
       };
     }
-    const submissionsWithUsers = await Promise.all(
+    const extractSubmissions = await Promise.all(
       submissions.map(async (submission) => {
-        const user = await User.findOne({
+        const comments = await Comment.find({
+          submission: submission._id.toString(),
+        }).select("content date user");
+        const submissionsWithUsers = await User.findOne({
           _id: submission.user,
         }).select("name FEID email role");
-        return { ...submission?._doc, user: user };
+        const commentsWithUsers = await Promise.all(
+          comments.map(async (comment) => {
+            const user = await User.findOne({
+              _id: comment?.user,
+            }).select("name FEID email role");
+            return { ...comment?._doc, user: user };
+          })
+        );
+        return {
+          ...submission?._doc,
+          comments: commentsWithUsers,
+          user: submissionsWithUsers,
+        };
       })
     );
-    console.log("modified" + submissionsWithUsers);
     return {
-      submissions: submissionsWithUsers,
+      submissions: extractSubmissions,
       isOk: true,
     };
   } catch (error) {
@@ -237,10 +313,10 @@ const getMeetingByCourse = async (courseCode) => {
 };
 
 const postQuestionSubmission = async (content, question, user) => {
+  console.log(content, question, user);
   try {
     const submission = new Submission({
-      submissionContent: content,
-      submissionDate: new Date(),
+      content: content,
       question,
       user,
       comments: [],
@@ -253,45 +329,28 @@ const postQuestionSubmission = async (content, question, user) => {
     };
   } catch (error) {
     return {
-      error: "Không thể tạo bài nộp",
+      error: "Không thể tạo bài nộp " + error,
       isOk: false,
     };
   }
 };
 
-const postSubmissionComment = async (
-  questionId,
-  submission,
-  commentContent,
-  user
-) => {
+const postSubmissionComment = async (question, submission, content, user) => {
   try {
     const newComment = new Comment({
-      commentContent,
-      commentDate: new Date(),
-      submission, // Embedding full submission object
-      user, // Embedding full user object
+      content: content,
+      submission: submission,
+      user: user,
     });
-
     await newComment.save();
-
-    // Update the submission with the new comment
-    await Submission.findByIdAndUpdate(submission._id, {
-      $push: { comments: newComment.toObject() },
-    });
-
-    const allSubmissions = await Submission.find({
-      "question._id": questionId,
-    });
-
+    const allSubmissions = await getSubmissionsByQuestion(question);
     return {
-      comment: newComment.toObject(),
-      allSubmissions: allSubmissions.map((sub) => sub.toObject()),
+      allSubmissions: allSubmissions?.submissions,
       isOk: true,
     };
   } catch (error) {
     return {
-      error: "Không thể tạo bình luận",
+      error: "Không thể tạo bình luận " + error,
       isOk: false,
     };
   }

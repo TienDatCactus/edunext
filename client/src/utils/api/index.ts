@@ -1,6 +1,8 @@
-import { UserToken } from "../interfaces";
+import { User, UserToken } from "../interfaces";
+import { useUserStore } from "../zustand/Store";
 import http from "./axios";
 import { accessApi, courseApi, homeApi } from "./urls";
+
 const login = async (campus: string, email: string, password: string) => {
   try {
     const resp = await http.post(`${accessApi}/login`, {
@@ -24,7 +26,7 @@ const getCourses = async () => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.get(`${homeApi}/${user?.user?.FEID}`);
+    const resp = await http.get(`${homeApi}/${user?.user?._id}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
@@ -102,7 +104,7 @@ const getQuestionSubmission = async (questionId: string) => {
 const postSubmissionComment = async (
   comment?: string,
   questionId?: string,
-  submissionId?: number
+  submissionId?: string
 ) => {
   try {
     const tokenString = localStorage.getItem("edu-token");
@@ -110,8 +112,8 @@ const postSubmissionComment = async (
     const resp = await http.post(
       `${courseApi}/question/${questionId}/submission/${submissionId}/comment`,
       {
-        userId: user?.user?.FEID,
-        comment,
+        content: comment,
+        user: user?.user?._id,
       }
     );
     if (resp?.data) return resp?.data;
@@ -146,6 +148,7 @@ const logout = async () => {
     return error;
   }
 };
+
 export {
   getCampuses,
   getCourseDetail,
@@ -155,7 +158,7 @@ export {
   getQuestionSubmission,
   getUserById,
   login,
+  logout,
   postQuestionSubmission,
   postSubmissionComment,
-  logout,
 };

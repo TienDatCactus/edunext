@@ -113,7 +113,6 @@ const MeetingSchema = new Schema(
         },
       },
     ],
-    course: { type: Schema.Types.Mixed, ref: "Course" },
   },
   commonOptions
 );
@@ -157,12 +156,6 @@ const QuestionSchema = new Schema(
 // Assignment Schema - Optimized
 const AssignmentSchema = new Schema(
   {
-    assignmentId: {
-      type: Schema.Types.String,
-      required: true,
-      unique: true,
-      index: true,
-    },
     courseId: {
       type: Schema.Types.Mixed,
       ref: "Course",
@@ -173,7 +166,7 @@ const AssignmentSchema = new Schema(
     description: { type: Schema.Types.String },
     startDate: { type: Schema.Types.Date, index: true },
     dueDate: { type: Schema.Types.Date, index: true },
-    course: { type: Schema.Types.Mixed, ref: "Course" },
+    courseId: { type: Schema.Types.Mixed, ref: "Course" },
   },
   commonOptions
 );
@@ -181,9 +174,7 @@ const AssignmentSchema = new Schema(
 // Submission Schema - Optimized
 const SubmissionSchema = new Schema(
   {
-    submissionContent: { type: Schema.Types.String, required: true },
-    submissionDate: { type: Schema.Types.Date, default: Date.now, index: true },
-    comments: [{ type: Schema.Types.Mixed, ref: "Comment" }],
+    content: { type: Schema.Types.String, required: true },
     question: { type: Schema.Types.Mixed, ref: "Question", index: true },
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
   },
@@ -203,12 +194,12 @@ const CourseClassSchema = new Schema(
 const TimetableSchema = new Schema(
   {
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
-    timeline: [
-      {
-        time: { type: Schema.Types.String, required: true },
-        content: { type: Schema.Types.Array, required: true },
-      },
-    ],
+    timeline: {
+      type: Schema.Types.Mixed,
+      required: true,
+    },
+    content: { type: Schema.Types.String, required: true },
+    type: { type: Schema.Types.String, required: true },
   },
   commonOptions
 );
@@ -216,8 +207,7 @@ const TimetableSchema = new Schema(
 // Comment Schema - Optimized
 const CommentSchema = new Schema(
   {
-    commentContent: { type: String, required: true },
-    commentDate: { type: Date, default: Date.now, index: true },
+    content: { type: String, required: true },
     submission: { type: Schema.Types.Mixed, ref: "Submission", index: true },
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
   },

@@ -5,10 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import CourseModal from "../../../ui/_elements/Modals/CourseModal";
 import CourseLayout from "../../../ui/layouts/CourseLayout";
 import MainLayout from "../../../ui/layouts/MainLayout";
-import { getCourseDetail } from "../../../utils/api";
 import { getCurrentSeason } from "../../../utils/customHooks";
-import { CourseItem, LessonItem } from "../../../utils/interfaces";
 import { CustomTabs } from "../../../utils/styles/CustomStyles";
+import { useCourseStore } from "../../../utils/zustand/Store";
 import ClassStudents from "./sub_pages/ClassStudents";
 import CourseInfo from "./sub_pages/CourseInfo";
 
@@ -17,27 +16,11 @@ const Detail: React.FC = () => {
   const month = getCurrentSeason();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { courseCode } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [detail, setDetail] = useState<CourseItem>();
-  const [lesson, setLesson] = useState<LessonItem>();
-  const getDetail = async () => {
-    if (!courseCode) return;
-    try {
-      setLoading(true);
-      const resp = await getCourseDetail(courseCode);
-      if (resp?.isOk) {
-        setDetail(resp?.course);
-        setLesson(resp?.course.lessons);
-      }
-    } catch (error) {
-      message.error("Gặp lỗi khi tải dữ liệu");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { fetchCourseById, detail, loading, error } = useCourseStore();
   useEffect(() => {
+    if (error) message.error(error);
     return () => {
-      getDetail();
+      fetchCourseById(courseCode || "");
     };
   }, []);
   const showModal = () => {
@@ -53,14 +36,13 @@ const Detail: React.FC = () => {
           <CourseLayout
             code={detail?.courseCode}
             name={detail?.courseName}
-            instructor="dat"
+            instructor={detail?.instructor}
           >
             <CourseInfo
-              meetings={detail?.meetings}
               courseCode={detail?.courseCode}
               courseName={detail?.courseName}
               description={detail?.description}
-              lessons={Array.isArray(lesson) ? lesson : []}
+              lessons={Array.isArray(detail?.lessons) ? detail?.lessons : []}
             />
           </CourseLayout>
         </Spin>

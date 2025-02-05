@@ -2,6 +2,7 @@ import { message } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ErrorHandlerOptions } from "../interfaces";
+import { error } from "console";
 
 // Create an Axios instance with default config
 const http = axios.create({
@@ -59,7 +60,7 @@ const createErrorHandler = (options: ErrorHandlerOptions = {}) => {
   const errorHandler = (err: any): Promise<never> => {
     const status = err?.response?.status || err?.status;
     const errorData = err?.response?.data;
-    const errorMessage = err?.message;
+    const errorMessage = err?.error;
 
     logger("Error caught:", err);
 
@@ -131,13 +132,11 @@ http.interceptors.request.use((config) => {
     accessToken: string;
     refreshToken: string;
     user: {
-      userId: number;
+      _id: string;
       name: string;
       email: string;
       FEID: string;
-      campusId: number | null;
-      classId: number;
-      roleId: number;
+      role: number;
     };
   } | null = tokenString ? JSON.parse(tokenString) : null;
   if (token) {

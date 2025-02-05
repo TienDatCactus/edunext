@@ -1,12 +1,13 @@
-import { BellZ, Kanban, UserGear } from "@phosphor-icons/react";
-import React, { useEffect, useState } from "react";
-import { User, UserToken } from "../../../utils/interfaces";
-import { getCurrentSeason } from "../../../utils/customHooks";
+import { BellZ, Kanban } from "@phosphor-icons/react";
 import { Button, Divider, Popover } from "antd";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../utils/api";
+import { getCurrentSeason } from "../../../utils/customHooks";
+import { User } from "../../../utils/interfaces";
+import { useUserStore } from "../../../utils/zustand/Store";
 
-const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
+export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const doLogout = async () => {
@@ -62,16 +63,7 @@ const Header = () => {
     { name: "Trang chủ", link: "/", active: true },
     { name: "Các môn học", link: `/home/${year}/${month}`, active: false },
   ];
-  const [user, setUser] = useState<User>();
-  const token = localStorage.getItem("edu-token");
-  const userToken = token ? (JSON.parse(token) as UserToken) : null;
-  useEffect(() => {
-    return () => {
-      if (userToken) {
-        return setUser(userToken?.user);
-      }
-    };
-  }, []);
+  const { user } = useUserStore();
   return (
     <div className="flex items-center justify-between p-6">
       <div className="flex items-center gap-2">

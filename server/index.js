@@ -9,7 +9,6 @@ const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
-const { seedDatabase } = require("./db/seed");
 dotenv.config();
 
 const app = express();

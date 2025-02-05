@@ -34,6 +34,8 @@ const loginControl = async (req, res) => {
             name: user?.user?.name,
             email: user?.user?.email,
             FEID: user?.user?.FEID,
+            role: user?.user?.role,
+            timetable: user?.user?.timetable,
           },
         },
       });
@@ -67,7 +69,7 @@ const getCampuses = async (req, res) => {
         .status(400)
         .json({ error: campuses?.error, isOk: campuses?.isOk });
     }
-    
+
     res.json({ campuses: campuses?.campuses, isOk: true });
   } catch (error) {
     console.error("Campuses fetch error:", error);

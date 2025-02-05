@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCampuses, login } from "../../../../utils/api";
 import { getCurrentSeason } from "../../../../utils/customHooks";
+import { useUserStore } from "../../../../utils/zustand/Store";
 const { Password } = Input;
 const { Option } = Select;
 
@@ -24,7 +25,7 @@ interface Campus {
   __v: number;
   _id: string;
 }
-type FieldType = {
+export type FieldType = {
   campus: string;
   email: string;
   password: string;
@@ -36,6 +37,8 @@ const LoginForm = () => {
   const [campuses, setCampuses] = useState<Campus[]>([]);
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
+  const { setUser } = useUserStore();
+
   const loginCampuses = async () => {
     try {
       setLoading(true);
@@ -49,18 +52,20 @@ const LoginForm = () => {
       setLoading(false);
     }
   };
+
   const onFinish: FormProps<FieldType>["onFinish"] = async (props) => {
     const { campus, email, password } = props;
     try {
       setLoading(true);
-      const loginAttempt = await login(campus, email, password);
-      if (loginAttempt?.isOk === true) {
-        message.success(loginAttempt?.message);
+      const resp = await login(campus, email, password);
+      if (resp?.isOk === true) {
+        message.success(resp?.message);
+        setUser(resp?.user?.user);
         setTimeout(() => {
           navigate(`/home/${year}/${month}`);
         }, 1000);
       } else {
-        message.error(loginAttempt?.error);
+        message.error(resp?.error);
       }
       return null;
     } catch (error) {

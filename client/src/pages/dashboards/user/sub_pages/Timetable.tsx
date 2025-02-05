@@ -1,47 +1,48 @@
 import {
   Bell,
-  MagnifyingGlass,
   PencilLine,
   ShareNetwork,
   Trash,
   UploadSimple,
-  UserCircleDashed,
   UserCirclePlus,
 } from "@phosphor-icons/react";
-import { Avatar, Button, Divider, Input } from "antd";
+import { Button, DatePicker, Divider, Form, Modal, Select } from "antd";
+import { FormProps, useForm } from "antd/es/form/Form";
+import TextArea from "antd/es/input/TextArea";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
+import { useUserStore } from "../../../../utils/zustand/Store";
 import TimetableCalendar from "./sub_elements/TimetableCalendar";
-import { User } from "../../../../utils/interfaces";
-import dayjs from "dayjs";
 const Timetable: React.FC = () => {
-  const [user, setUser] = useState<User>();
-  const token = window.localStorage.getItem("edu-token");
-  const userToken = token ? JSON.parse(token) : null;
-  React.useEffect(() => {
-    if (userToken) {
-      setUser(userToken.user);
-    }
-  }, []);
+  const [form] = useForm();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const onFinish: FormProps<any>["onFinish"] = async (props) => {
+    console.log(props);
+    const { day, month, type, content } = props;
+    console.log(dayjs(day).format("D"));
+    console.log(dayjs().get("year"));
+    console.log(dayjs(month).format("M"));
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  const { user } = useUserStore();
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[20px] font-bold">Thời khóa biểu</h1>
+          <h1 className="text-[30px] font-bold">Thời khóa biểu</h1>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex gap-2">
-            <Button icon={<ShareNetwork size={22} />} className="border-none" />
-            <Button icon={<Bell size={22} />} className="border-none" />
-          </div>
-          <Divider className="m-0 border-[#ccc]" type="vertical" />
-          <div className="flex items-center gap-2">
-            <Avatar size="default" icon={<UserCircleDashed size={22} />} />
-            <div className="flex flex-col ">
-              <h1 className="text-[14px] font-semibold">{user?.name}</h1>
-              <p className="text-[12px] text-[#212121]">{user?.email}</p>
-            </div>
-          </div>
+        <div className="flex gap-2">
+          <Button icon={<ShareNetwork size={22} />} className="border-none" />
+          <Button icon={<Bell size={22} />} className="border-none" />
         </div>
       </div>
       <Divider className="my-2 border-[#ddd]" />
@@ -68,23 +69,126 @@ const Timetable: React.FC = () => {
         <div>
           <div className="flex items-start gap-1">
             <h1 className="text-[34px] font-semibold">
-              {dayjs().format("MMMM YYYY")}
+              {dayjs().format("MMMM/YYYY")}
             </h1>
             <Button icon={<PencilLine size={22} />} className="border-none" />
           </div>
           <p className="text-[14px] text-[#3d3d3d]">
-            {dayjs().format("MMMM d YYYY")} - {dayjs().format("MMMM d YYYY")}
+            {dayjs().format("MMMM dd/YYYY")} - {dayjs().format("MMMM dd/YYYY")}
           </p>
         </div>
-        <div className="flex items-center gap-1">
-          <Input
-            size="large"
-            className="*:quick-sand"
-            placeholder="Search"
-            prefix={<MagnifyingGlass size={16} />}
-          />
-          <Button type="primary">Thêm thời gian biểu</Button>
-        </div>
+        <Button type="primary" onClick={showModal}>
+          Thêm thời gian biểu
+        </Button>
+        <Modal
+          title="Thêm công việc vào thời khóa biểu"
+          height={400}
+          className="[&_.ant-modal-title]:text-[20px]"
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Hủy
+            </Button>,
+            <Button
+              form="timetable-form"
+              htmlType="submit"
+              key="submit"
+              type="primary"
+            >
+              Lưu
+            </Button>,
+          ]}
+        >
+          <Form
+            id="timetable-form"
+            layout="vertical"
+            className="min-h-[200px] "
+            preserve={false}
+            onFinish={onFinish}
+            form={form}
+          >
+            <div className="flex gap-2">
+              <Form.Item
+                layout="vertical"
+                label="Ngày"
+                name="day"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn ngày",
+                  },
+                ]}
+              >
+                <DatePicker className="w-full" format="dddd" />
+              </Form.Item>
+              <Form.Item
+                layout="vertical"
+                label="Tháng"
+                name="month"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn tháng",
+                  },
+                ]}
+              >
+                <DatePicker
+                  className="w-full"
+                  defaultValue={dayjs().startOf("month")}
+                  picker="month"
+                  format="MMMM"
+                />
+              </Form.Item>
+              <Form.Item
+                layout="vertical"
+                label="Loại công việc"
+                className="col-span-6"
+                name="type"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn loại công việc",
+                  },
+                ]}
+              >
+                <Select
+                  className="w-full"
+                  showSearch
+                  placeholder="Chọn loại công việc"
+                  optionFilterProp="label"
+                  options={[
+                    {
+                      value: "warning",
+                      label: "Cần làm",
+                    },
+                    {
+                      value: "success",
+                      label: "Ghi nhớ",
+                    },
+                    {
+                      value: "error",
+                      label: "Quan trọng",
+                    },
+                  ]}
+                />
+              </Form.Item>
+            </div>
+            <Form.Item
+              layout="vertical"
+              label="Mô tả công việc"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập mô tả công việc",
+                },
+              ]}
+              name="content"
+            >
+              <TextArea className="w-full min-h-[100px]" />
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
       <TimetableCalendar />
     </DashboardLayout>

@@ -1,12 +1,12 @@
 import { Eye, Question } from "@phosphor-icons/react";
 import { Button, Empty } from "antd";
+import React from "react";
 import LessonDetail from "../../../../ui/_elements/Page/Course/LessonDetail";
 import { CourseInfoProps } from "../../../../utils/interfaces";
-import React from "react";
 const CourseInfo: React.FC<CourseInfoProps> = ({
+  courseCode,
   courseName,
   description,
-  questions,
   lessons,
 }) => {
   return (

@@ -2,7 +2,6 @@
   "_id": {
     "$oid": "6788be800862e875d6ac1dd0"
   },
-  "assignmentId": "ASG001",
   "courseId": {
     "$oid": "6788be800862e875d6ac1dc4"
   },
@@ -13,9 +12,6 @@
   },
   "dueDate": {
     "$date": "2025-01-30T00:00:00.000Z"
-  },
-  "course": {
-    "$oid": "6788be800862e875d6ac1dc4"
   },
   "createdAt": {
     "$date": "2025-01-16T08:08:32.991Z"

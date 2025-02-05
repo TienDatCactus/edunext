@@ -43,7 +43,7 @@ const router = createBrowserRouter([
         path: ":courseCode",
         children: [
           {
-            path: "lesson/:lessonId/question/:questionId",
+            path: "lesson/:lessonId/question",
             element: <Question />,
           },
           {

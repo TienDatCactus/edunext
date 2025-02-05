@@ -1,71 +1,38 @@
-import React, { useEffect, useState } from "react";
-import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
 import { Breadcrumb, Divider, message, Spin } from "antd";
-import MainLayout from "./MainLayout";
-import { useParams } from "react-router-dom";
-import { getCourseMeeting, getQuestionDetail } from "../../utils/api";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { getQuestionDetail } from "../../utils/api";
 import { getCurrentSeason } from "../../utils/customHooks";
+import { useCourseStore, useQuestionStore } from "../../utils/zustand/Store";
+import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
+import MainLayout from "./MainLayout";
+import { Question } from "../../utils/interfaces";
 
 const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const { questionId, courseCode } = useParams<{
-    questionId?: string;
-    courseCode?: string;
-  }>();
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
+  const { detail } = useCourseStore();
   const [loading, setLoading] = useState(false);
-  const [question, setQuestion] = useState<{
-    content?: string;
-    questionId?: number;
-  }>();
-  const [meeting, setMeeting] = useState<
-    {
-      courseId?: number;
-      meetingType?: string;
-      meetingLink?: string;
-    }[]
-  >();
+  const location = useLocation();
+  const questionId = location.state?.questionId;
+  const { fetchQuestionById, question } = useQuestionStore();
   const [remainQuestions, setRemainQuestions] = useState<
     {
       questionId?: number;
       status?: boolean;
     }[]
   >();
-  const getMeeting = async () => {
-    if (!courseCode) return;
-    try {
-      setLoading(true);
-      const resp = await getCourseMeeting(courseCode || "");
-      if (resp?.isOk) {
-        setMeeting(resp?.meetings);
-        setRemainQuestions(resp?.remainQuestions);
-      }
-    } catch (error) {
-      message.error("Gặp lỗi khi tải dữ liệu");
-    } finally {
-      setLoading(false);
-    }
+  const swapper = {
+    quiz: "Trắc nghiệm",
+    code: "Lập trình",
+    response: "Tự luận",
   };
-  const getQuestion = async () => {
-    if (!questionId) return;
-    try {
-      setLoading(true);
-      const resp = await getQuestionDetail(questionId);
-      if (resp?.isOk) {
-        setQuestion(resp?.question);
-      }
-    } catch (error) {
-      message.error("Gặp lỗi khi tải dữ liệu");
-    } finally {
-      setLoading(false);
-    }
-  };
+
   useEffect(() => {
     return () => {
-      getQuestion();
-      getMeeting();
+      fetchQuestionById(questionId);
     };
   }, []);
   return (
@@ -89,16 +56,20 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
               />
               <div className="p-4 my-4 bg-white border rounded-md shadow-md -fadeInLeft">
                 <h1 className="font-semibold text-[20px]">
-                  Câu hỏi #{questionId}
+                  Câu hỏi dạng {swapper[question?.type || "code"]}
                 </h1>
                 <Divider className="border-[#868686]  my-3" />
-                <p className="font-light">{question?.content}</p>
+                <p className="font-light">
+                  {typeof question?.content === "string"
+                    ? question.content
+                    : ""}
+                </p>
               </div>
             </div>
-            <main className=" -fadeInLeft">{children}</main>
+            <main className="">{children}</main>
           </div>
           <QuestionSidebar
-            meetings={meeting || []}
+            meetings={detail?.meetings || []}
             remainQuestions={remainQuestions || []}
           />
         </div>
