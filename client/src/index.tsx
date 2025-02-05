@@ -6,7 +6,10 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import LoadingScreen from "./ui/_elements/Loading/LoadingScreen";
 import router from "./utils/routes";
-
+import dayjs from "dayjs";
+import "dayjs/locale/vi";
+import viVN from "antd/es/locale/vi_VN";
+dayjs.locale("vi");
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -14,6 +17,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ConfigProvider
+      locale={viVN}
       theme={{
         token: {
           fontFamily: '"Funnel Display", sans-serif',
