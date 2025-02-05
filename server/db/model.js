@@ -198,8 +198,6 @@ const TimetableSchema = new Schema(
       type: Schema.Types.Mixed,
       required: true,
     },
-    content: { type: Schema.Types.String, required: true },
-    type: { type: Schema.Types.String, required: true },
   },
   commonOptions
 );

@@ -24,7 +24,12 @@ app.use("/auth", accessRouter);
 app.use("/", homeRouter);
 app.use("/course", courseRouter);
 const PORT = process.env.PORT;
-
+app.use("/articles", (req, res) => {
+  res.send({
+    title: "Hello World",
+    describe: "This is a description",
+  });
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

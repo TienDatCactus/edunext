@@ -16,11 +16,11 @@ type MenuItem = Required<MenuProps>["items"][number];
 const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUserStore();
   const DASHBOARD_KEYS = ROUTE_KEYS?.dashboard;
   const DASHBOARD_LOCATION = location.pathname.split(
     "/"
   )[2] as keyof typeof ROUTE_KEYS.dashboard;
+  const { user } = useUserStore();
   const studentItems: MenuItem[] = [
     {
       key: "grp",
@@ -108,7 +108,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}
           mode="inline"
-          items={studentItems}
+          items={user?.role == "1" ? studentItems : teacherItems}
           selectedKeys={[ROUTE_KEYS?.dashboard[DASHBOARD_LOCATION]?.key]}
         />
         <Divider className="my-2" />
