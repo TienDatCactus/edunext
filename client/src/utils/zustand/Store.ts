@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { CourseState, QuestionState } from "../interfaces";
+import {
+  CourseState,
+  QuestionState,
+  UserState,
+  UserToken,
+} from "../interfaces";
 import { getCourseDetail, getCourses, getQuestionDetail } from "../api";
 
 export const useCourseStore = create<CourseState>((set, get) => ({
@@ -168,4 +173,14 @@ export const useQuestionStore = create<QuestionState>((set, get) => ({
     }
   },
   deleteQuestion: async (id) => {},
+}));
+
+export const useUserStore = create<UserState>((set, get) => ({
+  user: (() => {
+    const token = localStorage.getItem("edu-token");
+    return token ? (JSON.parse(token) as UserToken)?.user : undefined;
+  })(),
+  setUser: (user) => {
+    set({ user });
+  },
 }));

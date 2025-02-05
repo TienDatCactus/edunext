@@ -1,24 +1,23 @@
-import { MailOutlined } from "@ant-design/icons";
 import {
   ArrowsInLineVertical,
   CalendarDots,
   CaretLeft,
   UserGear,
 } from "@phosphor-icons/react";
-import { ROUTE_KEYS } from "./../../utils/routes";
 import type { MenuProps } from "antd";
-import { Button, Divider, Menu } from "antd";
+import { Button, Divider, Menu, Popover } from "antd";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { User } from "../../utils/interfaces";
+import { useUserStore } from "../../utils/zustand/Store";
+import { ROUTE_KEYS } from "./../../utils/routes";
+import { AccountMenu } from "../_elements/Layout/Header";
 type MenuItem = Required<MenuProps>["items"][number];
 
 const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user") as string) as User;
+  const { user } = useUserStore();
   const DASHBOARD_KEYS = ROUTE_KEYS?.dashboard;
-  console.log(DASHBOARD_KEYS);
   const DASHBOARD_LOCATION = location.pathname.split(
     "/"
   )[2] as keyof typeof ROUTE_KEYS.dashboard;
@@ -113,24 +112,28 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           selectedKeys={[ROUTE_KEYS?.dashboard[DASHBOARD_LOCATION]?.key]}
         />
         <Divider className="my-2" />
-        <div className="flex items-center justify-between gap-2 px-4">
-          <div className="flex items-center gap-2">
-            <div>
+        <Popover
+          overlayInnerStyle={{ padding: 0 }}
+          content={<AccountMenu user={user} />}
+          trigger="click"
+          placement="topRight"
+        >
+          <div className="flex items-center shadow-lg rounded-md bg-[#ffffff] mx-1 p-2 hover:bg-[#f0f0f0] border cursor-pointer">
+            <div className="flex items-center gap-2">
               <img
                 src="https://api.dicebear.com/9.x/notionists/svg?seed=1"
                 alt="avatar"
                 className="w-12 h-12 bg-white border rounded-full"
               />
-            </div>
-            <div className="leading-6">
-              <h1 className="text-[20px] font-semibold">dat</h1>
-              <p className="text-[12px] font-semibold text-[#5f5f5f]">dat</p>
+              <div className="leading-6">
+                <h1 className="text-[16px] font-semibold">{user?.name}</h1>
+                <p className="text-[12px] font-semibold text-[#5f5f5f]">
+                  {user?.email}
+                </p>
+              </div>
             </div>
           </div>
-          <div>
-            <ArrowsInLineVertical size={22} />
-          </div>
-        </div>
+        </Popover>
       </div>
       <div className="col-span-10 p-2 overflow-y-scroll max-h-svh">
         {/* {children} */}

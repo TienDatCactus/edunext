@@ -101,6 +101,10 @@ export interface QuestionState {
   updateQuestion: (id: string, updatedData: Partial<Question>) => Promise<void>;
   deleteQuestion: (id: string) => Promise<void>;
 }
+export interface UserState {
+  user?: User;
+  setUser: (user: User) => void;
+}
 export interface LessonItem {
   title?: string;
   content?: string;
@@ -149,11 +153,22 @@ export interface UserToken {
   refreshToken: string;
   user?: User;
 }
+export interface TimelineEvent {
+  time: {
+    day: string;
+    month: string;
+    year: string;
+  };
+  content: string;
+  type: string;
+}
 export interface User {
   name: string;
   email: string;
   FEID: string;
   _id: string;
+  role: string;
+  timetable: TimelineEvent[];
 }
 export interface SubmissionItem {
   _id: string;

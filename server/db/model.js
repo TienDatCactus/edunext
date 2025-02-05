@@ -194,12 +194,12 @@ const CourseClassSchema = new Schema(
 const TimetableSchema = new Schema(
   {
     user: { type: Schema.Types.Mixed, ref: "User", index: true },
-    timeline: [
-      {
-        time: { type: Schema.Types.String, required: true },
-        content: { type: Schema.Types.Array, required: true },
-      },
-    ],
+    timeline: {
+      type: Schema.Types.Mixed,
+      required: true,
+    },
+    content: { type: Schema.Types.String, required: true },
+    type: { type: Schema.Types.String, required: true },
   },
   commonOptions
 );

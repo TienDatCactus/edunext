@@ -4,18 +4,11 @@ import Password from "antd/es/input/Password";
 import { useEffect, useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { User, UserToken } from "../../../../utils/interfaces";
+import { useUserStore } from "../../../../utils/zustand/Store";
 
 const Account = () => {
-  const [user, setUser] = useState<User>();
-  const token = localStorage.getItem("edu-token");
-  const userToken = token ? (JSON.parse(token) as UserToken) : null;
-  useEffect(() => {
-    return () => {
-      if (userToken) {
-        return setUser(userToken?.user);
-      }
-    };
-  }, []);
+  const { user } = useUserStore();
+
   return (
     <DashboardLayout>
       <div className="flex flex-col justify-start py-2 leading-6">
@@ -76,16 +69,12 @@ const Account = () => {
           className="items-end justify-between [&_.ant-form-item-label]:p-0 [&_.ant-form-item-label>label]:text-[10px] [&_.ant-form-item-label>label]:text-[#676767] [&_.ant-form-item-label>label]:font-medium grid grid-cols-12 "
           layout="vertical"
         >
-          <Form.Item label="Email" className="col-span-6">
-            <Input className="py-2 shadow-md dm-sans" value={user?.email} />
-          </Form.Item>
-          <Form.Item className="col-span-6 text-end">
-            <Button
-              className="w-1/2 font-medium text-[14px] text-[#222222] shadow-md"
-              icon={<PlusCircle size={18} />}
-            >
-              Thêm Email mới
-            </Button>
+          <Form.Item label="Email" className="col-span-10">
+            <Input
+              className="py-2 shadow-md dm-sans"
+              value={user?.email}
+              disabled
+            />
           </Form.Item>
         </Form>
       </div>

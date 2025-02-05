@@ -1,6 +1,8 @@
-import { UserToken } from "../interfaces";
+import { User, UserToken } from "../interfaces";
+import { useUserStore } from "../zustand/Store";
 import http from "./axios";
 import { accessApi, courseApi, homeApi } from "./urls";
+
 const login = async (campus: string, email: string, password: string) => {
   try {
     const resp = await http.post(`${accessApi}/login`, {

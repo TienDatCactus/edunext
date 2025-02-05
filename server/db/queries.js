@@ -11,6 +11,7 @@ const {
   Tag,
   Comment,
   Campus,
+  Timetable,
 } = require("./model");
 const { mongoose } = require("mongoose");
 
@@ -19,14 +20,16 @@ const loginWithEmail = async (campus, email, password) => {
     const user = await User.findOne({
       email: email,
       campus: new mongoose.Types.ObjectId(campus), // must be done by this
-    }).select("_id name email FEID password");
+    }).select("_id name email FEID password role");
     if (!user) {
       return {
         error: "Tài khoản hoặc mật khẩu không đúng",
         isOk: false,
       };
     }
-
+    const timetable = await Timetable.findOne({
+      user: new mongoose.Types.ObjectId(user._id),
+    }).select("timeline");
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return {
@@ -36,6 +39,9 @@ const loginWithEmail = async (campus, email, password) => {
     }
     const userObject = user.toObject();
     delete userObject.password;
+    if (timetable) {
+      userObject.timetable = timetable.timeline;
+    }
     return { user: userObject, isOk: true };
   } catch (error) {
     return {
