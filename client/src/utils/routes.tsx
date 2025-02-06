@@ -5,6 +5,7 @@ import Timetable from "../pages/dashboards/user/sub_pages/Timetable";
 import { getCurrentSeason } from "./customHooks";
 import path from "path";
 import Board from "../pages/chess/Board";
+import AddQuestion from "../pages/dashboards/teacher/AddQuestion";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -66,6 +67,12 @@ const router = createBrowserRouter([
         path: "timetable",
         element: <Timetable />,
       },
+
+      {
+        path: "create-question",
+        element: <AddQuestion />
+      }
+
     ],
     errorElement: <NotFound />,
   },

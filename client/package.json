@@ -34,10 +34,9 @@
     "zustand": "^5.0.3"
   },
   "scripts": {
-  "start": "craco start",
-  "build": "craco build"
-}
-,
+    "start": "craco start",
+    "build": "craco build"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

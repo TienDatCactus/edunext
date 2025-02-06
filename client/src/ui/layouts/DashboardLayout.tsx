@@ -26,7 +26,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       key: "grp",
       label: <p>Cài đặt chung</p>,
       type: "group",
-      children: [
+      children: [ 
         {
           key: "13",
           className: "py-6",
