@@ -193,3 +193,18 @@ export interface SubmissionItem {
 export const ItemTypes = {
   KNIGHT: "knight",
 };
+
+export interface DASHBOARD_KEY_PROPS {
+  landing?: {
+    path: string | URL;
+    key: string;
+  };
+  timetable?: {
+    path: string | URL;
+    key: string;
+  };
+  account?: {
+    path: string | URL;
+    key: string;
+  };
+}

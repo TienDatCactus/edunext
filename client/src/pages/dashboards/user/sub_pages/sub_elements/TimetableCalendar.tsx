@@ -8,7 +8,7 @@ import { useUserStore } from "../../../../../utils/zustand/Store";
 const parseTimeline = (data: any) => {
   const timelineMap = new Map<string, TimelineEvent[]>();
 
-  data.forEach((event: TimelineEvent) => {
+  data?.forEach((event: TimelineEvent) => {
     const { day, month, year } = event.time;
     const key = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 

@@ -5,10 +5,10 @@ import { useState } from "react";
 import AddForm from "./sub_elements/AddForm";
 
 function AddQuestion() {
-  const [questions, setQuestions] = useState([1]); 
+  const [questions, setQuestions] = useState([1]);
 
   const addQuestion = () => {
-    setQuestions([...questions, questions.length + 1]); 
+    setQuestions([...questions, questions.length + 1]);
   };
 
   return (

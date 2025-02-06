@@ -23,7 +23,6 @@ const Timetable: React.FC = () => {
   };
 
   const onFinish: FormProps<any>["onFinish"] = async (props) => {
-    console.log(props);
     const { day, month, type, content } = props;
     console.log(dayjs(day).format("D"));
     console.log(dayjs().get("year"));

@@ -1,5 +1,5 @@
 import {
-  ArrowsInLineVertical,
+  AppWindow,
   CalendarDots,
   CaretLeft,
   UserGear,
@@ -8,29 +8,37 @@ import type { MenuProps } from "antd";
 import { Button, Divider, Menu, Popover } from "antd";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { DASHBOARD_KEY_PROPS } from "../../utils/interfaces";
 import { useUserStore } from "../../utils/zustand/Store";
-import { ROUTE_KEYS } from "./../../utils/routes";
 import { AccountMenu } from "../_elements/Layout/Header";
+import { ROUTE_KEYS } from "./../../utils/routes";
 type MenuItem = Required<MenuProps>["items"][number];
 
 const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
+  const { user } = useUserStore();
   const location = useLocation();
-  const DASHBOARD_KEYS = ROUTE_KEYS?.dashboard;
+  const DASHBOARD_KEYS: DASHBOARD_KEY_PROPS =
+    user?.role == "2"
+      ? ROUTE_KEYS?.dashboard?.teacher
+      : ROUTE_KEYS?.dashboard?.student;
+  console.log(DASHBOARD_KEYS);
   const DASHBOARD_LOCATION = location.pathname.split(
     "/"
-  )[2] as keyof typeof ROUTE_KEYS.dashboard;
-  const { user } = useUserStore();
+  )[2] as keyof typeof DASHBOARD_KEYS;
   const studentItems: MenuItem[] = [
     {
       key: "grp",
       label: <p>Cài đặt chung</p>,
       type: "group",
-      children: [ 
+      children: [
         {
           key: "13",
           className: "py-6",
-          onClick: () => window.location.replace(DASHBOARD_KEYS?.account?.path),
+          onClick: () => {
+            if (DASHBOARD_KEYS?.account)
+              window.location.replace(DASHBOARD_KEYS?.account?.path);
+          },
           label: <p className="text-[14px] font-medium">Tài khoản</p>,
           icon: (
             <UserGear
@@ -42,8 +50,10 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: "14",
           className: "py-6",
-          onClick: () =>
-            window.location.replace(DASHBOARD_KEYS?.timetable?.path),
+          onClick: () => {
+            if (DASHBOARD_KEYS?.timetable)
+              window.location.replace(DASHBOARD_KEYS?.timetable?.path);
+          },
           label: <p className="text-[14px] font-medium">Thời khóa biểu</p>,
           icon: (
             <CalendarDots
@@ -64,23 +74,50 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: "13",
           className: "py-6",
-          onClick: () => window.location.replace(DASHBOARD_KEYS?.account?.path),
-          label: <p className="text-[14px] font-medium">Môn học</p>,
+          onClick: () => {
+            if (DASHBOARD_KEYS?.landing)
+              window.location.replace(DASHBOARD_KEYS?.landing?.path);
+          },
+          label: <p className="text-[14px] font-medium">Bảng Điều Khiển</p>,
           icon: (
-            <UserGear
+            <AppWindow
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+      ],
+    },
+    {
+      key: "grp2",
+      label: <p>Quản lý</p>,
+      type: "group",
+      children: [
+        {
+          key: "14",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.timetable)
+              window.location.replace(DASHBOARD_KEYS?.timetable?.path);
+          },
+          label: <p className="text-[14px] font-medium">Thời khóa biểu</p>,
+          icon: (
+            <CalendarDots
               size={34}
               className="p-2 bg-white border rounded-md shadow-md"
             />
           ),
         },
         {
-          key: "14",
+          key: "15",
           className: "py-6",
-          onClick: () =>
-            window.location.replace(DASHBOARD_KEYS?.timetable?.path),
-          label: <p className="text-[14px] font-medium">Thời khóa biểu</p>,
+          onClick: () => {
+            if (DASHBOARD_KEYS?.account)
+              window.location.replace(DASHBOARD_KEYS?.account?.path);
+          },
+          label: <p className="text-[14px] font-medium">Thông tin hồ sơ</p>,
           icon: (
-            <CalendarDots
+            <UserGear
               size={34}
               className="p-2 bg-white border rounded-md shadow-md"
             />
@@ -109,7 +146,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           defaultOpenKeys={["sub1"]}
           mode="inline"
           items={user?.role == "1" ? studentItems : teacherItems}
-          selectedKeys={[ROUTE_KEYS?.dashboard[DASHBOARD_LOCATION]?.key]}
+          selectedKeys={[DASHBOARD_KEYS[DASHBOARD_LOCATION]?.key || ""]}
         />
         <Divider className="my-2" />
         <Popover
@@ -137,7 +174,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       </div>
       <div className="col-span-10 p-2 overflow-y-scroll max-h-svh">
         {/* {children} */}
-        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-white px-10 py-2">
+        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-10 py-2">
           {children}
         </div>
       </div>

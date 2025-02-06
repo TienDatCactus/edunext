@@ -6,6 +6,7 @@ import { getCurrentSeason } from "./customHooks";
 import path from "path";
 import Board from "../pages/chess/Board";
 import AddQuestion from "../pages/dashboards/teacher/AddQuestion";
+import Landing from "../pages/dashboards/teacher/Landing";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
     path: "/dashboard",
     children: [
       {
+        path: "landing",
+        element: <Landing />,
+      },
+      {
         path: "account",
         element: <Account />,
       },
@@ -69,10 +74,14 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "create-question",
-        element: <AddQuestion />
-      }
-
+        path: "question",
+        children: [
+          {
+            path: "add",
+            element: <AddQuestion />,
+          },
+        ],
+      },
     ],
     errorElement: <NotFound />,
   },
@@ -81,13 +90,33 @@ const router = createBrowserRouter([
 export default router;
 const ROUTE_KEYS = {
   dashboard: {
-    account: {
-      path: "/dashboard/account",
-      key: "13",
+    student: {
+      account: {
+        path: "/dashboard/account",
+        key: "13",
+      },
+      timetable: {
+        path: "/dashboard/timetable",
+        key: "14",
+      },
     },
-    timetable: {
-      path: "/dashboard/timetable",
-      key: "14",
+    teacher: {
+      landing: {
+        path: "/dashboard/landing",
+        key: "13",
+      },
+      timetable: {
+        path: "/dashboard/timetable",
+        key: "14",
+      },
+      account: {
+        path: "/dashboard/account",
+        key: "15",
+      },
+      question: {
+        path: "/dashboard/question/add",
+        key: "15",
+      },
     },
   },
 };
