@@ -21,7 +21,7 @@ const loginControl = async (req, res) => {
     }
     if (user.isOk === true) {
       const accessToken = generateAccessToken(user);
-      const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
+      const refreshToken = jwt.sign(user, process.env.i9);
       refreshTokens.push(refreshToken);
       res.json({
         message: "Đăng nhập thành công !",
