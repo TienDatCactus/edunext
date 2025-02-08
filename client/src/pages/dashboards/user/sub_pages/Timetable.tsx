@@ -45,7 +45,7 @@ const Timetable: React.FC = () => {
         </div>
       </div>
       <Divider className="my-2 border-[#ddd]" />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between my-2">
         <div className="flex gap-2">
           <Button iconPosition="start" icon={<UploadSimple size={14} />}>
             Xuất File
@@ -64,7 +64,7 @@ const Timetable: React.FC = () => {
         </Button>
       </div>
       <Divider className="my-2 border-[#ddd]" />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between my-4">
         <div>
           <div className="flex items-start gap-1">
             <h1 className="text-[34px] font-semibold">

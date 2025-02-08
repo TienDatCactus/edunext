@@ -1,12 +1,10 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import AddQuestion from "../pages/dashboards/teacher/AddQuestion";
+import Landing from "../pages/dashboards/teacher/Landing";
 import Account from "../pages/dashboards/user/sub_pages/Account";
 import Timetable from "../pages/dashboards/user/sub_pages/Timetable";
 import { getCurrentSeason } from "./customHooks";
-import path from "path";
-import Board from "../pages/chess/Board";
-import AddQuestion from "../pages/dashboards/teacher/AddQuestion";
-import Landing from "../pages/dashboards/teacher/Landing";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));

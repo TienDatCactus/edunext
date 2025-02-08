@@ -1,5 +1,6 @@
 import {
   AppWindow,
+  ArrowsInLineVertical,
   CalendarDots,
   CaretLeft,
   UserGear,
@@ -10,8 +11,8 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DASHBOARD_KEY_PROPS } from "../../utils/interfaces";
 import { useUserStore } from "../../utils/zustand/Store";
-import { AccountMenu } from "../_elements/Layout/Header";
 import { ROUTE_KEYS } from "./../../utils/routes";
+import { AccountMenu } from "../_elements/Layout/Header";
 type MenuItem = Required<MenuProps>["items"][number];
 
 const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -174,7 +175,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       </div>
       <div className="col-span-10 p-2 overflow-y-scroll max-h-svh">
         {/* {children} */}
-        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-10 py-2">
+        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-4 py-2">
           {children}
         </div>
       </div>

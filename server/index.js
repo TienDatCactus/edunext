@@ -1,5 +1,4 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const passportConfig = require("./validators/passport");
@@ -9,8 +8,7 @@ const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
-dotenv.config();
-
+require("dotenv").config();
 const app = express();
 connectDB();
 

@@ -47,7 +47,7 @@ const TimetableCalendar: React.FC = () => {
     return info.originNode;
   };
 
-  return <Calendar cellRender={cellRender} />;
+  return <Calendar className="rounded-lg shadow-md" cellRender={cellRender} />;
 };
 
 export default TimetableCalendar;
