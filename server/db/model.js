@@ -197,7 +197,9 @@ const TimetableSchema = new Schema(
     timeline: {
       type: Schema.Types.Mixed,
       required: true,
+      
     },
+  
   },
   commonOptions
 );

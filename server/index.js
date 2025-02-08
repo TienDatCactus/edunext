@@ -6,6 +6,7 @@ const passport = require("passport");
 const accessRouter = require("./routes/accessRouter");
 const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
+const dashboardRouter = require("./routes/dashboardRouter");
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -21,6 +22,7 @@ passportConfig.initialize();
 app.use("/auth", accessRouter);
 app.use("/", homeRouter);
 app.use("/course", courseRouter);
+app.use("/dashboard",dashboardRouter);
 const PORT = process.env.PORT;
 app.use("/articles", (req, res) => {
   res.send({
