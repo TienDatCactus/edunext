@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const courseRouter = Router();
 const courseController = require("../controllers/courseController");
+
 const authenticateToken = require("../validators/authenticate");
 
 courseRouter.get(
@@ -33,5 +34,6 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseMeetings
 );
+
 
 module.exports = courseRouter;
