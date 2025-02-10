@@ -1,11 +1,14 @@
 import { create } from "zustand";
 import {
   CourseState,
+  ExternalCourseState,
   QuestionState,
+  User,
   UserState,
   UserToken,
 } from "../interfaces";
 import { getCourseDetail, getCourses, getQuestionDetail } from "../api";
+import { getCourseraCourses } from "../api/externals";
 
 export const useCourseStore = create<CourseState>((set, get) => ({
   courses: [],
@@ -17,7 +20,7 @@ export const useCourseStore = create<CourseState>((set, get) => ({
   fetchCourses: async () => {
     set({ loading: true, error: null });
     try {
-      const resp = await getCourses(); // Replace with your API endpoint
+      const resp = await getCourses();
       if (!!resp && resp?.isOk === true) set({ courses: resp?.courses });
     } catch (error) {
       set({ error: "Failed to fetch courses" });
@@ -175,7 +178,7 @@ export const useQuestionStore = create<QuestionState>((set, get) => ({
   deleteQuestion: async (id) => {},
 }));
 
-export const useUserStore = create<UserState>((set, get) => ({
+export const useUserStore = create<UserState>((set) => ({
   user: (() => {
     const token = localStorage.getItem("edu-token");
     return token ? (JSON.parse(token) as UserToken)?.user : undefined;
@@ -183,4 +186,38 @@ export const useUserStore = create<UserState>((set, get) => ({
   setUser: (user) => {
     set({ user });
   },
+  getKeyword: (user: User) => {
+    switch (true) {
+      case /^HE[0-9]+/i.test(user?.FEID):
+        return "programming";
+      case /^MC[0-9]+/i.test(user?.FEID):
+        return "marketing";
+      case /^GD[0-9]+/i.test(user?.FEID):
+        return "graphic design";
+      case /^MKT[0-9]+/i.test(user?.FEID):
+        return "marketing";
+      default:
+        return "unknown";
+    }
+  },
 }));
+
+export const useExternalCourseStore = create<ExternalCourseState>(
+  (set, get) => ({
+    coursera: [],
+    loading: false,
+    error: null,
+
+    fetchCourseraCourses: async (keyword) => {
+      try {
+        set({ loading: true, error: null });
+        const resp = await getCourseraCourses(keyword);
+        if (resp?.isOk === true) set({ coursera: resp?.courses });
+      } catch (error) {
+        set({ error: "Failed to fetch courses" });
+      } finally {
+        set({ loading: false });
+      }
+    },
+  })
+);

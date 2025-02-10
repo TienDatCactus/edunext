@@ -1,5 +1,7 @@
 import axios from "axios";
 import { stdin } from "process";
+import http from "./axios";
+import { courseApi } from "./urls";
 
 export const executeCode = async (code: string) => {
   try {
@@ -44,6 +46,14 @@ export const executeCode = async (code: string) => {
     }
 
     return output;
+  } catch (error) {
+    console.error(error);
+  }
+};
+export const getCourseraCourses = async (keyword: string) => {
+  try {
+    const resp = await http.get(`${courseApi}/api/coursera/${keyword}`);
+    return resp.data;
   } catch (error) {
     console.error(error);
   }

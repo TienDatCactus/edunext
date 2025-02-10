@@ -9,7 +9,9 @@ import router from "./utils/routes";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import viVN from "antd/es/locale/vi_VN";
+import "swiper/css";
 dayjs.locale("vi");
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );

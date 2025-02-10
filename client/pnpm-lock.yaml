@@ -59,9 +59,6 @@ importers:
       monaco-editor-webpack-plugin:
         specifier: ^7.1.0
         version: 7.1.0(monaco-editor@0.52.2)(webpack@5.95.0)
-      motion:
-        specifier: ^11.18.1
-        version: 11.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -86,6 +83,9 @@ importers:
       react-scripts:
         specifier: 5.0.1
         version: 5.0.1(@babel/plugin-syntax-flow@7.26.0(@babel/core@7.26.0))(@babel/plugin-transform-react-jsx@7.25.9(@babel/core@7.26.0))(@types/babel__core@7.20.5)(eslint@8.57.1)(react@18.3.1)(sass@1.80.6)(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5))(type-fest@0.21.3)(typescript@4.9.5)
+      swiper:
+        specifier: ^11.2.2
+        version: 11.2.2
       typescript:
         specifier: ^4.9.5
         version: 4.9.5
@@ -96,6 +96,12 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@18.3.12)(immer@9.0.21)(react@18.3.1)
     devDependencies:
+      '@types/swiper':
+        specifier: ^6.0.0
+        version: 6.0.0
+      animated-tailwindcss:
+        specifier: ^4.0.0
+        version: 4.0.0(postcss@8.4.47)(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5)))
       tailwind-scrollbar:
         specifier: ^3.1.0
         version: 3.1.0(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5)))
@@ -2276,6 +2282,10 @@ packages:
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
 
+  '@types/swiper@6.0.0':
+    resolution: {integrity: sha512-QPZRgxZ+ivXXtzV43B3LxpXUIC7FE/EoKM+rtxngmgt2M7eeUYypZhyqZD8UxJtlBcUDw/ATGoVeSNpvBBrz2w==}
+    deprecated: This is a stub types definition. swiper provides its own type definitions, so you do not need this installed.
+
   '@types/testing-library__jest-dom@5.14.9':
     resolution: {integrity: sha512-FSYhIjFlfOpGSRyVoMBMuS3ws5ehFQODymf3vlI7U1K8c7PHwWwFY7VREfmsuzHSOnoKs/9/Y983ayOs7eRzqw==}
 
@@ -2492,6 +2502,15 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
+
+  animated-tailwindcss@4.0.0:
+    resolution: {integrity: sha512-sJquGVOQkdRuEJiDKX/bjjuXgGTpXBiNKiYD3ef+hoNdpWnjDrOVInOHB9QJC/Q7Ir5Ae+KEAg/ZW/ZBS6KcSw==}
+    peerDependencies:
+      postcss: ^8
+      tailwindcss: ^3
+    peerDependenciesMeta:
+      postcss:
+        optional: true
 
   anser@2.3.0:
     resolution: {integrity: sha512-pGGR7Nq1K/i9KGs29PvHDXA8AsfZ3OiYRMDClT3FIC085Kbns9CJ7ogq9MEiGnrjd9THOGoh7B+kWzePHzZyJQ==}
@@ -3880,20 +3899,6 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@11.18.1:
-    resolution: {integrity: sha512-EQa8c9lWVOm4zlz14MsBJWr8woq87HsNmsBnQNvcS0hs8uzw6HtGAxZyIU7EGTVpHD1C1n01ufxRyarXcNzpPg==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
@@ -5069,26 +5074,6 @@ packages:
 
   monaco-editor@0.52.2:
     resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
-
-  motion-dom@11.18.1:
-    resolution: {integrity: sha512-g76KvA001z+atjfxczdRtw/RXOM3OMSdd1f4DL77qCTF/+avrRJiawSG4yDibEQ215sr9kpinSlX2pCTJ9zbhw==}
-
-  motion-utils@11.18.1:
-    resolution: {integrity: sha512-49Kt+HKjtbJKLtgO/LKj9Ld+6vw9BjH5d9sc40R/kVyH8GLAXgT42M2NnuPcJNuA3s9ZfZBUcwIgpmZWGEE+hA==}
-
-  motion@11.18.1:
-    resolution: {integrity: sha512-Tqbn7UMVp1V6JH5gbLFJAbP1//gdHNwEciQO22UHgFH1mBScq6gHrq8dlyBGbOlRF8iVSX8k0UV8tkkAVbwpKw==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
 
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -6786,6 +6771,10 @@ packages:
     resolution: {integrity: sha512-+N/Q9kV1+F+UeWYoSiULYo4xYSDQlTgb+ayMobAXPwMnLvop7oxKMo9OzIrX5x3eS4L4f2UHhc9axXwY8DpChg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+
+  swiper@11.2.2:
+    resolution: {integrity: sha512-FmAN6zACpVUbd/1prO9xQ9gKo9cc6RE2UKU/z4oXtS8fNyX4sdOW/HHT/e444WucLJs0jeMId6WjdWM2Lrs8zA==}
+    engines: {node: '>= 4.7.0'}
 
   symbol-tree@3.2.4:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
@@ -10295,6 +10284,10 @@ snapshots:
 
   '@types/stack-utils@2.0.3': {}
 
+  '@types/swiper@6.0.0':
+    dependencies:
+      swiper: 11.2.2
+
   '@types/testing-library__jest-dom@5.14.9':
     dependencies:
       '@types/jest': 27.5.2
@@ -10562,6 +10555,12 @@ snapshots:
       fast-uri: 3.0.3
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
+
+  animated-tailwindcss@4.0.0(postcss@8.4.47)(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5))):
+    dependencies:
+      tailwindcss: 3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5))
+    optionalDependencies:
+      postcss: 8.4.47
 
   anser@2.3.0: {}
 
@@ -12283,15 +12282,6 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@11.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      motion-dom: 11.18.1
-      motion-utils: 11.18.1
-      tslib: 2.8.0
-    optionalDependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
   fresh@0.5.2: {}
 
   fs-extra@10.1.0:
@@ -13955,20 +13945,6 @@ snapshots:
       webpack: 5.95.0
 
   monaco-editor@0.52.2: {}
-
-  motion-dom@11.18.1:
-    dependencies:
-      motion-utils: 11.18.1
-
-  motion-utils@11.18.1: {}
-
-  motion@11.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      framer-motion: 11.18.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      tslib: 2.8.0
-    optionalDependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   ms@2.0.0: {}
 
@@ -15936,6 +15912,8 @@ snapshots:
       csso: 4.2.0
       picocolors: 1.1.1
       stable: 0.1.8
+
+  swiper@11.2.2: {}
 
   symbol-tree@3.2.4: {}
 

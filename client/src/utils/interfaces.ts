@@ -72,6 +72,24 @@ export interface CourseLayoutProps {
   name?: string;
   instructor?: string;
 }
+export interface ExternalCourseState {
+  coursera?: Array<{
+    id: string;
+    name: string;
+    description: string;
+    photoUrl: string;
+    language: string;
+    domainTypes: Array<{
+      domainId: string;
+      subdomainId: string;
+    }>;
+    workload: string;
+    previewLink: string;
+  }>;
+  loading: boolean;
+  error: string | null;
+  fetchCourseraCourses: (keyword: string) => Promise<void>;
+}
 export interface CourseState {
   courses: CourseItem[];
   detail: CourseItem;
@@ -103,6 +121,7 @@ export interface QuestionState {
 }
 export interface UserState {
   user?: User;
+  getKeyword?: (user: User) => string;
   setUser: (user: User) => void;
 }
 export interface LessonItem {

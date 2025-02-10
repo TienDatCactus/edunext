@@ -1,4 +1,6 @@
+const { default: axios } = require("axios");
 const query = require("../db/queries");
+const { response } = require("express");
 
 const viewCourseDetail = async (req, res) => {
   const { courseCode } = req.params;
@@ -111,6 +113,29 @@ const addSubmissionComment = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
+const getCourseraCourses = async (req, res) => {
+  const { keyword } = req.params;
+  try {
+    const resp = await axios.get(
+      `${process.env.COURSERA_API_URL}?q=search&query=${keyword}&fields=id,name,description,photoUrl,instructorIds,partnerIds,language,domainTypes,workload,previewLink`
+    );
+    const courses = resp.data.elements.map((course) => ({
+      id: course.id,
+      name: course.name,
+      description: course.description || "No description available.",
+      photoUrl: course.photoUrl || "https://via.placeholder.com/300", // Placeholder if no image
+      language: course.language || "Unknown",
+      domainTypes: course.domainTypes || [],
+      workload: course.workload || "Not specified",
+      previewLink:
+        course.previewLink || `https://www.coursera.org/learn/${course.slug}`,
+    }));
+    res.json({ courses: courses, isOk: true });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -118,4 +143,5 @@ module.exports = {
   addQuestionSubmission,
   viewQuestionSubmissions,
   addSubmissionComment,
+  getCourseraCourses,
 };

@@ -1,11 +1,11 @@
 import {
+  Circle,
   DotsSixVertical,
   DotsThreeOutline,
   Plus,
   Question,
-  Trash,
-  Circle,
   Timer,
+  Trash,
 } from "@phosphor-icons/react";
 import {
   Button,
@@ -22,9 +22,15 @@ import { useState } from "react";
 const { Option } = Select;
 const { TextArea } = Input;
 
+
+
 function AddForm({ questionIndex }: { questionIndex: number }) {
+  const [content, setContent] = useState<string>("");
+  const [type, setType] = useState("");
+
+
   const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
+   setType(type);
   };
 
   const onChange = (checked: boolean) => {
@@ -43,7 +49,7 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
     string | string[] | null
   >(answers[1]);
 
-  const [isMultipleAnswers, setIsMultipleAnswers] = useState(false); // state to manage multiple answers
+  const [isMultipleAnswers, setIsMultipleAnswers] = useState(false);
 
   const addAnswer = (): void => {
     setAnswers([...answers, `New Answer ${answers.length + 1}`]);
@@ -70,16 +76,54 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
     setAnswers(updatedAnswers);
   };
 
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    const answersObject = answers.reduce<string[]>((acc, answer) => {
+      acc.push(answer);
+      return acc;
+    }, []);
+
+    let correctAnswer;
+
+    if (isMultipleAnswers) {
+      correctAnswer = answers
+        .map((value, index) => (selectedAnswer?.includes(value) ? index : -1))
+        .filter((index) => index !== -1);
+    } else {
+      correctAnswer = answers
+        .map((value, index) => (value === selectedAnswer ? index : -1))
+        .filter((index) => index !== -1);
+    }
+    const question = {
+      content: [
+        {
+          title: content,
+          answers: answersObject,
+          correctAnswer: correctAnswer,
+        },
+      ],
+      status: false,
+      lesson: "",
+      type: type
+    };
+
+    console.log(question);
+    
+  
+
+  };
+
   return (
     <div className="min-h-[550px] w-90%] border-[2px] rounded-[5px] p-[20px]">
       <div className="flex justify-between items-center">
         <Select
-          defaultValue="Multiple choice"
+          defaultValue="quiz"
           onChange={handleChange}
           className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6]"
           options={[
-            { value: "1", label: "Multiple choice" },
-            { value: "2", label: "Essay questions" },
+            { value: "quiz", label: "Multiple choice" },
+            { value: "response", label: "Essay questions" },
           ]}
         />
 
@@ -98,7 +142,7 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
 
       <Divider style={{ borderWidth: 1 }} />
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <div className="flex items-center mb-[20px]">
             <Question size={20} className="mr-[10px]" />
@@ -109,6 +153,8 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
 
           <TextArea
             maxLength={100}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
             style={{
               height: 180,
               width: "70%",
@@ -255,6 +301,7 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
             </div>
           </div>
         </div>
+        <button>ADD</button>
       </form>
     </div>
   );

@@ -378,6 +378,25 @@ const getUserById = async (id) => {
   }
 };
 
+// Question query
+
+const addQuestion = async (content, status, lesson, type) => {
+  try {
+    const question = new Question({
+      content: content,
+      status: false,
+      lesson: lesson,
+      type: type,
+    });
+
+    await question.save();
+
+    return {question, isOk: true};
+  } catch (error) {
+    return {error, isOk: false};
+  }
+};
+
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -390,4 +409,5 @@ module.exports = {
   postSubmissionComment,
   getUserById,
   getCampuses,
+  addQuestion
 };

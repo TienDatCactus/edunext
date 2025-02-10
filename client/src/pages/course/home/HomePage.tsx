@@ -15,7 +15,11 @@ import CourseCard from "../../../ui/_elements/Page/Home/CourseCard";
 import CourseProgress from "../../../ui/_elements/Page/Home/CourseProgress";
 import TimeTable from "../../../ui/_elements/Page/Home/TimeTable";
 import MainLayout from "../../../ui/layouts/MainLayout";
-import { useCourseStore } from "../../../utils/zustand/Store";
+import {
+  useCourseStore,
+  useExternalCourseStore,
+  useUserStore,
+} from "../../../utils/zustand/Store";
 const currentYear = new Date().getFullYear().toString();
 const items: MenuProps["items"] = [
   {
@@ -46,13 +50,13 @@ const items: MenuProps["items"] = [
 
 const HomePage: React.FC = () => {
   const { courses, error, loading, fetchCourses } = useCourseStore();
+
   useEffect(() => {
     if (error) message.error(error);
     return () => {
       fetchCourses();
     };
   }, []);
-
   return (
     <MainLayout>
       <div className="p-6 mx-10 mb-6 bg-white rounded-lg shadow-lg min-h-[300px]">

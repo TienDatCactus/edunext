@@ -1,14 +1,11 @@
-import { GoogleChromeLogo, MetaLogo, PlusCircle } from "@phosphor-icons/react";
+import { GoogleChromeLogo, MetaLogo } from "@phosphor-icons/react";
 import { Button, Divider, Form, Input } from "antd";
 import Password from "antd/es/input/Password";
-import { useEffect, useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { User, UserToken } from "../../../../utils/interfaces";
 import { useUserStore } from "../../../../utils/zustand/Store";
 
 const Account = () => {
   const { user } = useUserStore();
-
   return (
     <DashboardLayout>
       <div className="flex flex-col justify-start py-2 leading-6">

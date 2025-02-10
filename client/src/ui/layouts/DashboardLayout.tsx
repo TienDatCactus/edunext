@@ -23,7 +23,6 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
     user?.role == "2"
       ? ROUTE_KEYS?.dashboard?.teacher
       : ROUTE_KEYS?.dashboard?.student;
-  console.log(DASHBOARD_KEYS);
   const DASHBOARD_LOCATION = location.pathname.split(
     "/"
   )[2] as keyof typeof DASHBOARD_KEYS;
