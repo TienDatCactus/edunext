@@ -226,4 +226,16 @@ export interface DASHBOARD_KEY_PROPS {
     path: string | URL;
     key: string;
   };
+  courses?: {
+    path: string | URL;
+    key: string;
+  };
+  lessons?: {
+    path: string | URL;
+    key: string;
+  };
+  classes?: {
+    path: string | URL;
+    key: string;
+  };
 }

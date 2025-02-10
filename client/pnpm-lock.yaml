@@ -99,9 +99,6 @@ importers:
       '@types/swiper':
         specifier: ^6.0.0
         version: 6.0.0
-      animated-tailwindcss:
-        specifier: ^4.0.0
-        version: 4.0.0(postcss@8.4.47)(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5)))
       tailwind-scrollbar:
         specifier: ^3.1.0
         version: 3.1.0(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5)))
@@ -2502,15 +2499,6 @@ packages:
 
   ajv@8.17.1:
     resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
-
-  animated-tailwindcss@4.0.0:
-    resolution: {integrity: sha512-sJquGVOQkdRuEJiDKX/bjjuXgGTpXBiNKiYD3ef+hoNdpWnjDrOVInOHB9QJC/Q7Ir5Ae+KEAg/ZW/ZBS6KcSw==}
-    peerDependencies:
-      postcss: ^8
-      tailwindcss: ^3
-    peerDependenciesMeta:
-      postcss:
-        optional: true
 
   anser@2.3.0:
     resolution: {integrity: sha512-pGGR7Nq1K/i9KGs29PvHDXA8AsfZ3OiYRMDClT3FIC085Kbns9CJ7ogq9MEiGnrjd9THOGoh7B+kWzePHzZyJQ==}
@@ -10555,12 +10543,6 @@ snapshots:
       fast-uri: 3.0.3
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
-
-  animated-tailwindcss@4.0.0(postcss@8.4.47)(tailwindcss@3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5))):
-    dependencies:
-      tailwindcss: 3.4.14(ts-node@10.9.2(@types/node@16.18.117)(typescript@4.9.5))
-    optionalDependencies:
-      postcss: 8.4.47
 
   anser@2.3.0: {}
 

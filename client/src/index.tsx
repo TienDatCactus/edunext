@@ -6,10 +6,12 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import LoadingScreen from "./ui/_elements/Loading/LoadingScreen";
 import router from "./utils/routes";
-import dayjs from "dayjs";
+import dayjs, { extend } from "dayjs";
 import "dayjs/locale/vi";
 import viVN from "antd/es/locale/vi_VN";
+import relativeTime from "dayjs/plugin/relativeTime"; // ES 2015
 import "swiper/css";
+dayjs.extend(relativeTime);
 dayjs.locale("vi");
 
 const root = ReactDOM.createRoot(

@@ -1,8 +1,11 @@
 import {
   AppWindow,
+  Archive,
   ArrowsInLineVertical,
   CalendarDots,
   CaretLeft,
+  Chalkboard,
+  Student,
   UserGear,
 } from "@phosphor-icons/react";
 import type { MenuProps } from "antd";
@@ -125,6 +128,58 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         },
       ],
     },
+    {
+      key: "grp3",
+      label: <p>Quản trị thành phần</p>,
+      type: "group",
+      children: [
+        {
+          key: "17",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.courses)
+              window.location.replace(DASHBOARD_KEYS?.courses?.path);
+          },
+          label: <p className="text-[14px] font-medium">Môn học</p>,
+          icon: (
+            <Chalkboard
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+        {
+          key: "18",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.lessons)
+              window.location.replace(DASHBOARD_KEYS?.lessons?.path);
+          },
+          label: <p className="text-[14px] font-medium">Bài học</p>,
+          icon: (
+            <Archive
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+        {
+          key: "19",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.classes)
+              window.location.replace(DASHBOARD_KEYS?.classes?.path);
+          },
+          label: <p className="text-[14px] font-medium">Lớp học</p>,
+          icon: (
+            <Student
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+      ],
+    },
   ];
   return (
     <div className="grid grid-cols-12 h-svh">
@@ -174,7 +229,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       </div>
       <div className="col-span-10 p-2 overflow-y-scroll max-h-svh">
         {/* {children} */}
-        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-4 py-2">
+        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-4 py-2 min-h-svh">
           {children}
         </div>
       </div>
