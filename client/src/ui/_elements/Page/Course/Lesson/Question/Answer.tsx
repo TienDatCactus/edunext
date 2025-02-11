@@ -46,6 +46,7 @@ const Answer: React.FC<SubmissionItem> = ({
       <div className="grid items-start grid-cols-12 gap-2">
         <div className="flex justify-center">
           <img
+            loading="lazy"
             src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${user?._id}`}
             alt="avatar"
             className="w-10 col-span-1 mt-2 rounded-full"
@@ -93,6 +94,7 @@ const Answer: React.FC<SubmissionItem> = ({
                 <li key={index} className="grid items-start grid-cols-12 gap-2">
                   <div className="flex justify-center">
                     <img
+                      loading="lazy"
                       src={`https://api.dicebear.com/9.x/avataaars-neutral/svg?seed=${comment?.user?._id}`}
                       alt="avatar"
                       className="w-10 col-span-1 mt-2 rounded-full"

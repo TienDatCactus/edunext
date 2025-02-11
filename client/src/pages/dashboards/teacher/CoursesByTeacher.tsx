@@ -7,6 +7,8 @@ import {
   Divider,
   Dropdown,
   MenuProps,
+  Radio,
+  Segmented,
   Switch,
   Tag,
 } from "antd";
@@ -20,6 +22,7 @@ import {
   Trash,
 } from "@phosphor-icons/react";
 import dayjs from "dayjs";
+import style from "antd/es/affix/style";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -78,17 +81,10 @@ const CoursesByTeacher: React.FC = () => {
       </div>
       <Divider className="border-[#b3b3b3] my-4" />
       <div className="flex items-center justify-between mb-4">
-        <ul className="flex items-center gap-2 ">
-          {["Tất cả", "Đang hoạt động", "Tạm ngừng"]?.map((item, index) => (
-            <li key={index}>
-              <Button
-                className={`${item == "Tất cả" ? "mr-4" : ""} rounded-3xl`}
-              >
-                {item}
-              </Button>
-            </li>
-          ))}
-        </ul>
+        <Segmented
+          className="shadow-md"
+          options={["Tất cả", "Đang hoạt động", "Tạm ngừng"]}
+        />
         <div className="flex items-center gap-2">
           <Button icon={<Trash size={22} />} type="primary" danger>
             Xóa
@@ -97,38 +93,127 @@ const CoursesByTeacher: React.FC = () => {
         </div>
       </div>
       <div>
-        <ul className="grid grid-cols-12">
-          <li className="p-2 bg-white border rounded-lg md:col-span-4">
-            <Checkbox className="w-full [&_span:not(.ant-checkbox)]:w-[95%] [&_.ant-checkbox]:w-[5%]">
-              <div className="flex items-center justify-between w-full">
-                <div className="p-1 border rounded-full">
-                  <Archive size={20} />
+        <ul>
+          <Radio.Group
+            className="grid grid-cols-12 gap-2"
+            defaultValue="a"
+            buttonStyle="solid"
+          >
+            <li className="p-2 bg-white border rounded-lg shadow-md md:col-span-4">
+              <Radio
+                value="a"
+                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="p-1 border rounded-full">
+                    <Archive size={20} />
+                  </div>
+                  <div className="flex items-center gap-1 *:text-[#878787]">
+                    <ClockClockwise size={18} />
+                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1 *:text-[#878787]">
-                  <ClockClockwise size={18} />
-                  <p>{dayjs().to(dayjs("1990-01-01"))}</p>
+                <div>
+                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
+                    Lorem ipsum dolor
+                  </h1>
+                  <p className="truncate line-clamp-2 text-wrap">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Accusantium ad ratione temporibus aspernatur doloremque
+                    libero voluptatibus molestias delectus eaque dolorem nam
+                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
+                    deleniti.
+                  </p>
                 </div>
+              </Radio>
+              <Divider className="my-2 border-[#c9c9c9]" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
+                    CSI101
+                  </Tag>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
+                </div>
+                <Switch defaultChecked />
               </div>
-              <div>
-                <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Repellat maxime, veritatis dolore sit quia ullam harum
-                  necessitatibus fuga pariatur tempore aperiam libero voluptatum
-                  quibusdam recusandae adipisci in doloremque dolor ex.
-                </h1>
+            </li>
+            <li className="p-2 bg-white border rounded-lg md:col-span-4">
+              <Radio
+                value="b"
+                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="p-1 border rounded-full">
+                    <Archive size={20} />
+                  </div>
+                  <div className="flex items-center gap-1 *:text-[#878787]">
+                    <ClockClockwise size={18} />
+                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
+                  </div>
+                </div>
+                <div>
+                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
+                    Lorem ipsum dolor
+                  </h1>
+                  <p className="truncate line-clamp-2 text-wrap">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Accusantium ad ratione temporibus aspernatur doloremque
+                    libero voluptatibus molestias delectus eaque dolorem nam
+                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
+                    deleniti.
+                  </p>
+                </div>
+              </Radio>
+              <Divider className="my-2 border-[#c9c9c9]" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
+                    CSI101
+                  </Tag>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
+                </div>
+                <Switch defaultChecked />
               </div>
-            </Checkbox>
-            <Divider className="my-2 border-[#c9c9c9]" />
-            <div className="flex items-center justify-between">
-              <div>
-                <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
-                  CSI101
-                </Tag>
-                <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
+            </li>
+            <li className="p-2 bg-white border rounded-lg md:col-span-4">
+              <Radio
+                value="c"
+                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="p-1 border rounded-full">
+                    <Archive size={20} />
+                  </div>
+                  <div className="flex items-center gap-1 *:text-[#878787]">
+                    <ClockClockwise size={18} />
+                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
+                  </div>
+                </div>
+                <div>
+                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
+                    Lorem ipsum dolor
+                  </h1>
+                  <p className="truncate line-clamp-2 text-wrap">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Accusantium ad ratione temporibus aspernatur doloremque
+                    libero voluptatibus molestias delectus eaque dolorem nam
+                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
+                    deleniti.
+                  </p>
+                </div>
+              </Radio>
+              <Divider className="my-2 border-[#c9c9c9]" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
+                    CSI101
+                  </Tag>
+                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
+                </div>
+                <Switch defaultChecked />
               </div>
-              <Switch defaultChecked />
-            </div>
-          </li>
+            </li>
+          </Radio.Group>
         </ul>
       </div>
     </DashboardLayout>

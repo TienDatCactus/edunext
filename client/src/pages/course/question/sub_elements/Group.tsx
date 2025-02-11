@@ -25,6 +25,7 @@ const Group: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <img
+                  loading="lazy"
                   src="https://ui-avatars.com/api/?background=random"
                   alt="ava"
                   className="w-10 h-10 rounded-full"
@@ -56,6 +57,7 @@ const Group: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <img
+                  loading="lazy"
                   src="https://ui-avatars.com/api/?background=random"
                   alt="ava"
                   className="w-10 h-10 rounded-full"
@@ -87,6 +89,7 @@ const Group: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <img
+                  loading="lazy"
                   src="https://ui-avatars.com/api/?background=random"
                   alt="ava"
                   className="w-10 h-10 rounded-full"

@@ -134,7 +134,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       type: "group",
       children: [
         {
-          key: "17",
+          key: "16",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.courses)
@@ -149,7 +149,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           ),
         },
         {
-          key: "18",
+          key: "17",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.lessons)
@@ -164,7 +164,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           ),
         },
         {
-          key: "19",
+          key: "18  ",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.classes)
@@ -213,6 +213,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           <div className="flex items-center shadow-lg rounded-md bg-[#ffffff] mx-1 p-2 hover:bg-[#f0f0f0] border cursor-pointer">
             <div className="flex items-center gap-2">
               <img
+                loading="lazy"
                 src="https://api.dicebear.com/9.x/notionists/svg?seed=1"
                 alt="avatar"
                 className="w-12 h-12 bg-white border rounded-full"

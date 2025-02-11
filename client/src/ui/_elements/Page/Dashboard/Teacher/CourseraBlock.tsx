@@ -37,6 +37,7 @@ const CourseraBlock: React.FC = () => {
           <List.Item className="grid grid-cols-12 gap-2" key={index}>
             <div className="col-span-4 ">
               <img
+                loading="lazy"
                 src={item?.photoUrl}
                 className="rounded-md"
                 alt={item?.name}

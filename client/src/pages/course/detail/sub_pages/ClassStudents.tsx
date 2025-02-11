@@ -42,6 +42,7 @@ const ClassStudents = () => {
           <li className="grid grid-cols-12 min-w-[300px] border border-[#ccc] rounded-xl p-4 hover:border-blue-500  hover:bg-[#f9f9f9] ease-in-out cursor-pointer shadow-md">
             <div className="flex flex-col col-span-6 gap-3">
               <img
+                loading="lazy"
                 src="https://avatar.iran.liara.run/public"
                 alt="avatar"
                 className="w-10 h-10 rounded-full"
