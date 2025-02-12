@@ -1,5 +1,5 @@
 function LessonDetail() {
-    return (  <div></div>);
+    return (  <div>Minh DDuwcs</div>);
 }
 
 export default LessonDetail;
