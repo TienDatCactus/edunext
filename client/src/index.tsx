@@ -11,6 +11,7 @@ import "dayjs/locale/vi";
 import viVN from "antd/es/locale/vi_VN";
 import relativeTime from "dayjs/plugin/relativeTime"; // ES 2015
 import "swiper/css";
+import ErrorBoundary from "./utils/ErrorBoundary";
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 
@@ -38,7 +39,9 @@ root.render(
       }}
     >
       <Suspense fallback={<LoadingScreen />}>
-        <RouterProvider router={router} />
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
         {/* <Board knightPosition={knightPosition} /> */}
       </Suspense>
     </ConfigProvider>

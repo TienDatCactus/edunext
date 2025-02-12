@@ -8,13 +8,14 @@ import { getCurrentSeason } from "./customHooks";
 import CoursesByTeacher from "../pages/dashboards/teacher/CoursesByTeacher";
 import LessonsByTeacher from "../pages/dashboards/teacher/LessonsByTeacher";
 import ClassesByTeacher from "../pages/dashboards/teacher/ClassesByTeacher";
+import ErrorPage from "../ui/errors/ErrorPage";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
 const LandingPage = lazy(() => import("../pages/LandingPage"));
 const HomePage = lazy(() => import("../pages/course/home/HomePage"));
 const Question = lazy(() => import("../pages/course/question/Question"));
-const NotFound = lazy(() => import("../ui/errors/ErrorBoundary"));
+const NotFound = lazy(() => import("../ui/errors/ErrorElement"));
 
 const year = new Date().getFullYear().toString();
 const month = getCurrentSeason();
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     path: "/",
     errorElement: <NotFound />,
     element: <LandingPage />,
+  },
+  {
+    path: "/error",
+    element: <ErrorPage />,
   },
   {
     path: "/auth",

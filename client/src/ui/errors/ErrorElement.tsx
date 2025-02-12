@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 
-const ErrorBoundary = () => {
+const ErrorElement = () => {
   const error = useRouteError();
   console.log(error);
   // Check if the error is a route error response
@@ -61,4 +61,4 @@ const ErrorBoundary = () => {
   );
 };
 
-export default ErrorBoundary;
+export default ErrorElement;

@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const getCurrentSeason = () => {
   const month = new Date().getMonth() + 1; // getMonth() returns 0-11
 
@@ -14,5 +16,28 @@ const getCurrentSeason = () => {
     return "fall";
   }
 };
+const useErrorBoundary = () => {
+  const [error, setError] = useState<ErrorEvent>();
 
-export { getCurrentSeason };
+  useEffect(() => {
+    const errorHandler = (event: ErrorEvent | PromiseRejectionEvent) => {
+      setError(
+        event instanceof ErrorEvent
+          ? event.error
+          : new Error("An unknown error occurred")
+      );
+    };
+
+    window.addEventListener("error", errorHandler);
+    window.addEventListener("unhandledrejection", errorHandler);
+
+    return () => {
+      window.removeEventListener("error", errorHandler);
+      window.removeEventListener("unhandledrejection", errorHandler);
+    };
+  }, []);
+
+  return { error, setError };
+};
+
+export { getCurrentSeason, useErrorBoundary };
