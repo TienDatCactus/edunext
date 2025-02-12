@@ -69,23 +69,34 @@ const router = createBrowserRouter([
       {
         path: "landing",
         element: <Landing />,
+        errorElement: <NotFound />,
       },
       {
         path: "account",
         element: <Account />,
+        errorElement: <NotFound />,
       },
       {
         path: "timetable",
         element: <Timetable />,
+        errorElement: <NotFound />,
       },
       {
         path: "courses",
         element: <CoursesByTeacher />,
+        errorElement: <NotFound />,
       },
       {
         path: "lessons",
-        element: <LessonsByTeacher />,
         children: [
+          {
+            path: "all",
+            element: <LessonsByTeacher />,
+          },
+          {
+            path: "detail",
+            element: <div>dit me may</div>,
+          },
           {
             path: ":id/questions",
             children: [
@@ -96,6 +107,7 @@ const router = createBrowserRouter([
             ],
           },
         ],
+        errorElement: <NotFound />,
       },
       {
         path: "classes",
