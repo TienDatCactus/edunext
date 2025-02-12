@@ -15,12 +15,8 @@ import CourseCard from "../../../ui/_elements/Page/Home/CourseCard";
 import CourseProgress from "../../../ui/_elements/Page/Home/CourseProgress";
 import TimeTable from "../../../ui/_elements/Page/Home/TimeTable";
 import MainLayout from "../../../ui/layouts/MainLayout";
-import {
-  useCourseStore,
-  useExternalCourseStore,
-  useUserStore,
-} from "../../../utils/zustand/Store";
-const currentYear = new Date().getFullYear().toString();
+import { useCourseStore } from "../../../utils/zustand/Store";
+export const currentYear = new Date().getFullYear().toString();
 const items: MenuProps["items"] = [
   {
     key: "1",

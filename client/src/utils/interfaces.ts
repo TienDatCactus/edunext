@@ -144,6 +144,7 @@ export interface Question {
       };
   lessonId?: number;
   status?: boolean;
+  createdAt?: string;
   type?: "quiz" | "code" | "response";
 }
 export interface CourseInfoProps {
@@ -223,6 +224,18 @@ export interface DASHBOARD_KEY_PROPS {
     key: string;
   };
   account?: {
+    path: string | URL;
+    key: string;
+  };
+  courses?: {
+    path: string | URL;
+    key: string;
+  };
+  lessons?: {
+    path: string | URL;
+    key: string;
+  };
+  classes?: {
     path: string | URL;
     key: string;
   };

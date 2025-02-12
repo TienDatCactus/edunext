@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 
-const ErrorBoundary = () => {
+const ErrorElement = () => {
   const error = useRouteError();
   console.log(error);
   // Check if the error is a route error response
@@ -29,6 +29,7 @@ const ErrorBoundary = () => {
           </div>
           <div>
             <img
+              loading="lazy"
               src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGV1NmUwcDE2c3lqNGduM21ndXRpZmRyM2R4Y254bWJ3dmg5NHliayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9dg/vboZVH1oDiLdctj4V3/giphy.gif"
               alt="cat"
               className="h-40 shadow-lg rotate-12"
@@ -60,4 +61,4 @@ const ErrorBoundary = () => {
   );
 };
 
-export default ErrorBoundary;
+export default ErrorElement;

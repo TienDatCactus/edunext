@@ -391,12 +391,28 @@ const addQuestion = async (content, status, lesson, type) => {
 
     await question.save();
 
-    return {question, isOk: true};
+    return { question, isOk: true };
   } catch (error) {
-    return {error, isOk: false};
+    return { error, isOk: false };
   }
 };
 
+const getQuestions = async () => {
+  try {
+    const questions = await Question.find();
+    if (questions.length === 0) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return questions;
+
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -409,5 +425,6 @@ module.exports = {
   postSubmissionComment,
   getUserById,
   getCampuses,
-  addQuestion
+  addQuestion,
+  getQuestions,
 };

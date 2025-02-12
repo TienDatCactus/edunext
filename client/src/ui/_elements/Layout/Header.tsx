@@ -99,6 +99,7 @@ const Header = () => {
             placement="bottomRight"
           >
             <img
+              loading="lazy"
               src={`https://api.dicebear.com/9.x/notionists/svg?seed=${user?.FEID}`}
               alt="dat"
               className="w-10 h-10 bg-white rounded-full shadow-md cursor-pointer active:shadow-none"

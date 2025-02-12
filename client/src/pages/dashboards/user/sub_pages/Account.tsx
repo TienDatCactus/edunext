@@ -19,6 +19,7 @@ const Account = () => {
         <div className="flex items-center gap-4">
           <div>
             <img
+              loading="lazy"
               src="https://api.dicebear.com/9.x/notionists/svg?seed=Felix"
               alt="avatar"
               className="w-16 h-16 border rounded-full"

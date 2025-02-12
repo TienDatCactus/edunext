@@ -2,7 +2,7 @@ import { Button } from "antd";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
 import { Plus } from "@phosphor-icons/react";
 import { useState } from "react";
-import AddForm from "./sub_elements/AddForm";
+import AddForm from "../../../ui/_elements/Forms/Dashboard/Teacher/AddForm";
 
 function AddQuestion() {
   const [questions, setQuestions] = useState([1]);

@@ -20,11 +20,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(passport.initialize());
 passportConfig.initialize();
-
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use("/auth", accessRouter);
 app.use("/", homeRouter);
 app.use("/course", courseRouter);
-app.use("/dashboard",dashboardRouter);
+app.use("/dashboard", dashboardRouter);
 app.use("/question", questionRouter);
 
 const PORT = process.env.PORT;

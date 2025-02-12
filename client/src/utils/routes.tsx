@@ -5,13 +5,18 @@ import Landing from "../pages/dashboards/teacher/Landing";
 import Account from "../pages/dashboards/user/sub_pages/Account";
 import Timetable from "../pages/dashboards/user/sub_pages/Timetable";
 import { getCurrentSeason } from "./customHooks";
+import CoursesByTeacher from "../pages/dashboards/teacher/CoursesByTeacher";
+import LessonsByTeacher from "../pages/dashboards/teacher/LessonsByTeacher";
+import ClassesByTeacher from "../pages/dashboards/teacher/ClassesByTeacher";
+import ErrorPage from "../ui/errors/ErrorPage";
+import LessonDetail from "../pages/dashboards/teacher/LessonDetail";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
 const LandingPage = lazy(() => import("../pages/LandingPage"));
 const HomePage = lazy(() => import("../pages/course/home/HomePage"));
 const Question = lazy(() => import("../pages/course/question/Question"));
-const NotFound = lazy(() => import("../ui/errors/ErrorBoundary"));
+const NotFound = lazy(() => import("../ui/errors/ErrorElement"));
 
 const year = new Date().getFullYear().toString();
 const month = getCurrentSeason();
@@ -20,6 +25,10 @@ const router = createBrowserRouter([
     path: "/",
     errorElement: <NotFound />,
     element: <LandingPage />,
+  },
+  {
+    path: "/error",
+    element: <ErrorPage />,
   },
   {
     path: "/auth",
@@ -70,15 +79,35 @@ const router = createBrowserRouter([
         path: "timetable",
         element: <Timetable />,
       },
-
       {
-        path: "question",
+        path: "courses",
+        element: <CoursesByTeacher />,
+      },
+      {
+        path: "lessons",
         children: [
           {
-            path: "add",
-            element: <AddQuestion />,
+            path: "all",
+            element: <LessonsByTeacher />,
+          },
+          {
+            path: "detail",
+            element: <LessonDetail />
+          },
+          {
+            path: ":id/questions",
+            children: [
+              {
+                path: "add",
+                element: <AddQuestion />,
+              },
+            ],
           },
         ],
+      },
+      {
+        path: "classes",
+        element: <ClassesByTeacher />,
       },
     ],
     errorElement: <NotFound />,
@@ -111,9 +140,17 @@ const ROUTE_KEYS = {
         path: "/dashboard/account",
         key: "15",
       },
-      question: {
-        path: "/dashboard/question/add",
-        key: "15",
+      courses: {
+        path: "/dashboard/courses",
+        key: "16",
+      },
+      lessons: {
+        path: "/dashboard/lessons",
+        key: "17",
+      },
+      classes: {
+        path: "/dashboard/classes",
+        key: "18",
       },
     },
   },

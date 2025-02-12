@@ -7,13 +7,15 @@ import LoginForm from "../../ui/_elements/Forms/Access/LoginForm";
 const LoginPage: React.FC = () => {
   return (
     <div
-      className="flex items-center justify-center object-cover bg-center bg-no-repeat bg-cover h-lvh play-fair "
+      className="flex items-center justify-center play-fair h-svh"
       style={{
-        background: `url(${bg}) `,
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      <div className="py-4 bg-white rounded-lg">
-        <div className="flex flex-col px-10 justify-evenly">
+      <div className="py-4 bg-white shadow-2xl rounded-2xl ">
+        <div className="flex flex-col px-6 justify-evenly">
           <div className="px-8">
             <div>
               <Kanban size={32} weight="fill" className="" />
@@ -25,7 +27,7 @@ const LoginPage: React.FC = () => {
                   Nhập thông tin cần thiết để truy cập tài khoản
                 </p>
               </div>
-              <div className="flex items-center gap-4 *:py-6 *:rounded-2xl  justify-center">
+              <div className="flex items-center gap-4 *:py-5 *:rounded-2xl  justify-center">
                 <Button icon={<GoogleLogo size={22} />} className="play-fair">
                   Đăng nhập với Google
                 </Button>
