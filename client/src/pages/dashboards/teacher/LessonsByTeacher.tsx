@@ -1,9 +1,8 @@
+import { Download, Plus, SlidersHorizontal } from "@phosphor-icons/react";
+import { Avatar, Badge, Button, Divider, Tabs, Tooltip } from "antd";
 import React from "react";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
-import { Avatar, Badge, Button, Divider, Tabs, Tooltip } from "antd";
-import { Download, Plus, SlidersHorizontal, User } from "@phosphor-icons/react";
 import { LessonsList } from "./sub_elements/LessonsList";
-import { count } from "console";
 const LessonsByTeacher: React.FC = () => {
   const items = [
     {

@@ -35,12 +35,7 @@ app.use("/dashboard", dashboardRouter);
 app.use("/question", questionRouter);
 
 const PORT = process.env.PORT;
-app.use("/articles", (req, res) => {
-  res.send({
-    title: "Hello World",
-    describe: "This is a description",
-  });
-});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

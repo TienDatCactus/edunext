@@ -9,7 +9,7 @@ import CoursesByTeacher from "../pages/dashboards/teacher/CoursesByTeacher";
 import LessonsByTeacher from "../pages/dashboards/teacher/LessonsByTeacher";
 import ClassesByTeacher from "../pages/dashboards/teacher/ClassesByTeacher";
 import ErrorPage from "../ui/errors/ErrorPage";
-import LessonDetail from "../pages/dashboards/teacher/LessonDetail";
+import LessonDetail from "../pages/dashboards/teacher/sub_pages/LessonDetail";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -96,7 +96,7 @@ const router = createBrowserRouter([
           },
           {
             path: "detail",
-            element: <LessonDetail />
+            element: <LessonDetail />,
           },
           {
             path: ":id/questions",
@@ -150,8 +150,16 @@ const ROUTE_KEYS = {
         key: "16",
       },
       lessons: {
-        path: "/dashboard/lessons",
+        path: "/dashboard/lessons/all",
         key: "17",
+        children: [
+          {
+            addQuestion: {
+              path: "/dashboard/lessons/detail",
+              key: "17.1",
+            },
+          },
+        ],
       },
       classes: {
         path: "/dashboard/classes",

@@ -1,13 +1,15 @@
 import {
   CalendarDots,
-  DotsThreeOutline,
+  DevToLogo,
+  FolderOpen,
   SubtractSquare,
 } from "@phosphor-icons/react";
-import { Avatar, Button, Divider, Tag, Tooltip } from "antd";
+import { Avatar, Button, Divider, Tag } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
-import { text } from "stream/consumers";
+import { useNavigate } from "react-router-dom";
 export const LessonsList: React.FC<{ state: string }> = (state) => {
+  const navigate = useNavigate();
   const [randomColor, setRandomColor] = React.useState({
     bg: "#ffffff",
     text: "#000",
@@ -38,10 +40,13 @@ export const LessonsList: React.FC<{ state: string }> = (state) => {
           >
             tag mon hoc
           </Tag>
-          <Button className="border-none">
-            <DotsThreeOutline
-              className="text-[#878787]"
-              size={16}
+          <Button
+            className="border-none"
+            onClick={() => navigate("/dashboard/lessons/detail", { state: 1 })}
+          >
+            <FolderOpen
+              className="text-[#878787] hover:animate-pulse"
+              size={20}
               weight="fill"
             />
           </Button>
