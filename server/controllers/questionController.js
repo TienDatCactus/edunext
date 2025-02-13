@@ -1,4 +1,5 @@
 
+const { error } = require("console");
 const query = require("../db/queries");
 
  const createQuestion = async (req, res) => {
@@ -22,5 +23,23 @@ const query = require("../db/queries");
   }
 };
 
+const getAllQuestions = async (req, res) => {
+  try {
 
-module.exports = {createQuestion}
+    const questions =  await query.getQuestions();
+    if(questions?.isOk === false) return res.status(404).json({error: questions?.error, isOk: questions?.isOk});
+    return res.status(200).json({
+      data: questions,
+      isOk: true
+    })
+    
+  } catch (error) {
+    return res.status(500).json({
+      error,
+      isOk: false
+    })
+  }
+}
+
+
+module.exports = {createQuestion, getAllQuestions}

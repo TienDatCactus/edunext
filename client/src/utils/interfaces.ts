@@ -144,6 +144,7 @@ export interface Question {
       };
   lessonId?: number;
   status?: boolean;
+  createdAt?: string;
   type?: "quiz" | "code" | "response";
 }
 export interface CourseInfoProps {

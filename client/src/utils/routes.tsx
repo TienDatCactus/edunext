@@ -9,6 +9,7 @@ import CoursesByTeacher from "../pages/dashboards/teacher/CoursesByTeacher";
 import LessonsByTeacher from "../pages/dashboards/teacher/LessonsByTeacher";
 import ClassesByTeacher from "../pages/dashboards/teacher/ClassesByTeacher";
 import ErrorPage from "../ui/errors/ErrorPage";
+import LessonDetail from "../pages/dashboards/teacher/LessonDetail";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -95,7 +96,7 @@ const router = createBrowserRouter([
           },
           {
             path: "detail",
-            element: <div>dit me may</div>,
+            element: <LessonDetail />
           },
           {
             path: ":id/questions",
