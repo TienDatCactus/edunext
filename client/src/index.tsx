@@ -12,6 +12,7 @@ import viVN from "antd/es/locale/vi_VN";
 import relativeTime from "dayjs/plugin/relativeTime"; // ES 2015
 import "swiper/css";
 import ErrorBoundary from "./utils/ErrorBoundary";
+import "@mdxeditor/editor/style.css";
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 

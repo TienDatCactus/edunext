@@ -19,7 +19,6 @@ import {
   thematicBreakPlugin,
   toolbarPlugin,
 } from "@mdxeditor/editor";
-import "@mdxeditor/editor/style.css";
 import { ArrowsDownUp, CaretCircleDown } from "@phosphor-icons/react";
 import {
   Button,

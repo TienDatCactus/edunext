@@ -1,7 +1,32 @@
 import {
+  MDXEditor,
+  headingsPlugin,
+  listsPlugin,
+  thematicBreakPlugin,
+  quotePlugin,
+  linkPlugin,
+  linkDialogPlugin,
+  diffSourcePlugin,
+  imagePlugin,
+  tablePlugin,
+  toolbarPlugin,
+  BlockTypeSelect,
+  CodeToggle,
+  InsertImage,
+  InsertTable,
+  InsertThematicBreak,
+  ListsToggle,
+  BoldItalicUnderlineToggles,
+  MDXEditorMethods,
+} from "@mdxeditor/editor";
+import {
+  CaretDown,
+  CheckSquareOffset,
   Circle,
+  CodeBlock,
   DotsSixVertical,
   DotsThreeOutline,
+  Paragraph,
   Plus,
   Question,
   Timer,
@@ -17,20 +42,24 @@ import {
   Select,
   Switch,
 } from "antd";
+import React from "react";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-
-
-function AddForm({ questionIndex }: { questionIndex: number }) {
+function QuestionAddForm({ question }: { question: any }) {
+  const location = useLocation();
+  const lesson = location?.state?.lesson;
+  console.log(lesson);
+  const ref = React.useRef<MDXEditorMethods>(null);
+  const [md, setMd] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [type, setType] = useState("");
 
-
   const handleChange = (value: string) => {
-   setType(type);
+    setType(type);
   };
 
   const onChange = (checked: boolean) => {
@@ -44,7 +73,6 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
     "User Involvement",
   ]);
 
-  // Updated the state type to allow string[], string or null
   const [selectedAnswer, setSelectedAnswer] = useState<
     string | string[] | null
   >(answers[1]);
@@ -105,75 +133,119 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
       ],
       status: false,
       lesson: "",
-      type: type
+      type: type,
     };
 
     console.log(question);
-    
-  
-
   };
 
   return (
-    <div className="min-h-[550px] w-90%] border-[2px] rounded-[5px] p-[20px]">
-      <div className="flex justify-between items-center">
+    <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
+      <div className="flex items-center justify-between">
         <Select
           defaultValue="quiz"
           onChange={handleChange}
-          className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6]"
+          suffixIcon={<CaretDown weight="bold" color="black" />}
+          className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6] [&_.ant-select-selector]:rounded-md w-36"
           options={[
-            { value: "quiz", label: "Multiple choice" },
-            { value: "response", label: "Essay questions" },
+            {
+              value: "quiz",
+              label: (
+                <div className="flex items-center gap-1">
+                  <CheckSquareOffset weight="bold" />
+                  <p className="font-semibold">Trắc nghiệm</p>
+                </div>
+              ),
+            },
+            {
+              value: "response",
+              label: (
+                <div className="flex items-center gap-1">
+                  <Paragraph weight="bold" />
+                  <p className="font-semibold">Tự luận</p>
+                </div>
+              ),
+            },
+            {
+              value: "code",
+              label: (
+                <div className="flex items-center gap-1 *:font-semibold">
+                  <CodeBlock weight="bold" />
+                  <p className="font-semibold">Lập trình</p>
+                </div>
+              ),
+            },
           ]}
         />
 
-        <div className="flex justify-between items-center">
-          <div>
-            <span>
-              <strong>Required</strong>
-            </span>
-            <Switch defaultChecked onChange={onChange} className="mx-[10px]" />
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <h1 className="font-medium text-[1rem]">Required</h1>
+            <Switch
+              size="default"
+              defaultChecked
+              onChange={onChange}
+              className="bg-[#12b989]"
+            />
           </div>
-          <button className="border-[2px] rounded-[5px] p-[5px] ml-[20px]">
-            <DotsThreeOutline size={32} />
-          </button>
+          <Button icon={<DotsThreeOutline weight="fill" size={16} />} />
         </div>
       </div>
-
-      <Divider style={{ borderWidth: 1 }} />
-
+      <Divider className="border-[#ccc] my-4" />
       <form onSubmit={handleSubmit}>
         <div>
-          <div className="flex items-center mb-[20px]">
-            <Question size={20} className="mr-[10px]" />
+          <div className="flex items-center gap-1 mb-4">
+            <Question size={22} weight="fill" />
             <strong>
-              Question {questionIndex} <span className="text-[red]">*</span>
+              Câu hỏi #{question?._id?.substring(0, 4)}{" "}
+              <span className="text-[red]">*</span>
             </strong>
           </div>
-
-          <TextArea
-            maxLength={100}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            style={{
-              height: 180,
-              width: "70%",
-              resize: "none",
-              backgroundColor: "#f6f6f6",
-              marginBottom: 20,
-            }}
-          />
-
-          <div className="flex items-center">
+          <div className="grid grid-cols-12">
+            <MDXEditor
+              markdown={md}
+              className="col-span-8 p-2 rounded-md shadow-md"
+              contentEditableClassName="min-h-[180px]"
+              plugins={[
+                headingsPlugin(),
+                listsPlugin(),
+                thematicBreakPlugin(),
+                quotePlugin(),
+                linkPlugin(),
+                linkDialogPlugin(),
+                thematicBreakPlugin(),
+                diffSourcePlugin(),
+                imagePlugin(),
+                tablePlugin(),
+                toolbarPlugin({
+                  toolbarClassName: "my-classname",
+                  toolbarContents: () => (
+                    <>
+                      <BlockTypeSelect />
+                      <CodeToggle />
+                      <InsertImage />
+                      <InsertTable />
+                      <InsertThematicBreak />
+                      <ListsToggle />
+                      <BoldItalicUnderlineToggles />
+                    </>
+                  ),
+                }),
+              ]}
+              ref={ref}
+            />
+            <div className="col-span-4"></div>
+          </div>
+          <div className="flex items-center my-4">
             <div>
-              Choices<span className="text-[red]">*</span>
+              Lựa chọn<span className="text-[red]">*</span>
             </div>
             <Divider
               type="vertical"
               style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
             />
             <div>
-              <span>Multiple answers</span>
+              <span>Nhiều câu trả lời</span>
               <Switch
                 defaultChecked={isMultipleAnswers}
                 onChange={(checked) => setIsMultipleAnswers(checked)}
@@ -193,18 +265,18 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
                 {answers.map((answer, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between  bg-gray-50 p-2 rounded-md shadow-sm"
+                    className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
                   >
-                    <Checkbox value={answer} className="flex-1">
+                    <Checkbox value={answer} className="w-full">
                       <Input
+                        className="w-full border-0 bg-gray-50 dm-sans"
                         value={answer}
                         onChange={(e) => updateAnswer(index, e.target.value)}
-                        className="w-full"
                       />
                     </Checkbox>
                     <div className="flex items-center space-x-2">
                       <DotsSixVertical
-                        className="cursor-move text-gray-400"
+                        className="text-gray-400 cursor-move"
                         size={20}
                       />
                       <Trash
@@ -225,18 +297,18 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
                 {answers.map((answer, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-gray-50 p-2 rounded-md shadow-sm"
+                    className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
                   >
-                    <Radio value={answer} className="flex-1">
+                    <Radio value={answer} className="">
                       <Input
                         value={answer}
+                        className="w-full border-0 bg-gray-50 dm-sans"
                         onChange={(e) => updateAnswer(index, e.target.value)}
-                        className="w-full"
                       />
                     </Radio>
                     <div className="flex items-center space-x-2">
                       <DotsSixVertical
-                        className="cursor-move text-gray-400"
+                        className="text-gray-400 cursor-move"
                         size={20}
                       />
                       <Trash
@@ -254,15 +326,15 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
               type="dashed"
               onClick={addAnswer}
               icon={<Plus size={16} />}
-              className="w-[200px] mt-4 border-dashed"
+              className="mt-4"
             >
-              Add answers
+              Thêm lựa chọn
             </Button>
           </div>
 
           <Divider style={{ borderWidth: 1 }} />
 
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <div className="flex flex-col mr-[20px]">
               <label className="text-sm font-medium">Randomize Order</label>
               <Select
@@ -276,11 +348,11 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
 
             <div className="flex flex-col mr-[20px]">
               <label className="text-sm font-medium">Estimation time</label>
-              <div className="flex items-center border rounded-lg  gap-2 bg-gray-50">
+              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
                 <InputNumber
                   min={0}
                   defaultValue={2}
-                  className="w-16 border-none bg-transparent"
+                  className="w-16 bg-transparent border-none"
                 />
                 <span className="text-gray-500">Mins</span>
                 <Timer size={20} className="text-gray-400" />
@@ -289,11 +361,11 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
 
             <div className="flex flex-col">
               <label className="text-sm font-medium">Mark as point</label>
-              <div className="flex items-center border rounded-lg  gap-2 bg-gray-50">
+              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
                 <InputNumber
                   min={0}
                   defaultValue={1}
-                  className="w-16 border-none bg-transparent"
+                  className="w-16 bg-transparent border-none"
                 />
                 <span className="text-gray-500">Points</span>
                 <Circle size={20} weight="fill" className="text-yellow-400" />
@@ -307,4 +379,4 @@ function AddForm({ questionIndex }: { questionIndex: number }) {
   );
 }
 
-export default AddForm;
+export default QuestionAddForm;

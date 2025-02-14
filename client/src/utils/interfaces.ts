@@ -1,5 +1,3 @@
-import { error } from "console";
-import { title } from "process";
 export interface CourseSlice {
   error?: string;
   loading?: boolean;
@@ -135,17 +133,17 @@ export interface LessonItem {
 }
 export interface Question {
   _id?: string;
-  content?:
-    | string
-    | {
-        title?: string;
-        answer?: string[];
-        correctAnswer?: number;
-      };
-  lessonId?: number;
+  content?: string | QuestionQuizContent;
+  lesson?: string;
   status?: boolean;
   createdAt?: string;
+  updatedAt?: string;
   type?: "quiz" | "code" | "response";
+}
+export interface QuestionQuizContent {
+  title?: string;
+  answer?: string[];
+  correctAnswer?: number;
 }
 export interface CourseInfoProps {
   meetings?: {
@@ -190,6 +188,7 @@ export interface User {
   role: string;
   timetable: TimelineEvent[];
 }
+
 export interface SubmissionItem {
   _id: string;
   content: string;

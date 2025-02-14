@@ -1,15 +1,6 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import AddQuestion from "../pages/dashboards/teacher/AddQuestion";
-import Landing from "../pages/dashboards/teacher/Landing";
-import Account from "../pages/dashboards/user/sub_pages/Account";
-import Timetable from "../pages/dashboards/user/sub_pages/Timetable";
 import { getCurrentSeason } from "./customHooks";
-import CoursesByTeacher from "../pages/dashboards/teacher/CoursesByTeacher";
-import LessonsByTeacher from "../pages/dashboards/teacher/LessonsByTeacher";
-import ClassesByTeacher from "../pages/dashboards/teacher/ClassesByTeacher";
-import ErrorPage from "../ui/errors/ErrorPage";
-import LessonDetail from "../pages/dashboards/teacher/sub_pages/LessonDetail";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -17,6 +8,29 @@ const LandingPage = lazy(() => import("../pages/LandingPage"));
 const HomePage = lazy(() => import("../pages/course/home/HomePage"));
 const Question = lazy(() => import("../pages/course/question/Question"));
 const NotFound = lazy(() => import("../ui/errors/ErrorElement"));
+const Landing = lazy(() => import("../pages/dashboards/teacher/Landing"));
+const ErrorPage = lazy(() => import("../ui/errors/ErrorPage"));
+const Timetable = lazy(
+  () => import("../pages/dashboards/user/sub_pages/Timetable")
+);
+const Account = lazy(
+  () => import("../pages/dashboards/user/sub_pages/Account")
+);
+const QuestionModify = lazy(
+  () => import("../pages/dashboards/teacher/sub_pages/QuestionModify")
+);
+const LessonDetail = lazy(
+  () => import("../pages/dashboards/teacher/sub_pages/LessonDetail")
+);
+const LessonsByTeacher = lazy(
+  () => import("../pages/dashboards/teacher/LessonsByTeacher")
+);
+const CoursesByTeacher = lazy(
+  () => import("../pages/dashboards/teacher/CoursesByTeacher")
+);
+const ClassesByTeacher = lazy(
+  () => import("../pages/dashboards/teacher/ClassesByTeacher")
+);
 
 const year = new Date().getFullYear().toString();
 const month = getCurrentSeason();
@@ -99,11 +113,11 @@ const router = createBrowserRouter([
             element: <LessonDetail />,
           },
           {
-            path: ":id/questions",
+            path: "questions",
             children: [
               {
-                path: "add",
-                element: <AddQuestion />,
+                path: "modify",
+                element: <QuestionModify />,
               },
             ],
           },
@@ -154,7 +168,7 @@ const ROUTE_KEYS = {
         key: "17",
         children: [
           {
-            addQuestion: {
+            lessonDetail: {
               path: "/dashboard/lessons/detail",
               key: "17.1",
             },
