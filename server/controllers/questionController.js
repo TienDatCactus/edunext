@@ -25,8 +25,8 @@ const query = require("../db/queries");
 
 const getAllQuestions = async (req, res) => {
   try {
-
-    const questions =  await query.getQuestions();
+    const lessonId = req.params.lessonId;
+    const questions =  await query.getQuestions(lessonId);
     if(questions?.isOk === false) return res.status(404).json({error: questions?.error, isOk: questions?.isOk});
     return res.status(200).json({
       data: questions,
