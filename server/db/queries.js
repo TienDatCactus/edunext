@@ -397,18 +397,18 @@ const addQuestion = async (content, status, lesson, type) => {
   }
 };
 
-const getQuestions = async () => {
+const getQuestions = async (lessonId) => {
   try {
-    const questions = await Question.find();
+    const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
+    
+    const questions = await Question.find({ lesson: objectIdLessonId });
     if (questions.length === 0) {
       return {
         error: "Không tìm thấy thông tin question",
         isOk: false,
       };
     }
-
     return questions;
-
   } catch (error) {
     return { error: error.message, isOk: false };
   }
