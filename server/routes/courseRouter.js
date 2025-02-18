@@ -10,6 +10,11 @@ courseRouter.get(
   courseController.viewCourseDetail
 );
 courseRouter.get(
+  "/",
+  authenticateToken,
+  courseController.viewAllCourses
+);
+courseRouter.get(
   "/question/:questionId",
   authenticateToken,
   courseController.viewQuestionDetail
@@ -39,6 +44,15 @@ courseRouter.get(
   authenticateToken,
   courseController.getCourseraCourses
 );
-
+courseRouter.put(
+  "/inactive/:id",
+  authenticateToken,
+  courseController.changeStatusCoursesToInactive
+);
+courseRouter.put(
+  "/active/:id",
+  authenticateToken,
+  courseController.changeStatusCoursesToActive
+);
 
 module.exports = courseRouter;

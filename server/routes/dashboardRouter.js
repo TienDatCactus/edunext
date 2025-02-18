@@ -7,7 +7,7 @@ const authenticateToken = require("../validators/authenticate");
 
 dashboardRouter.post(
   "/timetable",
-  
+  authenticateToken,
   dashboardController.addNewTimeTable
 );
 
