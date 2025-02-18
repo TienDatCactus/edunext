@@ -1,8 +1,7 @@
-
 const { error } = require("console");
 const query = require("../db/queries");
 
- const createQuestion = async (req, res) => {
+const createQuestion = async (req, res) => {
   const { content, status, lesson, type } = req.body;
 
   try {
@@ -19,27 +18,28 @@ const query = require("../db/queries");
       isOk: newQuestion?.isOk,
     });
   } catch (error) {
-    return res.status(500).json({error});
+    return res.status(500).json({ error });
   }
 };
 
 const getAllQuestions = async (req, res) => {
   try {z
     const lessonId = req.params.lessonId;
-    const questions =  await query.getQuestions(lessonId);
-    if(questions?.isOk === false) return res.status(404).json({error: questions?.error, isOk: questions?.isOk});
+    const questions = await query.getQuestions(lessonId);
+    if (questions?.isOk === false)
+      return res
+        .status(404)
+        .json({ error: questions?.error, isOk: questions?.isOk });
     return res.status(200).json({
       data: questions,
-      isOk: true
-    })
-    
+      isOk: true,
+    });
   } catch (error) {
     return res.status(500).json({
       error,
-      isOk: false
-    })
+      isOk: false,
+    });
   }
-}
+};
 
-
-module.exports = {createQuestion, getAllQuestions}
+module.exports = { createQuestion, getAllQuestions };

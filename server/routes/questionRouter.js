@@ -4,7 +4,9 @@ const questionRouter = Router();
 const questionController = require("../controllers/questionController");
 
 questionRouter.post("/addQuestion", questionController.createQuestion);
-questionRouter.get("/getQuestions/:lessonId", questionController.getAllQuestions);
-
+questionRouter.get(
+  "/getQuestions/:lessonId",
+  questionController.getAllQuestions
+);
 
 module.exports = questionRouter;

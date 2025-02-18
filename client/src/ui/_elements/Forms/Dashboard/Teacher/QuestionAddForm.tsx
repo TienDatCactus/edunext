@@ -1,34 +1,36 @@
 import {
-  MDXEditor,
-  headingsPlugin,
-  listsPlugin,
-  thematicBreakPlugin,
-  quotePlugin,
-  linkPlugin,
-  linkDialogPlugin,
-  diffSourcePlugin,
-  imagePlugin,
-  tablePlugin,
-  toolbarPlugin,
   BlockTypeSelect,
+  BoldItalicUnderlineToggles,
   CodeToggle,
   InsertImage,
   InsertTable,
   InsertThematicBreak,
   ListsToggle,
-  BoldItalicUnderlineToggles,
+  MDXEditor,
   MDXEditorMethods,
+  diffSourcePlugin,
+  headingsPlugin,
+  imagePlugin,
+  linkDialogPlugin,
+  linkPlugin,
+  listsPlugin,
+  quotePlugin,
+  tablePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin,
 } from "@mdxeditor/editor";
 import {
+  BoxArrowUp,
   CaretDown,
   CheckSquareOffset,
   Circle,
   CodeBlock,
   DotsSixVertical,
   DotsThreeOutline,
+  MonitorArrowUp,
   Paragraph,
   Plus,
-  Question,
+  QuestionMark,
   Timer,
   Trash,
 } from "@phosphor-icons/react";
@@ -36,25 +38,34 @@ import {
   Button,
   Checkbox,
   Divider,
+  Form,
+  FormProps,
   Input,
   InputNumber,
   Radio,
   Select,
   Switch,
 } from "antd";
-import React from "react";
-import { useState } from "react";
+import Dragger from "antd/es/upload/Dragger";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Question } from "../../../../../utils/interfaces";
+import { log } from "console";
+import { FieldType } from "../../Access/LoginForm";
+import autoComplete from "antd/es/auto-complete";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 function QuestionAddForm({ question }: { question: any }) {
   const location = useLocation();
-  const lesson = location?.state?.lesson;
-  console.log(lesson);
+  const [lesson, setLesson] = useState<Question>(location?.state?.lesson);
   const ref = React.useRef<MDXEditorMethods>(null);
-  const [md, setMd] = useState<string>("");
+  const [md, setMd] = useState<string>(
+    lesson?.type !== "code" && typeof lesson?.content === "string"
+      ? lesson?.content
+      : ""
+  );
   const [content, setContent] = useState<string>("");
   const [type, setType] = useState("");
 
@@ -103,7 +114,15 @@ function QuestionAddForm({ question }: { question: any }) {
     updatedAnswers[index] = newAnswer;
     setAnswers(updatedAnswers);
   };
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("Success:", values);
+  };
 
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+    errorInfo
+  ) => {
+    console.log("Failed:", errorInfo);
+  };
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
@@ -135,21 +154,20 @@ function QuestionAddForm({ question }: { question: any }) {
       lesson: "",
       type: type,
     };
-
-    console.log(question);
   };
 
   return (
     <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
       <div className="flex items-center justify-between">
         <Select
-          defaultValue="quiz"
+          defaultValue={lesson?.type || "quiz"}
           onChange={handleChange}
           suffixIcon={<CaretDown weight="bold" color="black" />}
           className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6] [&_.ant-select-selector]:rounded-md w-36"
           options={[
             {
               value: "quiz",
+              disabled: lesson?.type && lesson?.type !== "quiz",
               label: (
                 <div className="flex items-center gap-1">
                   <CheckSquareOffset weight="bold" />
@@ -159,6 +177,7 @@ function QuestionAddForm({ question }: { question: any }) {
             },
             {
               value: "response",
+              disabled: lesson?.type && lesson?.type != "response",
               label: (
                 <div className="flex items-center gap-1">
                   <Paragraph weight="bold" />
@@ -168,6 +187,7 @@ function QuestionAddForm({ question }: { question: any }) {
             },
             {
               value: "code",
+              disabled: lesson?.type && lesson?.type != "code",
               label: (
                 <div className="flex items-center gap-1 *:font-semibold">
                   <CodeBlock weight="bold" />
@@ -180,31 +200,31 @@ function QuestionAddForm({ question }: { question: any }) {
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            <h1 className="font-medium text-[1rem]">Required</h1>
-            <Switch
-              size="default"
-              defaultChecked
-              onChange={onChange}
-              className="bg-[#12b989]"
-            />
+            <h1 className="font-medium text-[1rem]">Bắt buộc</h1>
+            <Switch size="default" defaultChecked onChange={onChange} />
           </div>
           <Button icon={<DotsThreeOutline weight="fill" size={16} />} />
         </div>
       </div>
       <Divider className="border-[#ccc] my-4" />
-      <form onSubmit={handleSubmit}>
-        <div>
-          <div className="flex items-center gap-1 mb-4">
-            <Question size={22} weight="fill" />
-            <strong>
-              Câu hỏi #{question?._id?.substring(0, 4)}{" "}
-              <span className="text-[red]">*</span>
-            </strong>
-          </div>
-          <div className="grid grid-cols-12">
+      <div className="flex items-center gap-1 mb-4">
+        <QuestionMark size={22} weight="fill" />
+        <strong>
+          Câu hỏi #{question?._id?.substring(0, 4)}{" "}
+          <span className="text-[red]">*</span>
+        </strong>
+      </div>
+      <Form
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <div className="grid grid-cols-12 gap-2">
+          <Form.Item className="col-span-8">
             <MDXEditor
               markdown={md}
-              className="col-span-8 p-2 rounded-md shadow-md"
+              className=" p-2 border-[#ccc] border rounded-md shadow-md"
               contentEditableClassName="min-h-[180px]"
               plugins={[
                 headingsPlugin(),
@@ -234,27 +254,41 @@ function QuestionAddForm({ question }: { question: any }) {
               ]}
               ref={ref}
             />
-            <div className="col-span-4"></div>
+          </Form.Item>
+          <Form.Item className="col-span-4 ">
+            <Dragger className="group">
+              <div className="flex justify-center">
+                <BoxArrowUp size={40} className=" group-hover:text-[#1688ff]" />
+              </div>
+              <p className="ant-upload-text group-hover:text-[#1688ff]">
+                Nhấp hoặc kéo tệp vào khu vực này để tải lên
+              </p>
+              <p className="ant-upload-hint  text-[12px]">
+                Hỗ trợ tải lên một lần hoặc hàng loạt. Nghiêm cấm tải lên dữ
+                liệu công ty hoặc các tệp bị cấm khác.
+              </p>
+            </Dragger>
+          </Form.Item>
+        </div>
+        <div className="flex items-center my-4">
+          <div>
+            Lựa chọn<span className="text-[red]">*</span>
           </div>
-          <div className="flex items-center my-4">
-            <div>
-              Lựa chọn<span className="text-[red]">*</span>
-            </div>
-            <Divider
-              type="vertical"
-              style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
+          <Divider
+            type="vertical"
+            style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
+          />
+          <div>
+            <span>Nhiều câu trả lời</span>
+            <Switch
+              defaultChecked={isMultipleAnswers}
+              onChange={(checked) => setIsMultipleAnswers(checked)}
+              className="mx-[10px]"
             />
-            <div>
-              <span>Nhiều câu trả lời</span>
-              <Switch
-                defaultChecked={isMultipleAnswers}
-                onChange={(checked) => setIsMultipleAnswers(checked)}
-                className="mx-[10px]"
-              />
-            </div>
           </div>
-
-          <div className="my-[20px]">
+        </div>
+        <div className="my-[20px]">
+          <Form.Item>
             {isMultipleAnswers ? (
               <Checkbox.Group
                 onChange={(checkedValues) => setSelectedAnswer(checkedValues)}
@@ -321,60 +355,56 @@ function QuestionAddForm({ question }: { question: any }) {
                 ))}
               </Radio.Group>
             )}
-
-            <Button
-              type="dashed"
-              onClick={addAnswer}
-              icon={<Plus size={16} />}
-              className="mt-4"
-            >
+          </Form.Item>
+          <div className="flex items-center justify-between">
+            <Button type="dashed" onClick={addAnswer} icon={<Plus size={16} />}>
               Thêm lựa chọn
             </Button>
-          </div>
-
-          <Divider style={{ borderWidth: 1 }} />
-
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col mr-[20px]">
-              <label className="text-sm font-medium">Randomize Order</label>
-              <Select
-                defaultValue="Keep choices in current order"
-                className="w-100"
-              >
-                <Option value="keep">Keep choices in current order</Option>
-                <Option value="random">Randomize choices</Option>
-              </Select>
-            </div>
-
-            <div className="flex flex-col mr-[20px]">
-              <label className="text-sm font-medium">Estimation time</label>
-              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
-                <InputNumber
-                  min={0}
-                  defaultValue={2}
-                  className="w-16 bg-transparent border-none"
-                />
-                <span className="text-gray-500">Mins</span>
-                <Timer size={20} className="text-gray-400" />
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-sm font-medium">Mark as point</label>
-              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
-                <InputNumber
-                  min={0}
-                  defaultValue={1}
-                  className="w-16 bg-transparent border-none"
-                />
-                <span className="text-gray-500">Points</span>
-                <Circle size={20} weight="fill" className="text-yellow-400" />
-              </div>
-            </div>
+            <Button type="primary" icon={<MonitorArrowUp size={16} />}>
+              {lesson ? "Cập nhật" : "Thêm câu hỏi"}
+            </Button>
           </div>
         </div>
-        <button>ADD</button>
-      </form>
+        <Divider className="border-[#ccc]" />
+      </Form>
+      <div className="flex items-center gap-4">
+        <div className="flex flex-col mr-[20px]">
+          <label className="text-sm font-medium">Sắp xếp</label>
+          <Select
+            defaultValue="Giữ các lựa chọn theo thứ tự hiện tại"
+            className="w-100"
+          >
+            <Option value="keep">Giữ các lựa chọn theo thứ tự hiện tại</Option>
+            <Option value="random">Lựa chọn ngẫu nhiên</Option>
+          </Select>
+        </div>
+
+        <div className="flex flex-col mr-[20px]">
+          <label className="text-sm font-medium">Thời gian ước tính</label>
+          <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
+            <InputNumber
+              min={0}
+              defaultValue={2}
+              className="w-16 bg-transparent border-none"
+            />
+            <span className="text-gray-500">phút</span>
+            <Timer size={20} className="text-gray-400" />
+          </div>
+        </div>
+
+        <div className="flex flex-col">
+          <label className="text-sm font-medium">Số điểm</label>
+          <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
+            <InputNumber
+              min={0}
+              defaultValue={1}
+              className="w-16 bg-transparent border-none"
+            />
+            <span className="text-gray-500">điểm</span>
+            <Circle size={20} weight="fill" className="text-yellow-400" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

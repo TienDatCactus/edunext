@@ -42,7 +42,13 @@ export const LessonsList: React.FC<{ state: string }> = (state) => {
           </Tag>
           <Button
             className="border-none"
-            onClick={() => navigate("/dashboard/lessons/detail", { state: 1 })}
+            onClick={() =>
+              navigate("/dashboard/lessons/detail", {
+                state: {
+                  lessonId: "1",
+                },
+              })
+            }
           >
             <FolderOpen
               className="text-[#878787] hover:animate-pulse"

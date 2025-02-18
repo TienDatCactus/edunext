@@ -13,21 +13,24 @@ import { Button, Collapse, Divider, Progress, Table, Tabs, Tag } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function LessonDetail() {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const lesson = state?.lessonId;
   const [questions, setQuestions] = useState<Question[]>();
   const swapper = {
     quiz: "Trắc nghiệm",
     code: "Lập trình",
     response: "Tự luận",
   };
-  const fetchQuestion = async () => {
+  const lessonId = "6788be800862e875d6ac1dca";
+  const fetchQuestions = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/question/getQuestions"
+        `http://localhost:5000/question/getQuestions/${lessonId}`
       );
       if (res) {
         setQuestions(res.data.data);
@@ -48,12 +51,14 @@ function LessonDetail() {
                 label: (
                   <div className="flex flex-col gap-2 px-2">
                     <div className="flex justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
                         <span className="text-[1rem] text-[#878787] font-semibold ">
                           #{q?._id && q?._id.substring(0, 6)}
                         </span>
-                        <span>-</span>
-                        <span className="text-[1.25rem] font-bold"></span>
+                        {typeof q?.content == "string" && <span>-</span>}
+                        <span className="text-[1.25rem] font-bold">
+                          {typeof q?.content == "string" && q?.content}
+                        </span>
                         {q?.status == false ? (
                           <Tag
                             className="flex items-center gap-1 rounded-lg dm-sans"
@@ -168,8 +173,10 @@ function LessonDetail() {
                     <span className="text-[1rem] text-[#878787] font-semibold ">
                       #{q?._id && q?._id.substring(0, 6)}
                     </span>
-                    <span>-</span>
-                    <span className="text-[1.25rem] font-bold"></span>
+                    {typeof q?.content == "string" && <span>-</span>}
+                    <span className="text-[1.25rem] font-bold">
+                      {typeof q?.content == "string" && q?.content}
+                    </span>
                     {q?.status ? (
                       <Tag
                         className="flex items-center gap-1 rounded-lg dm-sans"
@@ -245,8 +252,10 @@ function LessonDetail() {
                     <span className="text-[1rem] text-[#878787] font-semibold ">
                       #{q?._id && q?._id.substring(0, 6)}
                     </span>
-                    <span>-</span>
-                    <span className="text-[1.25rem] font-bold"></span>
+                    {typeof q?.content == "string" && <span>-</span>}
+                    <span className="text-[1.25rem] font-bold">
+                      {typeof q?.content == "string" && q?.content}
+                    </span>
                     {q?.status ? (
                       <Tag
                         className="flex items-center gap-1 rounded-lg dm-sans"
@@ -338,13 +347,25 @@ function LessonDetail() {
   ];
 
   useEffect(() => {
-    fetchQuestion();
+    return () => {
+      fetchQuestions();
+    };
   }, []);
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between my-2">
         <h1 className="text-[2.125rem] font-bold">Danh sách câu hỏi</h1>
-        <Button type="primary" icon={<Plus />}>
+        <Button
+          type="primary"
+          icon={<Plus />}
+          onClick={() =>
+            navigate("/dashboard/lessons/questions/modify", {
+              state: {
+                lessonId: lesson,
+              },
+            })
+          }
+        >
           Thêm câu hỏi
         </Button>
       </div>
