@@ -45,14 +45,9 @@ courseRouter.get(
   courseController.getCourseraCourses
 );
 courseRouter.put(
-  "/inactive/:id",
+  "/changeStatus/:courseCode",
   authenticateToken,
-  courseController.changeStatusCoursesToInactive
-);
-courseRouter.put(
-  "/active/:id",
-  authenticateToken,
-  courseController.changeStatusCoursesToActive
+  courseController.changeStatusCourses
 );
 
 module.exports = courseRouter;

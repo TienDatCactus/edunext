@@ -148,27 +148,31 @@ const viewAllCourses = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-const changeStatusCoursesToInactive = async (req, res) => {
+const changeStatusCourses = async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await query.changeStatusCoursesToInactive(id);
-    res.status(200).json(result);
+    const { courseCode } = req.params;
+    const result = await query.getCourseDetail(courseCode);
+    if(!result || result.length === 0){
+      return res.status(404).json({ message: 'Không có' });
+    } 
+    console.log(result);
+    let newStatus;
+    if(result?.course?.status == "active"){
+      newStatus = "inactive";
+    } else if (result?.course?.status == "inactive") {
+      newStatus = "active";
+    }
+    console.log(result?.status);
+    const updateResult = await query.changeStatusCourses(courseCode,newStatus);
+    if(!updateResult || updateResult.length === 0){
+      return res.status(404).json({ message: 'Không có' });
+    } 
+    res.status(200).json(updateResult);
   } catch (error) {
     console.error('Lỗi :', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-const changeStatusCoursesToActive = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await query.changeStatusCoursesToActive(id);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -178,6 +182,6 @@ module.exports = {
   addSubmissionComment,
   getCourseraCourses,
   viewAllCourses,
-  changeStatusCoursesToInactive,
-  changeStatusCoursesToActive
+  changeStatusCourses,
+  
 };
