@@ -408,7 +408,7 @@ const changeStatusCoursesToInactive = async (idCourses) => {
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
       idCourses,
-      { status: "inactive" },  
+      { status: "inactive" },
       { new: true }
     );
     return updatedCourse;
@@ -420,7 +420,7 @@ const changeStatusCoursesToActive = async (idCourses) => {
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
       idCourses,
-      { status: "active" },  
+      { status: "active" },
       { new: true }
     );
     return updatedCourse;
@@ -431,7 +431,7 @@ const changeStatusCoursesToActive = async (idCourses) => {
 const getQuestions = async (lessonId) => {
   try {
     const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
-    
+
     const questions = await Question.find({ lesson: objectIdLessonId });
     if (questions.length === 0) {
       return {
@@ -444,6 +444,22 @@ const getQuestions = async (lessonId) => {
     return { error: error.message, isOk: false };
   }
 };
+
+const getLessonsByStatus = async (status) => {
+  try {
+    const lessons = await Lesson.find({ status }).sort({ createdAt: -1 });
+    return {
+      lessons,
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Failed to fetch lessons by status",
+      isOk: false,
+    };
+  }
+};
+
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -460,5 +476,6 @@ module.exports = {
   getQuestions,
   getAllCourses,
   changeStatusCoursesToInactive,
-  changeStatusCoursesToActive
+  changeStatusCoursesToActive,
+  getLessonsByStatus
 };

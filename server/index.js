@@ -8,6 +8,7 @@ const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
 const dashboardRouter = require("./routes/dashboardRouter");
 const questionRouter = require("./routes/questionRouter");
+const lessonRouter = require("./routes/lessonRouter");
 
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
@@ -33,6 +34,7 @@ app.use("/", homeRouter);
 app.use("/course", courseRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/question", questionRouter);
+app.use("/lesson", lessonRouter);
 
 const PORT = process.env.PORT;
 
