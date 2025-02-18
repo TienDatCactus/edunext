@@ -136,6 +136,39 @@ const getCourseraCourses = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
+const viewAllCourses = async (req, res) => {
+  try {
+    const result = await query.getAllCourses();
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: 'Không có' });
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách :', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const changeStatusCoursesToInactive = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await query.changeStatusCoursesToInactive(id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi :', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const changeStatusCoursesToActive = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await query.changeStatusCoursesToActive(id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Lỗi :', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -144,4 +177,7 @@ module.exports = {
   viewQuestionSubmissions,
   addSubmissionComment,
   getCourseraCourses,
+  viewAllCourses,
+  changeStatusCoursesToInactive,
+  changeStatusCoursesToActive
 };

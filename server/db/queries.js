@@ -396,7 +396,38 @@ const addQuestion = async (content, status, lesson, type) => {
     return { error, isOk: false };
   }
 };
-
+const getAllCourses = async () => {
+  try {
+    const course = await Course.find();
+    return { course, isOk: true };
+  } catch (error) {
+    return { error, isOk: false };
+  }
+};
+const changeStatusCoursesToInactive = async (idCourses) => {
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      idCourses,
+      { status: "inactive" },  
+      { new: true }
+    );
+    return updatedCourse;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+const changeStatusCoursesToActive = async (idCourses) => {
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      idCourses,
+      { status: "active" },  
+      { new: true }
+    );
+    return updatedCourse;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
 const getQuestions = async (lessonId) => {
   try {
     const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
@@ -427,4 +458,7 @@ module.exports = {
   getCampuses,
   addQuestion,
   getQuestions,
+  getAllCourses,
+  changeStatusCoursesToInactive,
+  changeStatusCoursesToActive
 };
