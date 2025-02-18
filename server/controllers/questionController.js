@@ -6,6 +6,7 @@ const query = require("../db/queries");
   const { content, status, lesson, type } = req.body;
 
   try {
+    //test cmkmi
     const newQuestion = await query.addQuestion(content, status, lesson, type);
     if (newQuestion?.isOk) {
       return res.status(200).json({
