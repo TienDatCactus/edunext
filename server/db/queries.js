@@ -380,18 +380,12 @@ const getUserById = async (id) => {
 
 // Question query
 
-const addQuestion = async (content, status, lesson, type) => {
+const addQuestion = async (questions) => {
   try {
-    const question = new Question({
-      content: content,
-      status: false,
-      lesson: lesson,
-      type: type,
-    });
+    
+    const result = await Question.insertMany(questions)
 
-    await question.save();
-
-    return { question, isOk: true };
+    return { result, isOk: true };
   } catch (error) {
     return { error, isOk: false };
   }
