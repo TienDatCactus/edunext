@@ -169,6 +169,30 @@ const changeStatusCoursesToActive = async (req, res) => {
   }
 };
 
+const sortCoursesByStatus = async (req, res) => {
+  try {
+    const { status } = req.query;
+    if (!status || !['active', 'inactive', 'archived'].includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status parameter. Must be 'active', 'inactive', or 'archived'",
+        isOk: false,
+      });
+    }
+
+    const result = await query.getCoursesByStatus(status);
+    if (!result.isOk) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      error: "Internal server error",
+      isOk: false,
+    });
+  }
+};
+
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -179,5 +203,6 @@ module.exports = {
   getCourseraCourses,
   viewAllCourses,
   changeStatusCoursesToInactive,
-  changeStatusCoursesToActive
+  changeStatusCoursesToActive,
+  sortCoursesByStatus,
 };

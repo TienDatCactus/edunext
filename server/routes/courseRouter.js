@@ -55,4 +55,10 @@ courseRouter.put(
   courseController.changeStatusCoursesToActive
 );
 
+courseRouter.get(
+  "/sort/status",
+  authenticateToken,
+  courseController.sortCoursesByStatus
+);
+
 module.exports = courseRouter;
