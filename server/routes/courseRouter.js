@@ -3,17 +3,14 @@ const courseRouter = Router();
 const courseController = require("../controllers/courseController");
 
 const authenticateToken = require("../validators/authenticate");
+const questionController = require("../controllers/questionController");
 
 courseRouter.get(
   "/:courseCode",
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get(
-  "/",
-  authenticateToken,
-  courseController.viewAllCourses
-);
+courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
 courseRouter.get(
   "/question/:questionId",
   authenticateToken,
@@ -34,6 +31,8 @@ courseRouter.post(
   authenticateToken,
   courseController.addSubmissionComment
 );
+courseRouter.post("/addQuestion", questionController.createQuestion);
+courseRouter.get("/getQuestions/:lessonId", questionController.getAllQuestions);
 courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,
@@ -43,6 +42,10 @@ courseRouter.get(
   "/api/coursera/:keywords",
   authenticateToken,
   courseController.getCourseraCourses
+);
+courseRouter.get(
+  "/instructor/:userId",
+  courseController.viewCourseByInstructor
 );
 courseRouter.put(
   "/inactive/:id",

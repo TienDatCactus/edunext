@@ -46,13 +46,14 @@ const items: MenuProps["items"] = [
 
 const HomePage: React.FC = () => {
   const { courses, error, loading, fetchCourses } = useCourseStore();
-
   useEffect(() => {
     if (error) message.error(error);
-    return () => {
+    if (courses.length === 0) {
       fetchCourses();
-    };
+    }
   }, []);
+  console.log(courses);
+
   return (
     <MainLayout>
       <div className="p-6 mx-10 mb-6 bg-white rounded-lg shadow-lg min-h-[300px]">

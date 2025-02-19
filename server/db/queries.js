@@ -408,7 +408,7 @@ const changeStatusCoursesToInactive = async (idCourses) => {
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
       idCourses,
-      { status: "inactive" },  
+      { status: "inactive" },
       { new: true }
     );
     return updatedCourse;
@@ -420,7 +420,7 @@ const changeStatusCoursesToActive = async (idCourses) => {
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
       idCourses,
-      { status: "active" },  
+      { status: "active" },
       { new: true }
     );
     return updatedCourse;
@@ -431,7 +431,7 @@ const changeStatusCoursesToActive = async (idCourses) => {
 const getQuestions = async (lessonId) => {
   try {
     const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
-    
+
     const questions = await Question.find({ lesson: objectIdLessonId });
     if (questions.length === 0) {
       return {
@@ -440,6 +440,37 @@ const getQuestions = async (lessonId) => {
       };
     }
     return questions;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const getCourseByInstructor = async (userId) => {
+  try {
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(userId),
+    }).select("role");
+    if (user?.role != 2) {
+      return { error: "Không phải giảng viên", isOk: false };
+    }
+    const courses = await Course.find({
+      instructor: new mongoose.Types.ObjectId(userId),
+    });
+    if (courses.length === 0) {
+      return { error: "Không tìm thấy khóa học", isOk: false };
+    }
+    const coursesWithLessons = await Promise.all(
+      courses.map(async (course) => {
+        const lessons = await Lesson.find({
+          course: new mongoose.Types.ObjectId(course?._id),
+        });
+        if (lessons) return { ...course._doc, lessons: lessons };
+      })
+    );
+    if (coursesWithLessons) {
+      return coursesWithLessons;
+    }
+    return courses;
   } catch (error) {
     return { error: error.message, isOk: false };
   }
@@ -460,5 +491,6 @@ module.exports = {
   getQuestions,
   getAllCourses,
   changeStatusCoursesToInactive,
-  changeStatusCoursesToActive
+  changeStatusCoursesToActive,
+  getCourseByInstructor,
 };

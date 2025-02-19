@@ -7,7 +7,6 @@ const accessRouter = require("./routes/accessRouter");
 const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
 const dashboardRouter = require("./routes/dashboardRouter");
-const questionRouter = require("./routes/questionRouter");
 
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
@@ -22,7 +21,7 @@ app.use(passport.initialize());
 passportConfig.initialize();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -32,7 +31,6 @@ app.use("/auth", accessRouter);
 app.use("/", homeRouter);
 app.use("/course", courseRouter);
 app.use("/dashboard", dashboardRouter);
-app.use("/question", questionRouter);
 
 const PORT = process.env.PORT;
 

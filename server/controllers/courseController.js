@@ -1,6 +1,5 @@
 const { default: axios } = require("axios");
 const query = require("../db/queries");
-const { response } = require("express");
 
 const viewCourseDetail = async (req, res) => {
   const { courseCode } = req.params;
@@ -138,24 +137,25 @@ const getCourseraCourses = async (req, res) => {
 };
 const viewAllCourses = async (req, res) => {
   try {
-    const result = await query.getAllCourses();
-    if (!result || result.length === 0) {
-      return res.status(404).json({ message: 'Không có' });
+    const resp = await query.getAllCourses();
+    if (!resp || result.resp === 0) {
+      return res.status(404).json({ message: "Không có" });
     }
-    res.status(200).json(result);
+    res.status(200).json(resp);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi khi lấy danh sách :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 const changeStatusCoursesToInactive = async (req, res) => {
   try {
     const { id } = req.params;
+
     const result = await query.changeStatusCoursesToInactive(id);
     res.status(200).json(result);
   } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 const changeStatusCoursesToActive = async (req, res) => {
@@ -164,11 +164,25 @@ const changeStatusCoursesToActive = async (req, res) => {
     const result = await query.changeStatusCoursesToActive(id);
     res.status(200).json(result);
   } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
+const viewCourseByInstructor = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const resp = await query.getCourseByInstructor(userId);
+
+    if (!resp || resp.length === 0) {
+      return res.status(404).json({ message: "Không có môn nào", isOk: false });
+    }
+    res.status(200).json({ courses: resp, isOk: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error " + error });
+  }
+};
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -179,5 +193,6 @@ module.exports = {
   getCourseraCourses,
   viewAllCourses,
   changeStatusCoursesToInactive,
-  changeStatusCoursesToActive
+  changeStatusCoursesToActive,
+  viewCourseByInstructor,
 };

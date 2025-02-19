@@ -2,6 +2,7 @@ import { Download, Plus, SlidersHorizontal } from "@phosphor-icons/react";
 import { Avatar, Badge, Button, Divider, Tabs, Tooltip } from "antd";
 import React from "react";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
+import { useCourseStore } from "../../../utils/zustand/Store";
 import { LessonsList } from "./sub_elements/LessonsList";
 const LessonsByTeacher: React.FC = () => {
   const items = [
@@ -33,7 +34,6 @@ const LessonsByTeacher: React.FC = () => {
       children: <LessonsList state={"undone"} />,
     },
   ];
-
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between">

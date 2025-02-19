@@ -90,6 +90,7 @@ export interface ExternalCourseState {
 }
 export interface CourseState {
   courses: CourseItem[];
+
   detail: CourseItem;
   selectedCourse: CourseItem | null;
   loading: boolean;
@@ -123,6 +124,9 @@ export interface UserState {
   setUser: (user: User) => void;
 }
 export interface LessonItem {
+  _id?: string;
+  courseCode?: string;
+  courseName?: string;
   title?: string;
   content?: string;
   deadline?: string;
