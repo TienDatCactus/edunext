@@ -6,7 +6,7 @@ const ErrorPage: React.FC = () => {
   const error = location.state?.error || "An unexpected error occurred.";
   return (
     <div>
-      <h1>{error}</h1>
+      <h1>{error} nigger</h1>
     </div>
   );
 };

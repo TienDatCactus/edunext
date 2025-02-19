@@ -313,7 +313,6 @@ const getMeetingByCourse = async (courseCode) => {
 };
 
 const postQuestionSubmission = async (content, question, user) => {
-  console.log(content, question, user);
   try {
     const submission = new Submission({
       content: content,
@@ -382,8 +381,7 @@ const getUserById = async (id) => {
 
 const addQuestion = async (questions) => {
   try {
-    
-    const result = await Question.insertMany(questions)
+    const result = await Question.insertMany(questions);
 
     return { result, isOk: true };
   } catch (error) {
@@ -398,15 +396,14 @@ const getAllCourses = async () => {
     return { error, isOk: false };
   }
 };
-const changeStatusCourses = async (courseCode,newStatus) => {
-  
+const changeStatusCourses = async (courseCode, newStatus) => {
   try {
     const updatedCourse = await Course.findOneAndUpdate(
-      { courseCode : courseCode},
-      { status: newStatus },  
+      { courseCode: courseCode },
+      { status: newStatus },
       { new: true }
     );
-    
+
     return updatedCourse;
   } catch (error) {
     return { error: error.message, isOk: false };
@@ -475,5 +472,5 @@ module.exports = {
   getQuestions,
   getAllCourses,
   changeStatusCourses,
-  
+  getCourseByInstructor,
 };

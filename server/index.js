@@ -10,6 +10,7 @@ const dashboardRouter = require("./routes/dashboardRouter");
 
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
+const questionRouter = require("./routes/questionRouter");
 require("dotenv").config();
 const app = express();
 connectDB();
@@ -31,6 +32,7 @@ app.use("/auth", accessRouter);
 app.use("/", homeRouter);
 app.use("/course", courseRouter);
 app.use("/dashboard", dashboardRouter);
+app.use("/question", questionRouter);
 
 const PORT = process.env.PORT;
 

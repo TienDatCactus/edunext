@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const getCurrentSeason = () => {
   const month = new Date().getMonth() + 1; // getMonth() returns 0-11
@@ -18,14 +18,19 @@ const getCurrentSeason = () => {
 };
 const useErrorBoundary = () => {
   const [error, setError] = useState<ErrorEvent>();
+  const errorRef = useRef<ErrorEvent | null>(null);
 
   useEffect(() => {
     const errorHandler = (event: ErrorEvent | PromiseRejectionEvent) => {
-      setError(
+      errorRef.current =
         event instanceof ErrorEvent
           ? event.error
-          : new Error("An unknown error occurred")
-      );
+          : new Error("An unknown error occurred");
+      setTimeout(() => {
+        if (errorRef.current) {
+          setError(errorRef.current);
+        }
+      }, 0);
     };
 
     window.addEventListener("error", errorHandler);

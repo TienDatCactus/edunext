@@ -31,8 +31,6 @@ courseRouter.post(
   authenticateToken,
   courseController.addSubmissionComment
 );
-courseRouter.post("/addQuestion", questionController.createQuestion);
-courseRouter.get("/getQuestions/:lessonId", questionController.getAllQuestions);
 courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,

@@ -9,34 +9,35 @@ import {
   Trash,
 } from "@phosphor-icons/react";
 import type { TabsProps } from "antd";
-import { Button, Collapse, Divider, Progress, Table, Tabs, Tag } from "antd";
+import {
+  Button,
+  Collapse,
+  Divider,
+  Progress,
+  Spin,
+  Table,
+  Tabs,
+  Tag,
+} from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
+import { getQuestionByLesson } from "../../../../utils/api";
 function LessonDetail() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const lesson = state?.lessonId;
+  const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>();
   const swapper = {
     quiz: "Trắc nghiệm",
     code: "Lập trình",
     response: "Tự luận",
   };
-  const lessonId = "6788be800862e875d6ac1dca";
-  const fetchQuestions = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/question/getQuestions/${lessonId}`
-      );
-      if (res) {
-        setQuestions(res.data.data);
-      }
-    } catch (error) {}
-  };
+
   const tabItemCheck = (q: Question) => {
     switch (q?.type) {
       case "quiz":
@@ -345,10 +346,23 @@ function LessonDetail() {
       label: "Chưa trả lời",
     },
   ];
-
+  const getQuestion = async () => {
+    try {
+      setLoading(true);
+      const resp = await getQuestionByLesson(lesson);
+      if (resp?.data) {
+        setQuestions(resp?.data);
+      }
+      return null;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
     return () => {
-      fetchQuestions();
+      getQuestion();
     };
   }, []);
   return (
@@ -369,11 +383,13 @@ function LessonDetail() {
           Thêm câu hỏi
         </Button>
       </div>
-      <Tabs
-        defaultActiveKey="1"
-        items={tabItems}
-        className="[&_.ant-tabs-nav]:m-0 [&_.ant-tabs-content-holder]:bg-white [&_.ant-tabs-content-holder]:shadow-md [&_.ant-tabs-content-holder]:rounded-md [&_.ant-tabs-content-holder]:p-2"
-      />
+      <Spin spinning={loading}>
+        <Tabs
+          defaultActiveKey="1"
+          items={tabItems}
+          className="[&_.ant-tabs-nav]:m-0 [&_.ant-tabs-content-holder]:bg-white [&_.ant-tabs-content-holder]:shadow-md [&_.ant-tabs-content-holder]:rounded-md [&_.ant-tabs-content-holder]:p-2"
+        />
+      </Spin>
     </DashboardLayout>
   );
 }

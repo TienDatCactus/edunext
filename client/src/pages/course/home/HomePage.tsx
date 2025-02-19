@@ -48,9 +48,11 @@ const HomePage: React.FC = () => {
   const { courses, error, loading, fetchCourses } = useCourseStore();
   useEffect(() => {
     if (error) message.error(error);
-    if (courses.length === 0) {
-      fetchCourses();
-    }
+    return () => {
+      if (courses.length === 0) {
+        fetchCourses();
+      }
+    };
   }, []);
   console.log(courses);
 

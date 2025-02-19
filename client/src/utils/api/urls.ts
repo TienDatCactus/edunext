@@ -4,4 +4,5 @@ const accessApi = `${apiPort}/auth`;
 const homeApi = `${apiPort}/home`;
 const usersApi = `${apiPort}/users`;
 const courseApi = `${apiPort}/course`;
-export { accessApi, homeApi, courseApi, usersApi };
+const questionApi = `${apiPort}/question`;
+export { accessApi, homeApi, courseApi, usersApi, questionApi };

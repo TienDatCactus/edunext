@@ -1,4 +1,5 @@
 var mongoose = require("mongoose");
+const { User } = require("./model");
 //Set up default mongoose connection
 var mongoDB = process.env.DATABASE_URL;
 const connectDB = async () => {
@@ -9,4 +10,5 @@ const connectDB = async () => {
     console.log(err);
   }
 };
+
 module.exports = connectDB;

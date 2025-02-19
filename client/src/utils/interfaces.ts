@@ -62,6 +62,7 @@ export interface CourseItem {
     type: string;
     link?: string;
   }>;
+  updatedAt?: string;
   forMajor?: string;
 }
 export interface CourseLayoutProps {

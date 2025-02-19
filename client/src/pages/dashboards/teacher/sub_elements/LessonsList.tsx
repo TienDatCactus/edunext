@@ -59,7 +59,7 @@ export const LessonsList: React.FC<{ state: string }> = (state) => {
           lessons.map((lesson, index) => (
             <li
               key={index}
-              className="col-span-3 min-h-[260px] bg-white rounded-lg shadow-lg"
+              className="col-span-4 min-h-[260px] bg-white rounded-lg shadow-lg"
             >
               <div className="flex items-center justify-between px-4 pt-2">
                 <Tag

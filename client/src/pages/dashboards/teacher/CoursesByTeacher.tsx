@@ -8,6 +8,7 @@ import {
   Button,
   Divider,
   Dropdown,
+  Form,
   MenuProps,
   message,
   Segmented,
@@ -15,12 +16,13 @@ import {
   Switch,
   Tag,
 } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
 import { useCourseStore, useUserStore } from "../../../utils/zustand/Store";
 import { currentYear } from "../../course/home/HomePage";
 import se from "../../../assets/images/wallhaven-x892zz_3840x2160.png";
 import dayjs from "dayjs";
+import { changeCourseStatus } from "../../../utils/api";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -49,8 +51,22 @@ const items: MenuProps["items"] = [
 ];
 
 const CoursesByTeacher: React.FC = () => {
-  const { user } = useUserStore();
   const { courses, error, loading, fetchCourses } = useCourseStore();
+  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const handleChange = async (code?: string) => {
+    try {
+      setLoadingSwitch(true);
+      const resp = await changeCourseStatus(code || "");
+      if (resp) {
+        message.success("Thay đổi trạng thái thành công");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingSwitch(false);
+    }
+  };
+  const { user } = useUserStore();
   useEffect(() => {
     if (error) message.error(error);
     return () => {
@@ -112,9 +128,13 @@ const CoursesByTeacher: React.FC = () => {
                   </ul>
                   <div className="flex items-center justify-between">
                     <p className="text-[0.75rem] text-[#878787]">
-                      Chỉnh sửa {dayjs().to("20/10/2024")}*
+                      Chỉnh sửa {dayjs(course?.updatedAt).fromNow()}*
                     </p>
-                    <Switch defaultChecked />
+                    <Switch
+                      loading={loadingSwitch}
+                      defaultChecked={course?.status === "active"}
+                      onChange={() => handleChange(course?.courseCode)}
+                    />
                   </div>
                 </li>
               ))}
