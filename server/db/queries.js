@@ -380,18 +380,12 @@ const getUserById = async (id) => {
 
 // Question query
 
-const addQuestion = async (content, status, lesson, type) => {
+const addQuestion = async (questions) => {
   try {
-    const question = new Question({
-      content: content,
-      status: false,
-      lesson: lesson,
-      type: type,
-    });
+    
+    const result = await Question.insertMany(questions)
 
-    await question.save();
-
-    return { question, isOk: true };
+    return { result, isOk: true };
   } catch (error) {
     return { error, isOk: false };
   }
@@ -404,25 +398,15 @@ const getAllCourses = async () => {
     return { error, isOk: false };
   }
 };
-const changeStatusCoursesToInactive = async (idCourses) => {
+const changeStatusCourses = async (courseCode,newStatus) => {
+  
   try {
-    const updatedCourse = await Course.findByIdAndUpdate(
-      idCourses,
-      { status: "inactive" },
+    const updatedCourse = await Course.findOneAndUpdate(
+      { courseCode : courseCode},
+      { status: newStatus },  
       { new: true }
     );
-    return updatedCourse;
-  } catch (error) {
-    return { error: error.message, isOk: false };
-  }
-};
-const changeStatusCoursesToActive = async (idCourses) => {
-  try {
-    const updatedCourse = await Course.findByIdAndUpdate(
-      idCourses,
-      { status: "active" },
-      { new: true }
-    );
+    
     return updatedCourse;
   } catch (error) {
     return { error: error.message, isOk: false };
@@ -490,7 +474,6 @@ module.exports = {
   addQuestion,
   getQuestions,
   getAllCourses,
-  changeStatusCoursesToInactive,
-  changeStatusCoursesToActive,
-  getCourseByInstructor,
+  changeStatusCourses,
+  
 };
