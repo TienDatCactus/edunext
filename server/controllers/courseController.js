@@ -188,6 +188,19 @@ const viewCourseByInstructor = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error " + error });
   }
 };
+const viewCourseStudents = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const resp = await query.getCourseStudents(courseId);
+    if (!resp || resp.length === 0) {
+      return res.status(404).json({ message: "Không có sinh viên nào" });
+    }
+    res.status(200).json({ students: resp, isOk: true });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách sinh viên :", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
   viewCourseDetail,
   viewQuestionDetail,
@@ -199,4 +212,5 @@ module.exports = {
   viewAllCourses,
   changeStatusCourses,
   viewCourseByInstructor,
+  viewCourseStudents,
 };

@@ -456,6 +456,25 @@ const getCourseByInstructor = async (userId) => {
     return { error: error.message, isOk: false };
   }
 };
+const getCourseStudents = async (courseId) => {
+  try {
+    console.log(courseId);
+    const semester = await Semester.findOne({
+      courses: { $in: [new mongoose.Types.ObjectId(courseId)] },
+    });
+    const semesterId = semester._id;
+    const students = await User.find({
+      semester: new mongoose.Types.ObjectId(semesterId),
+      role: 1,
+    });
+    if (students.length === 0) {
+      return { error: "Không tìm thấy sinh viên", isOk: false };
+    }
+    return students;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -473,4 +492,5 @@ module.exports = {
   getAllCourses,
   changeStatusCourses,
   getCourseByInstructor,
+  getCourseStudents,
 };
