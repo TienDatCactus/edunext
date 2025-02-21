@@ -10,6 +10,6 @@ questionRouter.get(
   authenticateToken,
   questionController.getAllQuestions
 );
-questionRouter.put("/edit/:id", authenticateToken, questionController.updateQuestion);
-questionRouter.delete("/delete/:id", authenticateToken, questionController.deletedQuestion);
+questionRouter.put("/edit/:id", questionController.updateQuestion);
+questionRouter.delete("/delete/:id", questionController.deletedQuestion);
 module.exports = questionRouter;

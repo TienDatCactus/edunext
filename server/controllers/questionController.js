@@ -24,7 +24,6 @@ const createQuestions = async (req, res) => {
 
 const getAllQuestions = async (req, res) => {
   try {
-
     // Array questions
     const lessonId = req.params.lessonId;
     const questions = await query.getQuestions(lessonId);
@@ -47,13 +46,9 @@ const getAllQuestions = async (req, res) => {
 const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { question, options, answer } = req.body;
-    const updatedQuestion = await query.updateQuestion(
-      id,
-      question,
-      options,
-      answer
-    );
+    const question = req.body;
+console.log(question);
+    const updatedQuestion = await query.updateQuestion(id, question);
     if (updatedQuestion?.isOk === false) {
       return res.json({
         error: updatedQuestion?.error,
@@ -69,8 +64,7 @@ const updateQuestion = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
-}
-
+};
 
 const deletedQuestion = async (req, res) => {
   try {
@@ -91,6 +85,11 @@ const deletedQuestion = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
-}
+};
 
-module.exports = { createQuestions, getAllQuestions, updateQuestion, deletedQuestion };
+module.exports = {
+  createQuestions,
+  getAllQuestions,
+  updateQuestion,
+  deletedQuestion,
+};

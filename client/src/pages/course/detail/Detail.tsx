@@ -7,7 +7,7 @@ import CourseLayout from "../../../ui/layouts/CourseLayout";
 import MainLayout from "../../../ui/layouts/MainLayout";
 import { getCurrentSeason } from "../../../utils/customHooks";
 import { CustomTabs } from "../../../utils/styles/CustomStyles";
-import { useCourseStore } from "../../../utils/zustand/Store";
+import { useCourseStore, useUserStore } from "../../../utils/zustand/Store";
 import ClassStudents from "./sub_pages/ClassStudents";
 import CourseInfo from "./sub_pages/CourseInfo";
 
@@ -16,6 +16,7 @@ const Detail: React.FC = () => {
   const month = getCurrentSeason();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { courseCode } = useParams();
+  const { user } = useUserStore();
   const { fetchCourseById, detail, loading, error } = useCourseStore();
   useEffect(() => {
     if (error) message.error(error);
@@ -30,7 +31,7 @@ const Detail: React.FC = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Course Info",
+      label: "Thông tin môn học",
       children: (
         <Spin spinning={loading}>
           <CourseLayout
@@ -38,12 +39,7 @@ const Detail: React.FC = () => {
             name={detail?.courseName}
             instructor={detail?.instructor}
           >
-            <CourseInfo
-              courseCode={detail?.courseCode}
-              courseName={detail?.courseName}
-              description={detail?.description}
-              lessons={Array.isArray(detail?.lessons) ? detail?.lessons : []}
-            />
+            <CourseInfo />
           </CourseLayout>
         </Spin>
       ),
@@ -51,7 +47,7 @@ const Detail: React.FC = () => {
     },
     {
       key: "2",
-      label: "Students",
+      label: "Danh sách học sinh",
       children: (
         <Spin spinning={loading}>
           <CourseLayout

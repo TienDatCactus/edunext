@@ -16,12 +16,8 @@ export interface CourseSlice {
 }
 
 export interface LessonDetailProps {
-  title?: string;
-  deadline?: string;
-  content?: string;
   lessonId?: number;
-  questions?: Question[];
-  tag?: string;
+  lesson?: LessonItem;
 }
 export interface ErrorHandlerOptions {
   redirectOnUnauthorized?: boolean;
@@ -128,6 +124,7 @@ export interface LessonItem {
   _id?: string;
   courseCode?: string;
   courseName?: string;
+  questions?: Question[];
   title?: string;
   content?: string;
   deadline?: string;

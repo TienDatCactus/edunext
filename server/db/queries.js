@@ -428,9 +428,8 @@ const getQuestions = async (lessonId) => {
 
 const deleteQuestion = async (id) => {
   try {
-
-    const result = await Question.deleteOne({_id: id});
-    if(!result) {
+    const result = await Question.findByIdAndDelete({ _id: id });
+    if (!result) {
       return {
         error: "Không tìm thấy thông tin question",
         isOk: false,
@@ -439,14 +438,34 @@ const deleteQuestion = async (id) => {
 
     return {
       deletedQuestion: result,
-      isOk: true
-    }
-
+      isOk: true,
+    };
   } catch (error) {
     return { error: error.message, isOk: false };
-    
   }
-}
+};
+
+const updateQuestion = async (id, question) => {
+  try {
+
+    const result = await Question.findByIdAndUpdate(id,  question, { new: true });
+
+    if (!result) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return {
+      updatedQuestion: result,
+      isOk: true,
+    };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
 
 const getCourseByInstructor = async (userId) => {
   try {
@@ -478,6 +497,25 @@ const getCourseByInstructor = async (userId) => {
     return { error: error.message, isOk: false };
   }
 };
+const getCourseStudents = async (courseId) => {
+  try {
+    console.log(courseId);
+    const semester = await Semester.findOne({
+      courses: { $in: [new mongoose.Types.ObjectId(courseId)] },
+    });
+    const semesterId = semester._id;
+    const students = await User.find({
+      semester: new mongoose.Types.ObjectId(semesterId),
+      role: 1,
+    });
+    if (students.length === 0) {
+      return { error: "Không tìm thấy sinh viên", isOk: false };
+    }
+    return students;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -495,5 +533,7 @@ module.exports = {
   getAllCourses,
   changeStatusCourses,
   getCourseByInstructor,
-  deleteQuestion
+  getCourseStudents,
+  deleteQuestion,
+  updateQuestion
 };

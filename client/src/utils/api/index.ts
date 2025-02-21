@@ -170,6 +170,15 @@ const changeCourseStatus = async (courseCode: string) => {
     return error;
   }
 };
+const getCourseStudents = async (courseId: string) => {
+  try {
+    const resp = await http.get(`${courseApi}/${courseId}/students`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -184,4 +193,5 @@ export {
   postSubmissionComment,
   getQuestionByLesson,
   changeCourseStatus,
+  getCourseStudents,
 };

@@ -36,6 +36,7 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseMeetings
 );
+courseRouter.get("/:courseId/students", courseController.viewCourseStudents);
 courseRouter.get(
   "/api/coursera/:keywords",
   authenticateToken,
@@ -43,6 +44,7 @@ courseRouter.get(
 );
 courseRouter.get(
   "/instructor/:userId",
+  authenticateToken,
   courseController.viewCourseByInstructor
 );
 courseRouter.put(
