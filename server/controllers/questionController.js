@@ -1,7 +1,7 @@
 const { error } = require("console");
 const query = require("../db/queries");
 
-const createQuestion = async (req, res) => {
+const createQuestions = async (req, res) => {
   try {
     const questions = req.body;
 
@@ -44,4 +44,53 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
-module.exports = { createQuestion, getAllQuestions };
+const updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { question, options, answer } = req.body;
+    const updatedQuestion = await query.updateQuestion(
+      id,
+      question,
+      options,
+      answer
+    );
+    if (updatedQuestion?.isOk === false) {
+      return res.json({
+        error: updatedQuestion?.error,
+        isOk: updatedQuestion?.isOk,
+      });
+    } else if (updatedQuestion?.isOk === true) {
+      res.json({
+        updatedQuestion: updatedQuestion?.updatedQuestion,
+        isOk: updatedQuestion?.isOk,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+}
+
+
+const deletedQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedQuestion = await query.deleteQuestion(id);
+    if (deletedQuestion?.isOk === false) {
+      return res.json({
+        error: deletedQuestion?.error,
+        isOk: deletedQuestion?.isOk,
+      });
+    } else if (deletedQuestion?.isOk === true) {
+      res.json({
+        deletedQuestion: deletedQuestion?.deletedQuestion,
+        isOk: deletedQuestion?.isOk,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+}
+
+module.exports = { createQuestions, getAllQuestions, updateQuestion, deletedQuestion };

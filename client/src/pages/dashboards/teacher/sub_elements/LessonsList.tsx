@@ -48,7 +48,7 @@ export const LessonsList: React.FC<{ state: string }> = (state) => {
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     setRandomColor(randomColor);
   };
-  console.log(lessons);
+
   useEffect(() => {
     return colorRandomizer();
   }, []);
