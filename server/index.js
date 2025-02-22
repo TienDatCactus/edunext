@@ -7,11 +7,10 @@ const accessRouter = require("./routes/accessRouter");
 const homeRouter = require("./routes/homeRouter");
 const courseRouter = require("./routes/courseRouter");
 const dashboardRouter = require("./routes/dashboardRouter");
-const questionRouter = require("./routes/questionRouter");
-const lessonRouter = require("./routes/lessonRouter");
 
 const connectDB = require("./db/connect");
 const mongoose = require("mongoose");
+const questionRouter = require("./routes/questionRouter");
 require("dotenv").config();
 const app = express();
 connectDB();
@@ -23,7 +22,7 @@ app.use(passport.initialize());
 passportConfig.initialize();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,7 +33,6 @@ app.use("/", homeRouter);
 app.use("/course", courseRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/question", questionRouter);
-app.use("/lesson", lessonRouter);
 
 const PORT = process.env.PORT;
 

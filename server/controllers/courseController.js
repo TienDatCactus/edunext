@@ -1,6 +1,9 @@
-const { default: axios } = require("axios");
+const { default: axios, all } = require("axios");
 const query = require("../db/queries");
-const { response } = require("express");
+const { error } = require("console");
+const { default: mongoose, Types } = require("mongoose");
+const { User, Course, Lesson } = require("../db/model");
+const { json } = require("express");
 
 const viewCourseDetail = async (req, res) => {
   const { courseCode } = req.params;
@@ -93,7 +96,6 @@ const viewQuestionSubmissions = async (req, res) => {
 const addSubmissionComment = async (req, res) => {
   const { questionId, submissionId } = req.params;
   const { content, user } = req.body;
-  console.log(questionId, submissionId, content, user);
   try {
     const cmt = await query.postSubmissionComment(
       questionId,
@@ -138,34 +140,14 @@ const getCourseraCourses = async (req, res) => {
 };
 const viewAllCourses = async (req, res) => {
   try {
-    const result = await query.getAllCourses();
-    if (!result || result.length === 0) {
-      return res.status(404).json({ message: 'Không có' });
+    const resp = await query.getAllCourses();
+    if (!resp || result.resp === 0) {
+      return res.status(404).json({ message: "Không có" });
     }
-    res.status(200).json(result);
+    res.status(200).json(resp);
   } catch (error) {
-    console.error('Lỗi khi lấy danh sách :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-const changeStatusCoursesToInactive = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await query.changeStatusCoursesToInactive(id);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-const changeStatusCoursesToActive = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await query.changeStatusCoursesToActive(id);
-    res.status(200).json(result);
-  } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi khi lấy danh sách :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 

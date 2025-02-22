@@ -2,13 +2,13 @@ const { error } = require("console");
 const query = require("../db/queries");
 
 const createQuestion = async (req, res) => {
-  const { content, status, lesson, type } = req.body;
-
   try {
-    const newQuestion = await query.addQuestion(content, status, lesson, type);
+    const questions = req.body;
+
+    const newQuestion = await query.addQuestion(questions);
     if (newQuestion?.isOk) {
       return res.status(200).json({
-        data: newQuestion?.question,
+        data: newQuestion?.result,
         isOk: newQuestion?.isOk,
       });
     }
@@ -23,7 +23,9 @@ const createQuestion = async (req, res) => {
 };
 
 const getAllQuestions = async (req, res) => {
-  try {z
+  try {
+
+    // Array questions
     const lessonId = req.params.lessonId;
     const questions = await query.getQuestions(lessonId);
     if (questions?.isOk === false)
