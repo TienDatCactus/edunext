@@ -2,6 +2,9 @@ import { Eye, Question } from "@phosphor-icons/react";
 import { Button, Empty } from "antd";
 import React from "react";
 import LessonDetail from "../../../../ui/_elements/Page/Course/LessonDetail";
+import { useCourseStore } from "../../../../utils/zustand/Store";
+const CourseInfo: React.FC = () => {
+  const { detail } = useCourseStore();
 import { CourseInfoProps } from "../../../../utils/interfaces";
 const CourseInfo: React.FC<CourseInfoProps> = ({
   courseCode,

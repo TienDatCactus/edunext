@@ -3,7 +3,7 @@ const query = require("../db/queries");
 const dayjs = require("dayjs");
 const Question = require("../db/model").Question;
 
-const createQuestion = async (req, res) => {
+const createQuestions = async (req, res) => {
   try {
     const questions = req.body;
 
@@ -26,7 +26,6 @@ const createQuestion = async (req, res) => {
 
 const getAllQuestions = async (req, res) => {
   try {
-
     // Array questions
     const lessonId = req.params.lessonId;
     const questions = await query.getQuestions(lessonId);
@@ -46,6 +45,56 @@ const getAllQuestions = async (req, res) => {
   }
 };
 
+const updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const question = req.body;
+console.log(question);
+    const updatedQuestion = await query.updateQuestion(id, question);
+    if (updatedQuestion?.isOk === false) {
+      return res.json({
+        error: updatedQuestion?.error,
+        isOk: updatedQuestion?.isOk,
+      });
+    } else if (updatedQuestion?.isOk === true) {
+      res.json({
+        updatedQuestion: updatedQuestion?.updatedQuestion,
+        isOk: updatedQuestion?.isOk,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+
+const deletedQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedQuestion = await query.deleteQuestion(id);
+    if (deletedQuestion?.isOk === false) {
+      return res.json({
+        error: deletedQuestion?.error,
+        isOk: deletedQuestion?.isOk,
+      });
+    } else if (deletedQuestion?.isOk === true) {
+      res.json({
+        deletedQuestion: deletedQuestion?.deletedQuestion,
+        isOk: deletedQuestion?.isOk,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+
+module.exports = {
+  createQuestions,
+  getAllQuestions,
+  updateQuestion,
+  deletedQuestion,
+};
 const resetQuestionDeadline = async (req, res) => {
   try {
     const { id } = req.params;

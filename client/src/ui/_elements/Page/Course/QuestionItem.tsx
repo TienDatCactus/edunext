@@ -1,5 +1,12 @@
-import { Check, ExclamationMark, SealQuestion } from "@phosphor-icons/react";
-import { Button, Tag } from "antd";
+import {
+  Chalkboard,
+  Check,
+  ExclamationMark,
+  Eye,
+  SealQuestion,
+} from "@phosphor-icons/react";
+import { Badge, Button, Collapse, Table, TableProps, Tag } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -16,40 +23,142 @@ const QuestionItem: React.FC<{
     code: "Lập trình",
     response: "Tự luận",
   };
-  return (
-    <li className="flex items-center justify-between p-2 rounded-md cursor-pointer -slideInLeft group ">
-      <div className="flex items-center gap-2">
-        <SealQuestion size={22} />
-        <h1>Câu hỏi #{index}</h1>
-        <Tag color="cyan" className="quick-sand">
-          {swapper[type]}
-        </Tag>
-      </div>
-      <div className="flex items-center gap-2">
-        <Tag
-          icon={
-            !status ? (
-              <ExclamationMark size={22} className="" />
-            ) : (
-              <Check size={22} className="" />
-            )
-          }
-          color={!status ? "red" : "green"}
-          className="flex items-center gap-2 min-h-[30px] "
-        >
-          {!status ? "chưa hoàn thành" : "đã hoàn thành"}
-        </Tag>
-        <Link
-          to={`/course/${courseCode}/lesson/${lessonId}/question`}
-          state={{
-            questionId: questionId,
-          }}
-        >
-          <Button>Xem</Button>
-        </Link>
-      </div>
-    </li>
-  );
+  interface DataType {
+    answers: number;
+    comments: number;
+    toDeadline: string;
+    groups?: number;
+  }
+
+  const columns: TableProps<DataType>["columns"] = [
+    {
+      title: "Tổng số câu trả lời",
+      dataIndex: "answers",
+      key: "answers",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Tổng số bình luận",
+      dataIndex: "comments",
+      key: "comments",
+    },
+    {
+      title: "Thời gian còn lại",
+      dataIndex: "toDeadline",
+      key: "toDeadline",
+    },
+    {
+      title: "Nhóm",
+      dataIndex: "groups",
+      key: "groups",
+      render: (text) => (
+        <Badge dot={text == 0} offset={[0, 0]}>
+          <p>{text}</p>
+        </Badge>
+      ),
+    },
+  ];
+
+  const data: DataType[] = [
+    {
+      answers: 12,
+      comments: 22,
+      toDeadline: dayjs(deadline).fromNow(),
+      groups: 0,
+    },
+  ];
+
+  switch (String(user?.role)) {
+    case "1":
+      return (
+        <li className="flex items-center justify-between p-2 rounded-md cursor-pointer -slideInLeft group ">
+          <div className="flex items-center gap-2">
+            <SealQuestion size={22} />
+            <h1>Câu hỏi #{index}</h1>
+            <Tag color="cyan" className="quick-sand">
+              {question?.type && swapper[question?.type]}
+            </Tag>
+          </div>
+          <div className="flex items-center gap-2">
+            <Tag
+              icon={
+                !question?.status ? (
+                  <ExclamationMark size={22} className="" />
+                ) : (
+                  <Check size={22} className="" />
+                )
+              }
+              color={!question?.status ? "red" : "green"}
+              className="flex items-center gap-2 min-h-[30px] "
+            >
+              {!question?.status ? "chưa hoàn thành" : "đã hoàn thành"}
+            </Tag>
+            <Link
+              to={`/course/${detail?.courseCode}/lesson/${question?.lesson}/question`}
+              state={{
+                questionId: question?._id,
+              }}
+            >
+              <Button>Xem</Button>
+            </Link>
+          </div>
+        </li>
+      );
+    case "2":
+      return (
+        <Collapse
+          className="p-2 bg-white rounded-md cursor-pointer group"
+          expandIconPosition="end"
+          items={[
+            {
+              label: (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <SealQuestion size={22} />
+                    <h1>Câu hỏi #{index}</h1>
+                    <Tag color="cyan" className="quick-sand">
+                      {question?.type && swapper[question?.type]}
+                    </Tag>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Tag
+                      icon={<Chalkboard size={20} />}
+                      color="geekblue"
+                      className="flex items-center gap-2 min-h-[30px] "
+                    >
+                      Thuộc chương trình
+                    </Tag>
+                  </div>
+                </div>
+              ),
+              children: (
+                <div>
+                  <Table<DataType>
+                    pagination={{ position: ["none", "none"] }}
+                    columns={columns}
+                    dataSource={data}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Link
+                      to={`/course/${detail?.courseCode}/lesson/${question?.lesson}/question`}
+                      state={{
+                        questionId: question?._id,
+                      }}
+                    >
+                      <Button type="primary" icon={<Eye size={20} />}>
+                        Kiểm tra
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ),
+            },
+          ]}
+        />
+      );
+    default:
+      return null;
+  }
 };
 
 export default QuestionItem;
