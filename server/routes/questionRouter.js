@@ -71,6 +71,7 @@ questionRouter.put("/edit/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 });
+
 questionRouter.delete("/delete/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -91,4 +92,11 @@ questionRouter.delete("/delete/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 });
+
+questionRouter.put(
+  "/reset-deadline/:id",
+  authenticateToken,
+  questionController.resetQuestionDeadline
+);
+
 module.exports = questionRouter;

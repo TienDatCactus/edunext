@@ -491,6 +491,21 @@ const getCoursesByStatus = async (status) => {
   }
 };
 
+const getLessonsByStatus = async (status) => {
+  try {
+    const lessons = await Lesson.find({ status }).sort({ createdAt: -1 });
+    return {
+      lessons,
+      isOk: true,
+    };
+  } catch (error) {
+    return {
+      error: "Failed to fetch lessons by status",
+      isOk: false,
+    };
+  }
+};
+
 module.exports = {
   loginWithEmail,
   loginWithId,
