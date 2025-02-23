@@ -426,6 +426,47 @@ const getQuestions = async (lessonId) => {
   }
 };
 
+const deleteQuestion = async (id) => {
+  try {
+    const result = await Question.findByIdAndDelete({ _id: id });
+    if (!result) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return {
+      deletedQuestion: result,
+      isOk: true,
+    };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const updateQuestion = async (id, question) => {
+  try {
+
+    const result = await Question.findByIdAndUpdate(id,  question, { new: true });
+
+    if (!result) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return {
+      updatedQuestion: result,
+      isOk: true,
+    };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+
 const getCourseByInstructor = async (userId) => {
   try {
     const user = await User.findOne({
@@ -493,4 +534,6 @@ module.exports = {
   changeStatusCourses,
   getCourseByInstructor,
   getCourseStudents,
+  deleteQuestion,
+  updateQuestion
 };
