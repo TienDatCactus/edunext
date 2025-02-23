@@ -5,7 +5,6 @@ import LessonDetail from "../../../../ui/_elements/Page/Course/LessonDetail";
 import { useCourseStore } from "../../../../utils/zustand/Store";
 const CourseInfo: React.FC = () => {
   const { detail } = useCourseStore();
-  console.log(detail?.lessons);
   return (
     <>
       <div className="border-b border-[#ccc]">

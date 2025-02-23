@@ -211,8 +211,8 @@ const getQuestionById = async (questionId) => {
         isOk: false,
       };
     }
-
-    return { question: question.toObject(), isOk: true };
+    console.log(question);
+    return { question: question, isOk: true };
   } catch (error) {
     return {
       error: "Lỗi lấy thông tin câu hỏi",
