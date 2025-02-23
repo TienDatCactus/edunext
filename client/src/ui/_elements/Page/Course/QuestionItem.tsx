@@ -5,7 +5,7 @@ import {
   Eye,
   SealQuestion,
 } from "@phosphor-icons/react";
-import { Button, Collapse, Table, TableProps, Tag } from "antd";
+import { Badge, Button, Collapse, Table, TableProps, Tag } from "antd";
 import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -29,6 +29,7 @@ const QuestionItem: React.FC<{
     answers: number;
     comments: number;
     toDeadline: string;
+    groups?: number;
   }
 
   const columns: TableProps<DataType>["columns"] = [
@@ -48,6 +49,16 @@ const QuestionItem: React.FC<{
       dataIndex: "toDeadline",
       key: "toDeadline",
     },
+    {
+      title: "Nhóm",
+      dataIndex: "groups",
+      key: "groups",
+      render: (text) => (
+        <Badge dot={text == 0} offset={[0, 0]}>
+          <p>{text}</p>
+        </Badge>
+      ),
+    },
   ];
 
   const data: DataType[] = [
@@ -55,6 +66,7 @@ const QuestionItem: React.FC<{
       answers: 12,
       comments: 22,
       toDeadline: dayjs(deadline).fromNow(),
+      groups: 0,
     },
   ];
 
