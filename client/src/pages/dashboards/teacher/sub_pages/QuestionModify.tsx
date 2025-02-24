@@ -5,11 +5,14 @@ import { useLocation } from "react-router-dom";
 import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/QuestionAddForm";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
+import { addQuestionByTeacher } from "../../../../utils/api";
 
 function QuestionModify() {
   const location = useLocation();
   const { state } = location;
   const [question] = useState<Question>(state?.lesson);
+
+  const [questionArray, setQuestionArray] = useState<Question[]>([]);
   const [questions, setQuestions] = useState<
     (string & any[]) | (QuestionQuizContent & any[]) | undefined
   >();
@@ -23,10 +26,25 @@ function QuestionModify() {
       state && setQuestions([1]);
     }
   }, []);
-
   const addQuestion = () => {
     if (questions) setQuestions([...questions, questions?.length + 1]);
   };
+
+  const handleAddQuestion = (newQuestion: any, index: number | null = null) => {
+    if (index !== null) {
+      const updatedQuestions = [...questionArray];
+      updatedQuestions[index] = newQuestion;
+      setQuestionArray(updatedQuestions);
+    } else {
+      // Nếu không có index (thêm câu hỏi mới), thêm vào mảng
+      setQuestionArray([...questionArray, newQuestion]);
+    }
+  };
+  const handleSubmit = async () => {
+      const res = await addQuestionByTeacher(questionArray);
+      console.log(res);
+  }
+  
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
@@ -42,6 +60,7 @@ function QuestionModify() {
               <QuestionAddForm
                 key={index}
                 prop={{
+                  index: index, 
                   answer: q?.answer,
                   correct: q?.correctAnswer,
                   content: q?.title,
@@ -53,9 +72,15 @@ function QuestionModify() {
             ))
           : questions &&
             questions.map((q, index) => (
-              <QuestionAddForm key={index} prop={question} />
+
+              <QuestionAddForm key={index} prop={{
+                number: q,
+                index: index, 
+                lessonId: state.lessonId,
+                addQuestion: handleAddQuestion
+              }} />
             ))}
-        {!!question && question?.type == "quiz" && (
+      
           <Button
             type="dashed"
             icon={<Plus size={16} />}
@@ -64,8 +89,10 @@ function QuestionModify() {
           >
             Thêm câu hỏi
           </Button>
-        )}
+       
       </div>
+      <Button onClick={handleSubmit}>Thêm</Button>
+
     </DashboardLayout>
   );
 }

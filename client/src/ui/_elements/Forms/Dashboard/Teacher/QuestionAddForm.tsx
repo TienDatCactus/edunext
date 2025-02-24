@@ -50,20 +50,18 @@ import Dragger from "antd/es/upload/Dragger";
 import React, { useState } from "react";
 import { QuestionQuizContent } from "../../../../../utils/interfaces";
 import { FieldType } from "../../Access/LoginForm";
-import { isArray } from "util";
 
 const { Option } = Select;
 
 function QuestionAddForm({ prop }: { prop: any }) {
-  console.log(prop);
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
     prop?.title || prop?.content || "" || "" || ""
   );
-  const [type, setType] = useState("");
+  const [type, setType] = useState("quiz");
 
   const handleChange = (value: string) => {
-    setType(type);
+    setType(value);
   };
 
   const onChange = (checked: boolean) => {
@@ -75,7 +73,9 @@ function QuestionAddForm({ prop }: { prop: any }) {
   >(prop?.answer || ["Answer 1", "Answer 2"]);
 
   const [isMultipleAnswers, setIsMultipleAnswers] = useState(false);
-
+  const [correctAnswer, setCorrectAnswer] = useState<number | null | undefined>(
+    null
+  );
   const addAnswer = (): void => {
     if (Array.isArray(answers)) {
       setAnswers([...answers, `New Answer ${answers.length + 1}`]);
@@ -83,7 +83,6 @@ function QuestionAddForm({ prop }: { prop: any }) {
   };
 
   const deleteAnswer = (index: number): void => {
-    const newAnswers = [];
     if (Array.isArray(answers)) {
       const newAnswers = answers.filter((_, i) => i !== index);
       setAnswers(newAnswers);
@@ -107,6 +106,34 @@ function QuestionAddForm({ prop }: { prop: any }) {
     console.log("Failed:", errorInfo);
   };
 
+  const handleEditorChange = (newMarkdown: string) => {
+    setMd(newMarkdown);
+  };
+
+  const handleSubmit = () => {
+    let question;
+    if (type === "quiz") {
+      question = {
+        content: {
+          title: md,
+          answers: answers,
+          correctAnswer: correctAnswer,
+        },
+        lessonId: prop.lessonId,
+        status: false,
+        type: type,
+      };
+    } else {
+      question = {
+        content: md,
+        lessonId: prop.lessonId,
+        status: false,
+        type: type,
+      };
+    }
+
+    prop.addQuestion(question, prop.index);
+  };
   return (
     <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
       <div className="flex items-center justify-between">
@@ -206,6 +233,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
                 }),
               ]}
               ref={ref}
+              onChange={handleEditorChange}
             />
           </Form.Item>
           {prop?.type != "quiz" && (
@@ -245,7 +273,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
             />
           </div>
         </div>
-        {prop?.type === "quiz" && (
+        {(prop?.type === "quiz" || type === "quiz") && (
           <div className="my-[20px]">
             <Form.Item>
               {isMultipleAnswers ? (
@@ -290,13 +318,16 @@ function QuestionAddForm({ prop }: { prop: any }) {
                   className="w-full space-y-2"
                   value={
                     Array.isArray(answers) ? answers[prop?.correct] : undefined
-                  } // This controls which radio is selected
+                  }
                   onChange={(e) => {
                     const selectedAnswer = e.target.value;
-                    const selectedIndex =
-                      Array.isArray(answers) &&
-                      answers.findIndex((ans) => ans === selectedAnswer);
+                    const selectedIndex = Array.isArray(answers)
+                      ? answers.findIndex((ans) => ans === selectedAnswer)
+                      : null;
                     prop.correct = selectedIndex;
+                    setCorrectAnswer(
+                      selectedIndex !== -1 ? selectedIndex : null
+                    );
                   }}
                   children={
                     Array.isArray(answers) &&
@@ -394,8 +425,12 @@ function QuestionAddForm({ prop }: { prop: any }) {
           </div>
         </div>
         <div>
-          <Button type="primary" icon={<MonitorArrowUp size={20} />}>
-            Thêm
+          <Button
+            onClick={handleSubmit}
+            type="primary"
+            icon={<MonitorArrowUp size={20} />}
+          >
+            Lưu
           </Button>
         </div>
       </div>

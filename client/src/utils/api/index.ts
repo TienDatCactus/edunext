@@ -179,6 +179,17 @@ const getCourseStudents = async (courseId: string) => {
     return error;
   }
 };
+
+const addQuestionByTeacher = async (questions: any) => {
+  try {
+    const res = await http.post(`${questionApi}/addQuestion`, questions);
+    if (res?.data) return res?.data;
+
+  } catch (error) {
+    return error;
+    
+  }
+}
 export {
   getCampuses,
   getCourseDetail,
@@ -194,4 +205,5 @@ export {
   getQuestionByLesson,
   changeCourseStatus,
   getCourseStudents,
-};
+  addQuestionByTeacher
+}
