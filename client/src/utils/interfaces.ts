@@ -140,7 +140,7 @@ export interface Question {
   status?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  type?: "quiz" | "code" | "response";
+  type?:"quiz" | "code" | "response";
 }
 export interface QuestionQuizContent {
   title?: string;

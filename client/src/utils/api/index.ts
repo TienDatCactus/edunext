@@ -185,6 +185,17 @@ const getCourseStudents = async (courseId: string) => {
     return error;
   }
 };
+
+const addQuestionByTeacher = async (questions: any) => {
+  try {
+    const res = await http.post(`${questionApi}/addQuestion`, questions);
+    if (res?.data) return res?.data;
+
+  } catch (error) {
+    return error;
+    
+  }
+}
 const postTimetable = async (courseCode: string, timetable: any) => {
   try {
     const resp = await http.post(`${dashboardApi}/timetable/${courseCode}`, {});
@@ -207,5 +218,5 @@ export {
   getQuestionByLesson,
   changeCourseStatus,
   getCourseStudents,
-  postTimetable,
-};
+  addQuestionByTeacher
+}

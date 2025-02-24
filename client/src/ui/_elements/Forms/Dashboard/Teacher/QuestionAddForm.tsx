@@ -51,22 +51,18 @@ import Dragger from "antd/es/upload/Dragger";
 import React, { useState } from "react";
 import { QuestionQuizContent } from "../../../../../utils/interfaces";
 import { FieldType } from "../../Access/LoginForm";
-import { isArray } from "util";
-import Ribbon from "antd/es/badge/Ribbon";
-import { text } from "stream/consumers";
 
 const { Option } = Select;
 
 function QuestionAddForm({ prop }: { prop: any }) {
-  console.log(prop);
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
     prop?.title || prop?.content || "" || "" || ""
   );
-  const [type, setType] = useState("");
+  const [type, setType] = useState("quiz");
 
   const handleChange = (value: string) => {
-    setType(type);
+    setType(value);
   };
 
   const onChange = (checked: boolean) => {
@@ -78,7 +74,9 @@ function QuestionAddForm({ prop }: { prop: any }) {
   >(prop?.answer || ["Answer 1", "Answer 2"]);
 
   const [isMultipleAnswers, setIsMultipleAnswers] = useState(false);
-
+  const [correctAnswer, setCorrectAnswer] = useState<number | null | undefined>(
+    null
+  );
   const addAnswer = (): void => {
     if (Array.isArray(answers)) {
       setAnswers([...answers, `New Answer ${answers.length + 1}`]);
@@ -86,7 +84,6 @@ function QuestionAddForm({ prop }: { prop: any }) {
   };
 
   const deleteAnswer = (index: number): void => {
-    const newAnswers = [];
     if (Array.isArray(answers)) {
       const newAnswers = answers.filter((_, i) => i !== index);
       setAnswers(newAnswers);
@@ -110,6 +107,34 @@ function QuestionAddForm({ prop }: { prop: any }) {
     console.log("Failed:", errorInfo);
   };
 
+  const handleEditorChange = (newMarkdown: string) => {
+    setMd(newMarkdown);
+  };
+
+  const handleSubmit = () => {
+    let question;
+    if (type === "quiz") {
+      question = {
+        content: {
+          title: md,
+          answers: answers,
+          correctAnswer: correctAnswer,
+        },
+        lessonId: prop.lessonId,
+        status: false,
+        type: type,
+      };
+    } else {
+      question = {
+        content: md,
+        lessonId: prop.lessonId,
+        status: false,
+        type: type,
+      };
+    }
+
+    prop.addQuestion(question, prop.index);
+  };
   return (
     <Badge.Ribbon text={`#${prop?.index}`} placement="start">
       <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
@@ -161,58 +186,76 @@ function QuestionAddForm({ prop }: { prop: any }) {
             <Button icon={<DotsThreeOutline weight="fill" size={16} />} />
           </div>
         </div>
-        <Divider className="border-[#ccc] my-4" />
-        <div className="flex items-center gap-1 mb-4">
-          <QuestionMark size={22} weight="fill" />
-          <strong>
-            Câu hỏi #{prop?._id?.substring(0, 4)}{" "}
-            <span className="text-[red]">*</span>
-          </strong>
-        </div>
-        <Form
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <div className="grid grid-cols-12 gap-2">
-            <Form.Item
-              className={`${
-                prop?.type != "quiz" ? "col-span-8" : "col-span-12"
-              }`}
-            >
-              <MDXEditor
-                markdown={md}
-                className="p-2 border-[#ccc] border rounded-md shadow-md"
-                contentEditableClassName="min-h-[180px]"
-                plugins={[
-                  headingsPlugin(),
-                  listsPlugin(),
-                  thematicBreakPlugin(),
-                  quotePlugin(),
-                  linkPlugin(),
-                  linkDialogPlugin(),
-                  thematicBreakPlugin(),
-                  diffSourcePlugin(),
-                  imagePlugin(),
-                  tablePlugin(),
-                  toolbarPlugin({
-                    toolbarClassName: "my-classname",
-                    toolbarContents: () => (
-                      <>
-                        <BlockTypeSelect />
-                        <CodeToggle />
-                        <InsertImage />
-                        <InsertTable />
-                        <InsertThematicBreak />
-                        <ListsToggle />
-                        <BoldItalicUnderlineToggles />
-                      </>
-                    ),
-                  }),
-                ]}
-                ref={ref}
-              />
+      </div>
+      <Divider className="border-[#ccc] my-4" />
+      <div className="flex items-center gap-1 mb-4">
+        <QuestionMark size={22} weight="fill" />
+        <strong>
+          Câu hỏi #{prop?._id?.substring(0, 4)}{" "}
+          <span className="text-[red]">*</span>
+        </strong>
+      </div>
+      <Form
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <div className="grid grid-cols-12 gap-2">
+          <Form.Item
+            className={`${prop?.type != "quiz" ? "col-span-8" : "col-span-12"}`}
+          >
+            <MDXEditor
+              markdown={md}
+              className="p-2 border-[#ccc] border rounded-md shadow-md"
+              contentEditableClassName="min-h-[180px]"
+              plugins={[
+                headingsPlugin(),
+                listsPlugin(),
+                thematicBreakPlugin(),
+                quotePlugin(),
+                linkPlugin(),
+                linkDialogPlugin(),
+                thematicBreakPlugin(),
+                diffSourcePlugin(),
+                imagePlugin(),
+                tablePlugin(),
+                toolbarPlugin({
+                  toolbarClassName: "my-classname",
+                  toolbarContents: () => (
+                    <>
+                      <BlockTypeSelect />
+                      <CodeToggle />
+                      <InsertImage />
+                      <InsertTable />
+                      <InsertThematicBreak />
+                      <ListsToggle />
+                      <BoldItalicUnderlineToggles />
+                    </>
+                  ),
+                }),
+              ]}
+              ref={ref}
+              onChange={handleEditorChange}
+            />
+          </Form.Item>
+          {prop?.type != "quiz" && (
+            <Form.Item className="col-span-4 ">
+              <Dragger className="group">
+                <div className="flex justify-center">
+                  <BoxArrowUp
+                    size={40}
+                    className=" group-hover:text-[#1688ff]"
+                  />
+                </div>
+                <p className="ant-upload-text group-hover:text-[#1688ff]">
+                  Nhấp hoặc kéo tệp vào khu vực này để tải lên
+                </p>
+                <p className="ant-upload-hint  text-[12px]">
+                  Hỗ trợ tải lên một lần hoặc hàng loạt. Nghiêm cấm tải lên dữ
+                  liệu công ty hoặc các tệp bị cấm khác.
+                </p>
+              </Dragger>
             </Form.Item>
             {prop?.type != "quiz" && (
               <Form.Item className="col-span-4 ">
@@ -251,15 +294,67 @@ function QuestionAddForm({ prop }: { prop: any }) {
               />
             </div>
           </div>
-          {prop?.type === `"quiz" ` && (
-            <div className="my-[20px]">
-              <Form.Item>
-                {isMultipleAnswers ? (
-                  <Checkbox.Group
-                    className="block w-full space-y-2"
-                    children={
-                      Array.isArray(answers) &&
-                      answers.map((answer, index) => (
+        </div>
+        {(prop?.type === "quiz" || type === "quiz") && (
+          <div className="my-[20px]">
+            <Form.Item>
+              {isMultipleAnswers ? (
+                <Checkbox.Group
+                  className="block w-full space-y-2"
+                  children={
+                    Array.isArray(answers) &&
+                    answers.map((answer, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
+                      >
+                        <Checkbox
+                          className="w-full"
+                          checked={index == prop?.correct}
+                        >
+                          <Input
+                            className="w-full border-0 bg-gray-50 dm-sans"
+                            value={answer}
+                            onChange={(e) =>
+                              updateAnswer(index, e.target.value)
+                            }
+                          />
+                        </Checkbox>
+                        <div className="flex items-center space-x-2">
+                          <DotsSixVertical
+                            className="text-gray-400 cursor-move"
+                            size={20}
+                          />
+                          <Trash
+                            className="text-red-500 cursor-pointer"
+                            size={20}
+                            onClick={() => deleteAnswer(index)}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  }
+                />
+              ) : (
+                <Radio.Group
+                  className="w-full space-y-2"
+                  value={
+                    Array.isArray(answers) ? answers[prop?.correct] : undefined
+                  }
+                  onChange={(e) => {
+                    const selectedAnswer = e.target.value;
+                    const selectedIndex = Array.isArray(answers)
+                      ? answers.findIndex((ans) => ans === selectedAnswer)
+                      : null;
+                    prop.correct = selectedIndex;
+                    setCorrectAnswer(
+                      selectedIndex !== -1 ? selectedIndex : null
+                    );
+                  }}
+                  children={
+                    Array.isArray(answers) &&
+                    answers.map((answer, index) => {
+                      return (
                         <div
                           key={index}
                           className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
@@ -406,6 +501,15 @@ function QuestionAddForm({ prop }: { prop: any }) {
               Thêm
             </Button>
           </div>
+        </div>
+        <div>
+          <Button
+            onClick={handleSubmit}
+            type="primary"
+            icon={<MonitorArrowUp size={20} />}
+          >
+            Lưu
+          </Button>
         </div>
       </div>
     </Badge.Ribbon>
