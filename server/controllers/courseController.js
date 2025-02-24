@@ -2,7 +2,7 @@ const { default: axios, all } = require("axios");
 const query = require("../db/queries");
 const { error } = require("console");
 const { default: mongoose, Types } = require("mongoose");
-const { User, Course, Lesson } = require("../db/model");
+const { User, Course, Lesson, LessonGroup } = require("../db/model");
 const { json } = require("express");
 
 const viewCourseDetail = async (req, res) => {
@@ -25,8 +25,6 @@ const viewCourseDetail = async (req, res) => {
   }
 };
 
-
-
 const viewCourseMeetings = async (req, res) => {
   const { courseCode } = req.params;
   try {
@@ -44,11 +42,6 @@ const viewCourseMeetings = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
-
-
-
-
-
 
 const getCourseraCourses = async (req, res) => {
   const { keyword } = req.params;
@@ -76,18 +69,17 @@ const getCourseraCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    if (!resp || result.resp === 0) {
+    console.log(resp)
+    
+    if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
     res.status(200).json(resp);
   } catch (error) {
-
-    console.error('Lỗi khi lấy danh sách :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi khi lấy danh sách :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
 
 const changeStatusCourses = async (req, res) => {
   try {
@@ -99,7 +91,6 @@ const changeStatusCourses = async (req, res) => {
     }
     let newStatus;
     if (result?.course?.status == "active") {
-
       newStatus = "inactive";
     } else if (result?.course?.status == "inactive") {
       newStatus = "active";
@@ -142,6 +133,61 @@ const viewCourseStudents = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const randomGroupForStudent = async (req, res) => {
+  try {
+    const courseID = req.query.courseId;
+    const amount = req.query.amount;
+    const studentList = await query.getCourseStudents(courseID);
+    if (!studentList || studentList.length === 0) {
+      return res.status(404).json({ message: "Không có sinh viên nào" });
+    }
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    function createTeams(studentList, amount) {
+      shuffleArray(studentList);
+      const teams = [];
+      const baseSize = Math.floor(studentList.length / amount);  
+      const remainder = studentList.length % amount;  
+      let currentTeam = [];
+      let teamNumber = 1;
+      for (let i = 0; i < studentList.length; i++) {
+        currentTeam.push(studentList[i]);
+        const isLastTeam = (teamNumber === amount) || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
+        if (isLastTeam || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)) {
+          teams.push({ team: teamNumber, members: currentTeam });
+          currentTeam = [];
+          teamNumber++;
+        }
+      }
+      if (currentTeam.length > 0) {
+        teams.push({ team: teamNumber, members: currentTeam });
+      }
+      return teams;
+    }
+    const teams = createTeams(studentList, amount);
+    const lessonGroups = [];
+    for (let i = 0; i < teams.length; i++) {
+      const team = teams[i];
+      const userIds = team.members.map(student => student._id); 
+      const lessonGroup = new LessonGroup({
+        userId: userIds,  
+        course: courseID, 
+        team: team.team  
+      });
+      const savedStudentGroup = await lessonGroup.save();
+      lessonGroups.push(savedStudentGroup);  
+    }
+    res.status(201).json({ message: "Teams created successfully", lessonGroups });
+  } catch (error) {
+    console.error("Lỗi:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
   viewCourseDetail,
   viewCourseMeetings,
@@ -150,5 +196,5 @@ module.exports = {
   changeStatusCourses,
   viewCourseByInstructor,
   viewCourseStudents,
-
+  randomGroupForStudent,
 };

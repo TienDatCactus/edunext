@@ -10,7 +10,8 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
+courseRouter.get("/", courseController.viewAllCourses);
+courseRouter.post("/group", courseController.randomGroupForStudent);
 
 courseRouter.get(
   "/:courseCode/meetings",
@@ -32,8 +33,8 @@ courseRouter.get(
 courseRouter.put(
   "/changeStatus/:courseCode",
   authenticateToken,
-
   courseController.changeStatusCourses
 );
+
 
 module.exports = courseRouter;
