@@ -31,9 +31,11 @@ function QuestionModify() {
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
         <h1 className="text-[1.75rem] font-semibold">Danh sách câu hỏi : </h1>
-        <p className="text-[0.875rem] text-[#878787]">
-          Mã chương : #{question?._id}
-        </p>
+        {question?._id && (
+          <p className="text-[0.875rem] text-[#878787]">
+            Mã chương : #{question?._id}
+          </p>
+        )}
       </div>
       <div className="flex flex-col min-h-screen gap-2">
         {Array.isArray(question?.content)
@@ -48,12 +50,16 @@ function QuestionModify() {
                   type: question?.type,
                   status: question?.status,
                   id: question?._id,
+                  index: index + 1,
                 }}
               />
             ))
           : questions &&
             questions.map((q, index) => (
-              <QuestionAddForm key={index} prop={question} />
+              <QuestionAddForm
+                key={index}
+                prop={{ question: question, index: index + 1 }}
+              />
             ))}
         {!!question && question?.type == "quiz" && (
           <Button

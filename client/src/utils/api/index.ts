@@ -1,7 +1,13 @@
 import { User, UserToken } from "../interfaces";
 import { useUserStore } from "../zustand/Store";
 import http from "./axios";
-import { accessApi, courseApi, homeApi, questionApi } from "./urls";
+import {
+  accessApi,
+  courseApi,
+  dashboardApi,
+  homeApi,
+  questionApi,
+} from "./urls";
 
 const login = async (campus: string, email: string, password: string) => {
   try {
@@ -179,6 +185,13 @@ const getCourseStudents = async (courseId: string) => {
     return error;
   }
 };
+const postTimetable = async (courseCode: string, timetable: any) => {
+  try {
+    const resp = await http.post(`${dashboardApi}/timetable/${courseCode}`, {});
+  } catch (error) {
+    console.error(error);
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -194,4 +207,5 @@ export {
   getQuestionByLesson,
   changeCourseStatus,
   getCourseStudents,
+  postTimetable,
 };

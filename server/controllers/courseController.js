@@ -141,7 +141,7 @@ const getCourseraCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    if (!resp || result.resp === 0) {
+    if (!resp) {
       return res.status(404).json({ message: "Không có" });
     }
     res.status(200).json(resp);

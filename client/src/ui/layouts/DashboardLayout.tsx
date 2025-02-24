@@ -228,9 +228,9 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           </div>
         </Popover>
       </div>
-      <div className="col-span-10 p-2 overflow-y-scroll max-h-svh">
+      <div className="max-h-full col-span-10 p-2 overflow-y-scroll">
         {/* {children} */}
-        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-4 py-2 min-h-svh">
+        <div className="[box-shadow:rgba(50,_50,_93,_0.25)_0px_2px_5px_-1px,_rgba(0,_0,_0,_0.3)_0px_1px_3px_-1px] rounded-md bg-[#f6f5fa] px-4 py-2 ">
           {children}
         </div>
       </div>

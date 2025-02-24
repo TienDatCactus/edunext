@@ -29,6 +29,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const location = useLocation();
   const questionId = location.state?.questionId;
   const { fetchQuestionById, question, loading } = useQuestionStore();
+
   const [remainQuestions, setRemainQuestions] = useState<
     {
       questionId?: number;

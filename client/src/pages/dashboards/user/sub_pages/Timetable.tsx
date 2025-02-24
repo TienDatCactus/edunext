@@ -14,19 +14,27 @@ import React, { useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { useUserStore } from "../../../../utils/zustand/Store";
 import TimetableCalendar from "./sub_elements/TimetableCalendar";
+import { currentYear } from "../../../course/home/HomePage";
+import { error, log } from "console";
+import { format } from "path";
 const Timetable: React.FC = () => {
   const [form] = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const onFinish: FormProps<any>["onFinish"] = async (props) => {
     const { day, month, type, content } = props;
-    console.log(dayjs(day).format("D"));
-    console.log(dayjs().get("year"));
-    console.log(dayjs(month).format("M"));
+    const currentYear = dayjs().year();
+    const timeline = dayjs(`${currentYear}-${month}-${day}`, "YYYY-M-D", true); // `true` enables strict parsing
+    if (!timeline.isValid()) {
+      console.error("Invalid date selected");
+    } else {
+      console.log("Valid date:", timeline.format("YYYY-MM-DD"));
+    }
   };
 
   const handleCancel = () => {
@@ -119,7 +127,11 @@ const Timetable: React.FC = () => {
                   },
                 ]}
               >
-                <DatePicker className="w-full" format="dddd" />
+                <DatePicker
+                  className="w-full"
+                  format="D"
+                  onChange={(date) => setSelectedDay(date ? date.date() : null)}
+                />
               </Form.Item>
               <Form.Item
                 layout="vertical"
@@ -134,9 +146,11 @@ const Timetable: React.FC = () => {
               >
                 <DatePicker
                   className="w-full"
-                  defaultValue={dayjs().startOf("month")}
                   picker="month"
                   format="MMMM"
+                  onChange={(date) =>
+                    setSelectedMonth(date ? date.month() + 1 : null)
+                  } // Convert 0-based month index to 1-based
                 />
               </Form.Item>
               <Form.Item
@@ -162,11 +176,11 @@ const Timetable: React.FC = () => {
                       label: "Cần làm",
                     },
                     {
-                      value: "success",
+                      value: "note",
                       label: "Ghi nhớ",
                     },
                     {
-                      value: "error",
+                      value: "important",
                       label: "Quan trọng",
                     },
                   ]}
