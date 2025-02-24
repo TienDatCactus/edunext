@@ -211,8 +211,8 @@ const getQuestionById = async (questionId) => {
         isOk: false,
       };
     }
-
-    return { question: question.toObject(), isOk: true };
+    console.log(question);
+    return { question: question, isOk: true };
   } catch (error) {
     return {
       error: "Lỗi lấy thông tin câu hỏi",
@@ -313,7 +313,6 @@ const getMeetingByCourse = async (courseCode) => {
 };
 
 const postQuestionSubmission = async (content, question, user) => {
-  console.log(content, question, user);
   try {
     const submission = new Submission({
       content: content,
@@ -380,18 +379,11 @@ const getUserById = async (id) => {
 
 // Question query
 
-const addQuestion = async (content, status, lesson, type) => {
+const addQuestion = async (questions) => {
   try {
-    const question = new Question({
-      content: content,
-      status: false,
-      lesson: lesson,
-      type: type,
-    });
+    const result = await Question.insertMany(questions);
 
-    await question.save();
-
-    return { question, isOk: true };
+    return { result, isOk: true };
   } catch (error) {
     return { error, isOk: false };
   }
@@ -404,15 +396,15 @@ const getAllCourses = async () => {
     return { error, isOk: false };
   }
 };
-const changeStatusCourses = async (courseCode,newStatus) => {
-  
+
+const changeStatusCourses = async (courseCode, newStatus) => {
   try {
     const updatedCourse = await Course.findOneAndUpdate(
-      { courseCode : courseCode},
-      { status: newStatus },  
+      { courseCode: courseCode },
+      { status: newStatus },
       { new: true }
     );
-    
+
     return updatedCourse;
   } catch (error) {
     return { error: error.message, isOk: false };
@@ -421,7 +413,7 @@ const changeStatusCourses = async (courseCode,newStatus) => {
 const getQuestions = async (lessonId) => {
   try {
     const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
-    
+
     const questions = await Question.find({ lesson: objectIdLessonId });
     if (questions.length === 0) {
       return {
@@ -430,6 +422,97 @@ const getQuestions = async (lessonId) => {
       };
     }
     return questions;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const deleteQuestion = async (id) => {
+  try {
+    const result = await Question.findByIdAndDelete({ _id: id });
+    if (!result) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return {
+      deletedQuestion: result,
+      isOk: true,
+    };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const updateQuestion = async (id, question) => {
+  try {
+
+    const result = await Question.findByIdAndUpdate(id,  question, { new: true });
+
+    if (!result) {
+      return {
+        error: "Không tìm thấy thông tin question",
+        isOk: false,
+      };
+    }
+
+    return {
+      updatedQuestion: result,
+      isOk: true,
+    };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+
+const getCourseByInstructor = async (userId) => {
+  try {
+    const user = await User.findOne({
+      _id: new mongoose.Types.ObjectId(userId),
+    }).select("role");
+    if (user?.role != 2) {
+      return { error: "Không phải giảng viên", isOk: false };
+    }
+    const courses = await Course.find({
+      instructor: new mongoose.Types.ObjectId(userId),
+    });
+    if (courses.length === 0) {
+      return { error: "Không tìm thấy khóa học", isOk: false };
+    }
+    const coursesWithLessons = await Promise.all(
+      courses.map(async (course) => {
+        const lessons = await Lesson.find({
+          course: new mongoose.Types.ObjectId(course?._id),
+        });
+        if (lessons) return { ...course._doc, lessons: lessons };
+      })
+    );
+    if (coursesWithLessons) {
+      return coursesWithLessons;
+    }
+    return courses;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+const getCourseStudents = async (courseId) => {
+  try {
+    console.log(courseId);
+    const semester = await Semester.findOne({
+      courses: { $in: [new mongoose.Types.ObjectId(courseId)] },
+    });
+    const semesterId = semester._id;
+    const students = await User.find({
+      semester: new mongoose.Types.ObjectId(semesterId),
+      role: 1,
+    });
+    if (students.length === 0) {
+      return { error: "Không tìm thấy sinh viên", isOk: false };
+    }
+    return students;
   } catch (error) {
     return { error: error.message, isOk: false };
   }
@@ -450,5 +533,9 @@ module.exports = {
   getQuestions,
   getAllCourses,
   changeStatusCourses,
-  
+  getCourseByInstructor,
+  getCourseStudents,
+  deleteQuestion,
+  updateQuestion
+
 };

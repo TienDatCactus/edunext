@@ -4,33 +4,57 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/QuestionAddForm";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { Question } from "../../../../utils/interfaces";
+import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 
 function QuestionModify() {
-  const [questions, setQuestions] = useState([1]);
-  const [question, setQuestion] = useState<Question>();
   const location = useLocation();
   const { state } = location;
-  const lessonId = state?.lessonId;
+  const [question] = useState<Question>(state?.lesson);
+  const [questions, setQuestions] = useState<
+    (string & any[]) | (QuestionQuizContent & any[]) | undefined
+  >();
   useEffect(() => {
-    state && setQuestion(state?.lesson);
+    if (Array.isArray(state?.lesson?.content)) {
+      state &&
+        setQuestions(
+          Array.isArray(state?.lesson?.content) ? state?.lesson?.content : [1]
+        );
+    } else {
+      state && setQuestions([1]);
+    }
   }, []);
-  const addQuestion = () => {
-    setQuestions([...questions, questions.length + 1]);
-  };
 
+  const addQuestion = () => {
+    if (questions) setQuestions([...questions, questions?.length + 1]);
+  };
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
         <h1 className="text-[1.75rem] font-semibold">Danh sách câu hỏi : </h1>
         <p className="text-[0.875rem] text-[#878787]">
-          Mã chương : #{question?.lesson || lessonId}{" "}
+          Mã chương : #{question?._id}
         </p>
       </div>
-      <div className="min-h-screen">
-        {questions.map((questionIndex) => (
-          <QuestionAddForm key={questionIndex} question={question} />
-        ))}
+      <div className="flex flex-col min-h-screen gap-2">
+        {Array.isArray(question?.content)
+          ? questions &&
+            question?.content?.map((q, index) => (
+              <QuestionAddForm
+                key={index}
+                prop={{
+                  answer: q?.answer,
+                  correct: q?.correctAnswer,
+                  content: q?.title,
+                  type: question?.type,
+                  status: question?.status,
+                  id: question?._id,
+                }}
+              />
+            ))
+          : questions &&
+            questions.map((q, index) => (
+              <QuestionAddForm key={index} prop={question} />
+            ))}
         {!!question && question?.type == "quiz" && (
           <Button
             type="dashed"

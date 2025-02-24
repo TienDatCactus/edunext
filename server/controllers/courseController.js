@@ -1,6 +1,9 @@
-const { default: axios } = require("axios");
+const { default: axios, all } = require("axios");
 const query = require("../db/queries");
-const { response } = require("express");
+const { error } = require("console");
+const { default: mongoose, Types } = require("mongoose");
+const { User, Course, Lesson } = require("../db/model");
+const { json } = require("express");
 
 const viewCourseDetail = async (req, res) => {
   const { courseCode } = req.params;
@@ -93,7 +96,6 @@ const viewQuestionSubmissions = async (req, res) => {
 const addSubmissionComment = async (req, res) => {
   const { questionId, submissionId } = req.params;
   const { content, user } = req.body;
-  console.log(questionId, submissionId, content, user);
   try {
     const cmt = await query.postSubmissionComment(
       questionId,
@@ -138,39 +140,71 @@ const getCourseraCourses = async (req, res) => {
 };
 const viewAllCourses = async (req, res) => {
   try {
-    const result = await query.getAllCourses();
-    if (!result || result.length === 0) {
-      return res.status(404).json({ message: 'Không có' });
+    const resp = await query.getAllCourses();
+    if (!resp || result.resp === 0) {
+      return res.status(404).json({ message: "Không có" });
     }
-    res.status(200).json(result);
+    res.status(200).json(resp);
   } catch (error) {
+
     console.error('Lỗi khi lấy danh sách :', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
+
 const changeStatusCourses = async (req, res) => {
   try {
     const { courseCode } = req.params;
     const result = await query.getCourseDetail(courseCode);
-    if(!result || result.length === 0){
-      return res.status(404).json({ message: 'Không có' });
-    } 
-    console.log(result);
+
+    if (!result || result.length === 0) {
+      return res.status(404).json({ message: "Không có" });
+    }
     let newStatus;
-    if(result?.course?.status == "active"){
+    if (result?.course?.status == "active") {
+
       newStatus = "inactive";
     } else if (result?.course?.status == "inactive") {
       newStatus = "active";
     }
-    console.log(result?.status);
-    const updateResult = await query.changeStatusCourses(courseCode,newStatus);
-    if(!updateResult || updateResult.length === 0){
-      return res.status(404).json({ message: 'Không có' });
-    } 
+
+    const updateResult = await query.changeStatusCourses(courseCode, newStatus);
+    if (!updateResult || updateResult.length === 0) {
+      return res.status(404).json({ message: "Không có" });
+    }
     res.status(200).json(updateResult);
   } catch (error) {
-    console.error('Lỗi :', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Lỗi :", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+const viewCourseByInstructor = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const resp = await query.getCourseByInstructor(userId);
+
+    if (!resp || resp.length === 0) {
+      return res.status(404).json({ message: "Không có môn nào", isOk: false });
+    }
+    res.status(200).json({ courses: resp, isOk: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error " + error });
+  }
+};
+const viewCourseStudents = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const resp = await query.getCourseStudents(courseId);
+    if (!resp || resp.length === 0) {
+      return res.status(404).json({ message: "Không có sinh viên nào" });
+    }
+    res.status(200).json({ students: resp, isOk: true });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách sinh viên :", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 module.exports = {
@@ -183,5 +217,7 @@ module.exports = {
   getCourseraCourses,
   viewAllCourses,
   changeStatusCourses,
-  
+  viewCourseByInstructor,
+  viewCourseStudents,
+
 };

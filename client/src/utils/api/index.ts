@@ -1,7 +1,7 @@
 import { User, UserToken } from "../interfaces";
 import { useUserStore } from "../zustand/Store";
 import http from "./axios";
-import { accessApi, courseApi, homeApi } from "./urls";
+import { accessApi, courseApi, homeApi, questionApi } from "./urls";
 
 const login = async (campus: string, email: string, password: string) => {
   try {
@@ -26,14 +26,27 @@ const getCourses = async () => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.get(`${homeApi}/${user?.user?._id}`);
+    if (user?.user?.role == "2") {
+      const resp = await http.get(`${courseApi}/instructor/${user?.user?._id}`);
+      if (resp?.data) return resp?.data;
+    } else {
+      const resp = await http.get(`${homeApi}/${user?.user?._id}`);
+      if (resp?.data) return resp?.data;
+    }
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
+const getQuestionByLesson = async (lessonId: string) => {
+  try {
+    const resp = await http.get(`${questionApi}/getQuestions/${lessonId}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
     return error;
   }
 };
-
 const getCourseDetail = async (courseCode: string) => {
   try {
     const resp = await http.get(`${courseApi}/${courseCode}`);
@@ -148,7 +161,24 @@ const logout = async () => {
     return error;
   }
 };
-
+const changeCourseStatus = async (courseCode: string) => {
+  try {
+    const resp = await http.put(`${courseApi}/changeStatus/${courseCode}`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
+const getCourseStudents = async (courseId: string) => {
+  try {
+    const resp = await http.get(`${courseApi}/${courseId}/students`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -161,4 +191,7 @@ export {
   logout,
   postQuestionSubmission,
   postSubmissionComment,
+  getQuestionByLesson,
+  changeCourseStatus,
+  getCourseStudents,
 };

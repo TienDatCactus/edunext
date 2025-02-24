@@ -21,5 +21,3 @@ export const Glassmorphism =
 
 export const CustomTabs =
   "[&_.ant-tabs-nav]:mb-0 [&_.ant-tabs-nav-wrap]:px-14 [&_.ant-tabs-tab]:mb-4 [&_.ant-tabs-nav-wrap]:border-b [&_.ant-tabs-nav-wrap]:border-[#ccc] [&_.ant-tabs-tab-active]:shadow-lg [&_.ant-tabs-tab]:rounded-md [&_.ant-tabs-tab-active]:border-blue-500 [&_.ant-tabs-tab-btn]:flex [&_.ant-tabs-tab-btn]:items-center [&_.ant-tabs-tab-btn]:text-[16px] [&_.ant-tabs-tab]:bg-white [&_.ant-tabs-nav_.ant-tabs-nav-list_.ant-tabs-tab-active]:!bg-blue-50";
-
-export const CustomPaperCard = `h-[260px]  min-h-[260px] shadow-lg relative box-border bg-[#ffffff] bg-[linear-gradient(#ffffff_1.1rem,_#ccc_1.2rem)] [background-size:100%_1.2rem] rounded-[10px] cursor-pointer after:absolute after:content-[""] after:bottom-[10px] after:w-2/5 after:h-[10px] after:[box-shadow:0_5px_14px_rgba(0,_0,_0,_0.7)] after:[transition:all_0.3s_ease] before:left-[15px] before:-skew-x-[5deg] before:-rotate-[5deg] after:right-[15px] after:skew-x-[5deg] after:rotate-[5deg] after:[box-shadow:0_2px_14px_rgba(0,_0,_0,_0.4)]after:[box-shadow:0_2px_14px_rgba(0,_0,_0,_0.4)] `;

@@ -1,28 +1,28 @@
-import React from "react";
-import DashboardLayout from "../../../ui/layouts/DashboardLayout";
-import { useUserStore } from "../../../utils/zustand/Store";
 import {
-  Button,
-  Checkbox,
-  Divider,
-  Dropdown,
-  MenuProps,
-  Radio,
-  Segmented,
-  Switch,
-  Tag,
-} from "antd";
-import { currentYear } from "../../course/home/HomePage";
-import {
-  Archive,
   CalendarBlank,
-  ClockClockwise,
   FolderPlus,
   GridFour,
   Trash,
 } from "@phosphor-icons/react";
+import {
+  Button,
+  Divider,
+  Dropdown,
+  Form,
+  MenuProps,
+  message,
+  Segmented,
+  Spin,
+  Switch,
+  Tag,
+} from "antd";
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "../../../ui/layouts/DashboardLayout";
+import { useCourseStore, useUserStore } from "../../../utils/zustand/Store";
+import { currentYear } from "../../course/home/HomePage";
+import se from "../../../assets/images/wallhaven-x892zz_3840x2160.png";
 import dayjs from "dayjs";
-import style from "antd/es/affix/style";
+import { changeCourseStatus } from "../../../utils/api";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -51,7 +51,28 @@ const items: MenuProps["items"] = [
 ];
 
 const CoursesByTeacher: React.FC = () => {
+  const { courses, error, loading, fetchCourses } = useCourseStore();
+  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const handleChange = async (code?: string) => {
+    try {
+      setLoadingSwitch(true);
+      const resp = await changeCourseStatus(code || "");
+      if (resp) {
+        message.success("Thay đổi trạng thái thành công");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingSwitch(false);
+    }
+  };
   const { user } = useUserStore();
+  useEffect(() => {
+    if (error) message.error(error);
+    return () => {
+      fetchCourses();
+    };
+  }, []);
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between my-2 ">
@@ -61,23 +82,14 @@ const CoursesByTeacher: React.FC = () => {
             Các môn học quản lí bởi {user?.name}
           </h1>
         </div>
-        <div className="flex items-center gap-2">
-          <Dropdown menu={{ items }} placement="bottom" arrow>
-            <Button
-              icon={<CalendarBlank size={22} />}
-              className="px-8 py-6 border-none  rounded-none text-[16px]"
-            >
-              Kì Học
-            </Button>
-          </Dropdown>
+        <Dropdown menu={{ items }} placement="bottom" arrow>
           <Button
-            icon={<FolderPlus size={22} />}
-            type="primary"
-            className="border-none "
+            icon={<CalendarBlank size={22} />}
+            className="px-8 py-6 border-none  rounded-none text-[16px]"
           >
-            Thêm môn học
+            Kì Học
           </Button>
-        </div>
+        </Dropdown>
       </div>
       <Divider className="border-[#b3b3b3] my-4" />
       <div className="flex items-center justify-between mb-4">
@@ -85,136 +97,49 @@ const CoursesByTeacher: React.FC = () => {
           className="shadow-md"
           options={["Tất cả", "Đang hoạt động", "Tạm ngừng"]}
         />
-        <div className="flex items-center gap-2">
-          <Button icon={<Trash size={22} />} type="primary" danger>
-            Xóa
-          </Button>
-          <GridFour size={24} weight="fill" />
-        </div>
       </div>
       <div>
-        <ul>
-          <Radio.Group
-            className="grid grid-cols-12 gap-2"
-            defaultValue="a"
-            buttonStyle="solid"
-          >
-            <li className="p-2 bg-white border rounded-lg shadow-md md:col-span-4">
-              <Radio
-                value="a"
-                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="p-1 border rounded-full">
-                    <Archive size={20} />
+        <Spin spinning={loading}>
+          <ul className="grid grid-cols-12 gap-2">
+            {!!courses?.length &&
+              courses?.map((course, index) => (
+                <li className="flex flex-col gap-2 p-2 bg-white border rounded-lg shadow-md md:col-span-4">
+                  <div className="max-h-[100px]">
+                    <img
+                      className="object-cover w-full h-full rounded-lg"
+                      loading="lazy"
+                      src={`${se}`}
+                      alt="se"
+                    />
                   </div>
-                  <div className="flex items-center gap-1 *:text-[#878787]">
-                    <ClockClockwise size={18} />
-                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
+                  <div className="">
+                    <h1 className="font-semibold">{course?.courseName}</h1>
+                    <p className="line-clamp-2">{course?.description}</p>
                   </div>
-                </div>
-                <div>
-                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
-                    Lorem ipsum dolor
-                  </h1>
-                  <p className="truncate line-clamp-2 text-wrap">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Accusantium ad ratione temporibus aspernatur doloremque
-                    libero voluptatibus molestias delectus eaque dolorem nam
-                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
-                    deleniti.
-                  </p>
-                </div>
-              </Radio>
-              <Divider className="my-2 border-[#c9c9c9]" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
-                    CSI101
-                  </Tag>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </li>
-            <li className="p-2 bg-white border rounded-lg md:col-span-4">
-              <Radio
-                value="b"
-                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="p-1 border rounded-full">
-                    <Archive size={20} />
+                  <ul className="flex flex-wrap items-center gap-0">
+                    <Tag className="border-none bg-[#f3f3f5] rounded-xl quick-sand">
+                      {course?.status === "active"
+                        ? "Đang hoạt động"
+                        : "Tạm ngừng"}
+                    </Tag>
+                    <Tag className="border-none bg-[#f3f3f5] rounded-xl quick-sand">
+                      {course?.courseCode}
+                    </Tag>
+                  </ul>
+                  <div className="flex items-center justify-between">
+                    <p className="text-[0.75rem] text-[#878787]">
+                      Chỉnh sửa {dayjs(course?.updatedAt).fromNow()}*
+                    </p>
+                    <Switch
+                      loading={loadingSwitch}
+                      defaultChecked={course?.status === "active"}
+                      onChange={() => handleChange(course?.courseCode)}
+                    />
                   </div>
-                  <div className="flex items-center gap-1 *:text-[#878787]">
-                    <ClockClockwise size={18} />
-                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
-                  </div>
-                </div>
-                <div>
-                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
-                    Lorem ipsum dolor
-                  </h1>
-                  <p className="truncate line-clamp-2 text-wrap">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Accusantium ad ratione temporibus aspernatur doloremque
-                    libero voluptatibus molestias delectus eaque dolorem nam
-                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
-                    deleniti.
-                  </p>
-                </div>
-              </Radio>
-              <Divider className="my-2 border-[#c9c9c9]" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
-                    CSI101
-                  </Tag>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </li>
-            <li className="p-2 bg-white border rounded-lg md:col-span-4">
-              <Radio
-                value="c"
-                className="w-full [&_span:not(.ant-radio)]:w-[95%] [&_.ant-radio]:w-[5%]"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="p-1 border rounded-full">
-                    <Archive size={20} />
-                  </div>
-                  <div className="flex items-center gap-1 *:text-[#878787]">
-                    <ClockClockwise size={18} />
-                    <p>{dayjs().to(dayjs("1990-01-01"))}</p>
-                  </div>
-                </div>
-                <div>
-                  <h1 className="truncate text-[1rem] line-clamp-3 font-semibold text-wrap ">
-                    Lorem ipsum dolor
-                  </h1>
-                  <p className="truncate line-clamp-2 text-wrap">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Accusantium ad ratione temporibus aspernatur doloremque
-                    libero voluptatibus molestias delectus eaque dolorem nam
-                    quam nisi, ipsam id consectetur ipsum voluptatem doloribus
-                    deleniti.
-                  </p>
-                </div>
-              </Radio>
-              <Divider className="my-2 border-[#c9c9c9]" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">
-                    CSI101
-                  </Tag>
-                  <Tag className="border-none bg-[#f3f3f3] rounded-3xl">IT</Tag>
-                </div>
-                <Switch defaultChecked />
-              </div>
-            </li>
-          </Radio.Group>
-        </ul>
+                </li>
+              ))}
+          </ul>
+        </Spin>
       </div>
     </DashboardLayout>
   );
