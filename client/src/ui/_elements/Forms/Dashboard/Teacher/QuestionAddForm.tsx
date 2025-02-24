@@ -35,7 +35,6 @@ import {
   Trash,
 } from "@phosphor-icons/react";
 import {
-  Badge,
   Button,
   Checkbox,
   Divider,
@@ -55,11 +54,13 @@ import { FieldType } from "../../Access/LoginForm";
 const { Option } = Select;
 
 function QuestionAddForm({ prop }: { prop: any }) {
+  console.log(prop);
+  console.log(prop.type == "quiz");
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
-    prop?.title || prop?.content || "" || "" || ""
+    prop?.content || prop?.question?.content || "" || "" || ""
   );
-  const [type, setType] = useState("quiz");
+  const [type, setType] = useState("");
 
   const handleChange = (value: string) => {
     setType(value);
@@ -136,62 +137,61 @@ function QuestionAddForm({ prop }: { prop: any }) {
     prop.addQuestion(question, prop.index);
   };
   return (
-    <Badge.Ribbon text={`#${prop?.index}`} placement="start">
-      <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
-        <div className="flex items-center justify-between mt-4">
-          <Select
-            defaultValue={prop?.type || "quiz"}
-            onChange={handleChange}
-            suffixIcon={<CaretDown weight="bold" color="black" />}
-            className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6] [&_.ant-select-selector]:rounded-md w-36"
-            options={[
-              {
-                value: "quiz",
-                disabled: prop?.type && prop?.type !== "quiz",
-                label: (
-                  <div className="flex items-center gap-1">
-                    <CheckSquareOffset weight="bold" />
-                    <p className="font-semibold">Trắc nghiệm</p>
-                  </div>
-                ),
-              },
-              {
-                value: "response",
-                disabled: prop?.type && prop?.type != "response",
-                label: (
-                  <div className="flex items-center gap-1">
-                    <Paragraph weight="bold" />
-                    <p className="font-semibold">Tự luận</p>
-                  </div>
-                ),
-              },
-              {
-                value: "code",
-                disabled: prop?.type && prop?.type != "code",
-                label: (
-                  <div className="flex items-center gap-1 *:font-semibold">
-                    <CodeBlock weight="bold" />
-                    <p className="font-semibold">Lập trình</p>
-                  </div>
-                ),
-              },
-            ]}
-          />
+    <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
+      <div className="flex items-center justify-between">
+        <Select
+          defaultValue={prop?.question?.type || "quiz"}
+          onChange={handleChange}
+          suffixIcon={<CaretDown weight="bold" color="black" />}
+          className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6] [&_.ant-select-selector]:rounded-md w-36"
+          options={[
+            {
+              value: "quiz",
+              disabled: prop?.question?.type && prop?.question?.type !== "quiz",
+              label: (
+                <div className="flex items-center gap-1">
+                  <CheckSquareOffset weight="bold" />
+                  <p className="font-semibold">Trắc nghiệm</p>
+                </div>
+              ),
+            },
+            {
+              value: "response",
+              disabled:
+                prop?.question?.type && prop?.question?.type != "response",
+              label: (
+                <div className="flex items-center gap-1">
+                  <Paragraph weight="bold" />
+                  <p className="font-semibold">Tự luận</p>
+                </div>
+              ),
+            },
+            {
+              value: "code",
+              disabled: prop?.type && prop?.type != "code",
+              label: (
+                <div className="flex items-center gap-1 *:font-semibold">
+                  <CodeBlock weight="bold" />
+                  <p className="font-semibold">Lập trình</p>
+                </div>
+              ),
+            },
+          ]}
+        />
 
+        <div className="flex items-center gap-2">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <h1 className="font-medium text-[1rem]">Bắt buộc</h1>
-              <Switch size="default" defaultChecked onChange={onChange} />
-            </div>
-            <Button icon={<DotsThreeOutline weight="fill" size={16} />} />
+            <h1 className="font-medium text-[1rem]">Bắt buộc</h1>
+            <Switch size="default" defaultChecked onChange={onChange} />
           </div>
+          <Button icon={<DotsThreeOutline weight="fill" size={16} />} />
         </div>
       </div>
       <Divider className="border-[#ccc] my-4" />
       <div className="flex items-center gap-1 mb-4">
         <QuestionMark size={22} weight="fill" />
         <strong>
-          Câu hỏi #{prop?._id?.substring(0, 4)}{" "}
+          Câu hỏi #{prop?.id ? prop?.id?.substring(0, 4) : prop?.index}{" "}
           <span className="text-[red]">*</span>
         </strong>
       </div>
@@ -257,45 +257,28 @@ function QuestionAddForm({ prop }: { prop: any }) {
                 </p>
               </Dragger>
             </Form.Item>
-            {prop?.type != "quiz" && (
-              <Form.Item className="col-span-4 ">
-                <Dragger className="group">
-                  <div className="flex justify-center">
-                    <BoxArrowUp
-                      size={40}
-                      className=" group-hover:text-[#1688ff]"
-                    />
-                  </div>
-                  <p className="ant-upload-text group-hover:text-[#1688ff]">
-                    Nhấp hoặc kéo tệp vào khu vực này để tải lên
-                  </p>
-                  <p className="ant-upload-hint  text-[12px]">
-                    Hỗ trợ tải lên một lần hoặc hàng loạt. Nghiêm cấm tải lên dữ
-                    liệu công ty hoặc các tệp bị cấm khác.
-                  </p>
-                </Dragger>
-              </Form.Item>
-            )}
+          )}
+        </div>
+        <div className="flex items-center my-4">
+          <div>
+            Lựa chọn<span className="text-[red]">*</span>
           </div>
-          <div className="flex items-center my-4">
-            <div>
-              Lựa chọn<span className="text-[red]">*</span>
-            </div>
-            <Divider
-              type="vertical"
-              style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
+          <Divider
+            type="vertical"
+            style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
+          />
+          <div>
+            <span>Nhiều câu trả lời</span>
+            <Switch
+              defaultChecked={isMultipleAnswers}
+              onChange={(checked) => setIsMultipleAnswers(checked)}
+              className="mx-[10px]"
             />
-            <div>
-              <span>Nhiều câu trả lời</span>
-              <Switch
-                defaultChecked={isMultipleAnswers}
-                onChange={(checked) => setIsMultipleAnswers(checked)}
-                className="mx-[10px]"
-              />
-            </div>
           </div>
         </div>
-        {(prop?.type === "quiz" || type === "quiz") && (
+        {(prop?.type == "quiz" ||
+          prop?.question?.type == "quiz" ||
+          type === "quiz") && (
           <div className="my-[20px]">
             <Form.Item>
               {isMultipleAnswers ? (
@@ -359,18 +342,18 @@ function QuestionAddForm({ prop }: { prop: any }) {
                           key={index}
                           className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
                         >
-                          <Checkbox
-                            className="w-full"
+                          <Radio
                             checked={index == prop?.correct}
+                            value={answer}
                           >
                             <Input
-                              className="w-full border-0 bg-gray-50 dm-sans"
                               value={answer}
+                              className="w-full border-0 bg-gray-50 dm-sans"
                               onChange={(e) =>
                                 updateAnswer(index, e.target.value)
                               }
                             />
-                          </Checkbox>
+                          </Radio>
                           <div className="flex items-center space-x-2">
                             <DotsSixVertical
                               className="text-gray-400 cursor-move"
@@ -383,123 +366,67 @@ function QuestionAddForm({ prop }: { prop: any }) {
                             />
                           </div>
                         </div>
-                      ))
-                    }
-                  />
-                ) : (
-                  <Radio.Group
-                    className="w-full space-y-2"
-                    value={
-                      Array.isArray(answers)
-                        ? answers[prop?.correct]
-                        : undefined
-                    } // This controls which radio is selected
-                    onChange={(e) => {
-                      const selectedAnswer = e.target.value;
-                      const selectedIndex =
-                        Array.isArray(answers) &&
-                        answers.findIndex((ans) => ans === selectedAnswer);
-                      prop.correct = selectedIndex;
-                    }}
-                    children={
-                      Array.isArray(answers) &&
-                      answers.map((answer, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between p-2 rounded-md shadow-sm bg-gray-50"
-                          >
-                            <Radio
-                              checked={index == prop?.correct}
-                              value={answer}
-                            >
-                              <Input
-                                value={answer}
-                                className="w-full border-0 bg-gray-50 dm-sans"
-                                onChange={(e) =>
-                                  updateAnswer(index, e.target.value)
-                                }
-                              />
-                            </Radio>
-                            <div className="flex items-center space-x-2">
-                              <DotsSixVertical
-                                className="text-gray-400 cursor-move"
-                                size={20}
-                              />
-                              <Trash
-                                className="text-red-500 cursor-pointer"
-                                size={20}
-                                onClick={() => deleteAnswer(index)}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })
-                    }
-                  />
-                )}
-              </Form.Item>
-              <div className="flex items-center justify-between">
-                <Button
-                  type="dashed"
-                  onClick={addAnswer}
-                  icon={<Plus size={16} />}
-                >
-                  Thêm lựa chọn
-                </Button>
-                <Button type="primary" icon={<MonitorArrowUp size={16} />}>
-                  {prop ? "Cập nhật" : "Thêm câu hỏi"}
-                </Button>
-              </div>
-            </div>
-          )}
-          <Divider className="border-[#ccc]" />
-        </Form>
-        <div className="flex items-end justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col mr-[20px]">
-              <label className="text-sm font-medium">Sắp xếp</label>
-              <Select
-                defaultValue="Giữ các lựa chọn theo thứ tự hiện tại"
-                className="w-100"
+                      );
+                    })
+                  }
+                />
+              )}
+            </Form.Item>
+            <div className="flex items-center justify-between">
+              <Button
+                type="dashed"
+                onClick={addAnswer}
+                icon={<Plus size={16} />}
               >
-                <Option value="keep">
-                  Giữ các lựa chọn theo thứ tự hiện tại
-                </Option>
-                <Option value="random">Lựa chọn ngẫu nhiên</Option>
-              </Select>
-            </div>
-
-            <div className="flex flex-col mr-[20px]">
-              <label className="text-sm font-medium">Thời gian ước tính</label>
-              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
-                <InputNumber
-                  min={0}
-                  defaultValue={2}
-                  className="w-16 bg-transparent border-none"
-                />
-                <span className="text-gray-500">phút</span>
-                <Timer size={20} className="text-gray-400" />
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              <label className="text-sm font-medium">Số điểm</label>
-              <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
-                <InputNumber
-                  min={0}
-                  defaultValue={1}
-                  className="w-16 bg-transparent border-none"
-                />
-                <span className="text-gray-500">điểm</span>
-                <Circle size={20} weight="fill" className="text-yellow-400" />
-              </div>
+                Thêm lựa chọn
+              </Button>
+              <Button type="primary" icon={<MonitorArrowUp size={16} />}>
+                {prop ? "Cập nhật" : "Thêm câu hỏi"}
+              </Button>
             </div>
           </div>
-          <div>
-            <Button type="primary" icon={<MonitorArrowUp size={20} />}>
-              Thêm
-            </Button>
+        )}
+        <Divider className="border-[#ccc]" />
+      </Form>
+      <div className="flex items-end justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col mr-[20px]">
+            <label className="text-sm font-medium">Sắp xếp</label>
+            <Select
+              defaultValue="Giữ các lựa chọn theo thứ tự hiện tại"
+              className="w-100"
+            >
+              <Option value="keep">
+                Giữ các lựa chọn theo thứ tự hiện tại
+              </Option>
+              <Option value="random">Lựa chọn ngẫu nhiên</Option>
+            </Select>
+          </div>
+
+          <div className="flex flex-col mr-[20px]">
+            <label className="text-sm font-medium">Thời gian ước tính</label>
+            <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
+              <InputNumber
+                min={0}
+                defaultValue={2}
+                className="w-16 bg-transparent border-none"
+              />
+              <span className="text-gray-500">phút</span>
+              <Timer size={20} className="text-gray-400" />
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium">Số điểm</label>
+            <div className="flex items-center gap-2 border rounded-lg bg-gray-50">
+              <InputNumber
+                min={0}
+                defaultValue={1}
+                className="w-16 bg-transparent border-none"
+              />
+              <span className="text-gray-500">điểm</span>
+              <Circle size={20} weight="fill" className="text-yellow-400" />
+            </div>
           </div>
         </div>
         <div>
@@ -512,7 +439,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
           </Button>
         </div>
       </div>
-    </Badge.Ribbon>
+    </div>
   );
 }
 

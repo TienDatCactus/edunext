@@ -367,7 +367,7 @@ function LessonDetail() {
   }, []);
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between my-2">
+      <div className="flex items-center justify-between p-2 bg-white rounded-md shadow-sm">
         <h1 className="text-[2.125rem] font-bold">Danh sách câu hỏi</h1>
         <Button
           type="primary"

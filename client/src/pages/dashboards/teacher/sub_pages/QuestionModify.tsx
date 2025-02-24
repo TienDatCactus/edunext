@@ -1,17 +1,18 @@
-import { Plus } from "@phosphor-icons/react";
-import { Button } from "antd";
+import { FolderPlus, Plus } from "@phosphor-icons/react";
+import { Button, FloatButton, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/QuestionAddForm";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 import { addQuestionByTeacher } from "../../../../utils/api";
+import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
+import { prop } from "@mdxeditor/editor";
 
 function QuestionModify() {
   const location = useLocation();
   const { state } = location;
   const [question] = useState<Question>(state?.lesson);
-
+  console.log(state);
   const [questionArray, setQuestionArray] = useState<Question[]>([]);
   const [questions, setQuestions] = useState<
     (string & any[]) | (QuestionQuizContent & any[]) | undefined
@@ -41,10 +42,10 @@ function QuestionModify() {
     }
   };
   const handleSubmit = async () => {
-      const res = await addQuestionByTeacher(questionArray);
-      console.log(res);
-  }
-  
+    const res = await addQuestionByTeacher(questionArray);
+    console.log(res);
+  };
+  console.log(questions);
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
@@ -62,40 +63,44 @@ function QuestionModify() {
               <QuestionAddForm
                 key={index}
                 prop={{
-                  index: index, 
                   answer: q?.answer,
                   correct: q?.correctAnswer,
                   content: q?.title,
                   type: question?.type,
                   status: question?.status,
                   id: question?._id,
-                  index: index + 1,
                 }}
               />
             ))
           : questions &&
             questions.map((q, index) => (
-
-              <QuestionAddForm key={index} prop={{
-                number: q,
-                index: index, 
-                lessonId: state.lessonId,
-                addQuestion: handleAddQuestion
-              }} />
+              <QuestionAddForm
+                key={index}
+                prop={{
+                  question: question,
+                  index: index + 1,
+                }}
+              />
             ))}
-      
-          <Button
-            type="dashed"
-            icon={<Plus size={16} />}
-            className="w-[100%] mt-4 border-dashed"
-            onClick={addQuestion}
-          >
-            Thêm câu hỏi
-          </Button>
-       
-      </div>
-      <Button onClick={handleSubmit}>Thêm</Button>
 
+        <Button
+          type="dashed"
+          icon={<Plus size={16} />}
+          className="w-[100%] mt-4 border-dashed"
+          onClick={addQuestion}
+        >
+          Thêm câu hỏi
+        </Button>
+      </div>
+      <Tooltip title="Thêm tất cả" placement="top">
+        <FloatButton
+          onClick={handleSubmit}
+          className="w-[50px] h-[50px] shadow-md "
+          type="primary"
+          style={{ insetInlineEnd: 44 }}
+          icon={<FolderPlus />}
+        />
+      </Tooltip>
     </DashboardLayout>
   );
 }
