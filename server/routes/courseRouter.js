@@ -10,8 +10,8 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get("/", courseController.viewAllCourses);
-courseRouter.post("/group", courseController.randomGroupForStudent);
+courseRouter.get("/",authenticateToken, courseController.viewAllCourses);
+courseRouter.post("/group",authenticateToken, courseController.randomGroupForStudent);
 
 courseRouter.get(
   "/:courseCode/meetings",
