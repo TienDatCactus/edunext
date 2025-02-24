@@ -11,26 +11,7 @@ courseRouter.get(
   courseController.viewCourseDetail
 );
 courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
-courseRouter.get(
-  "/question/:questionId",
-  authenticateToken,
-  courseController.viewQuestionDetail
-);
-courseRouter.get(
-  "/question/:questionId/submissions",
-  authenticateToken,
-  courseController.viewQuestionSubmissions
-);
-courseRouter.post(
-  "/question/:questionId",
-  authenticateToken,
-  courseController.addQuestionSubmission
-);
-courseRouter.post(
-  "/question/:questionId/submission/:submissionId/comment",
-  authenticateToken,
-  courseController.addSubmissionComment
-);
+
 courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,

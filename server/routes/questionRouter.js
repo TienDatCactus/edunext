@@ -12,4 +12,24 @@ questionRouter.get(
 );
 questionRouter.put("/edit/:id", questionController.updateQuestion);
 questionRouter.delete("/delete/:id", questionController.deletedQuestion);
+questionRouter.get(
+  "/question/:questionId",
+  authenticateToken,
+  questionController.viewQuestionDetail
+);
+questionRouter.get(
+  "/question/:questionId/submissions",
+  authenticateToken,
+  questionController.viewQuestionSubmissions
+);
+courseRouter.post(
+  "/question/:questionId",
+  authenticateToken,
+  questionController.addQuestionSubmission
+);
+courseRouter.post(
+  "/question/:questionId/submission/:submissionId/comment",
+  authenticateToken,
+  questionController.addSubmissionComment
+);
 module.exports = questionRouter;

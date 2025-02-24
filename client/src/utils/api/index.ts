@@ -59,7 +59,7 @@ const getCourseDetail = async (courseCode: string) => {
 
 const getQuestionDetail = async (questionId: string) => {
   try {
-    const resp = await http.get(`${courseApi}/question/${questionId}`);
+    const resp = await http.get(`${questionApi}/question/${questionId}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
@@ -83,7 +83,7 @@ const postQuestionSubmission = async (
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.post(`${courseApi}/question/${questionId}`, {
+    const resp = await http.post(`${questionApi}/question/${questionId}`, {
       userId: user?.user?._id,
       content,
     });
@@ -123,7 +123,7 @@ const postSubmissionComment = async (
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
     const resp = await http.post(
-      `${courseApi}/question/${questionId}/submission/${submissionId}/comment`,
+      `${questionApi}/question/${questionId}/submission/${submissionId}/comment`,
       {
         content: comment,
         user: user?.user?._id,
