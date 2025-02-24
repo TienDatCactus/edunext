@@ -22,12 +22,12 @@ questionRouter.get(
   authenticateToken,
   questionController.viewQuestionSubmissions
 );
-courseRouter.post(
+questionRouter.post(
   "/question/:questionId",
   authenticateToken,
   questionController.addQuestionSubmission
 );
-courseRouter.post(
+questionRouter.post(
   "/question/:questionId/submission/:submissionId/comment",
   authenticateToken,
   questionController.addSubmissionComment

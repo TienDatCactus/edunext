@@ -145,8 +145,6 @@ const viewCourseStudents = async (req, res) => {
 module.exports = {
   viewCourseDetail,
   viewCourseMeetings,
-  addQuestionSubmission,
-  addSubmissionComment,
   getCourseraCourses,
   viewAllCourses,
   changeStatusCourses,
