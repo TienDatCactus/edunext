@@ -396,6 +396,7 @@ const getAllCourses = async () => {
     return { error, isOk: false };
   }
 };
+
 const changeStatusCourses = async (courseCode, newStatus) => {
   try {
     const updatedCourse = await Course.findOneAndUpdate(
@@ -536,4 +537,5 @@ module.exports = {
   getCourseStudents,
   deleteQuestion,
   updateQuestion
+
 };

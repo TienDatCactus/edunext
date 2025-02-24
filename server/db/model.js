@@ -134,6 +134,7 @@ const LessonGroupSchema = new Schema(
   {
     userId: [{ type: Schema.Types.Mixed, ref: "User", index: true }],
     course: { type: Schema.Types.Mixed, ref: "Course", index: true },
+    team: String
   },
   commonOptions
 );

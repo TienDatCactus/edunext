@@ -10,27 +10,9 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
-courseRouter.get(
-  "/question/:questionId",
-  authenticateToken,
-  courseController.viewQuestionDetail
-);
-courseRouter.get(
-  "/question/:questionId/submissions",
-  authenticateToken,
-  courseController.viewQuestionSubmissions
-);
-courseRouter.post(
-  "/question/:questionId",
-  authenticateToken,
-  courseController.addQuestionSubmission
-);
-courseRouter.post(
-  "/question/:questionId/submission/:submissionId/comment",
-  authenticateToken,
-  courseController.addSubmissionComment
-);
+courseRouter.get("/",authenticateToken, courseController.viewAllCourses);
+courseRouter.post("/group",authenticateToken, courseController.randomGroupForStudent);
+
 courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,
@@ -42,6 +24,7 @@ courseRouter.get(
   authenticateToken,
   courseController.getCourseraCourses
 );
+
 courseRouter.get(
   "/instructor/:userId",
   authenticateToken,
@@ -52,5 +35,6 @@ courseRouter.put(
   authenticateToken,
   courseController.changeStatusCourses
 );
+
 
 module.exports = courseRouter;

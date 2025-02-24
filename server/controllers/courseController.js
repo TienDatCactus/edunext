@@ -2,7 +2,7 @@ const { default: axios, all } = require("axios");
 const query = require("../db/queries");
 const { error } = require("console");
 const { default: mongoose, Types } = require("mongoose");
-const { User, Course, Lesson } = require("../db/model");
+const { User, Course, Lesson, LessonGroup } = require("../db/model");
 const { json } = require("express");
 
 const viewCourseDetail = async (req, res) => {
@@ -25,20 +25,6 @@ const viewCourseDetail = async (req, res) => {
   }
 };
 
-const viewQuestionDetail = async (req, res) => {
-  const { questionId } = req.params;
-  try {
-    const question = await query.getQuestionById(questionId);
-    if (question?.isOk === false) {
-      return res.status(400).json({ error: question?.error, isOk: false });
-    }
-    res.json({ question: question?.question, isOk: true });
-  } catch (error) {
-    console.error("Question fetch error:", error);
-    res.status(500).json({ error: "Internal server error", isOk: false });
-  }
-};
-
 const viewCourseMeetings = async (req, res) => {
   const { courseCode } = req.params;
   try {
@@ -57,64 +43,6 @@ const viewCourseMeetings = async (req, res) => {
   }
 };
 
-const addQuestionSubmission = async (req, res) => {
-  const { questionId } = req.params;
-  const { content, userId } = req.body;
-  try {
-    const newSubmission = await query.postQuestionSubmission(
-      content,
-      questionId,
-      userId
-    );
-    if (newSubmission?.isOk === false) {
-      return res.status(400).json({ error: newSubmission?.error, isOk: false });
-    }
-    res.json({
-      allSubmission: newSubmission?.allSubmissions,
-      isOk: true,
-    });
-  } catch (error) {
-    console.error("Submission error:", error);
-    res.status(500).json({ error: "Internal server error", isOk: false });
-  }
-};
-
-const viewQuestionSubmissions = async (req, res) => {
-  const { questionId } = req.params;
-  try {
-    const submissions = await query.getSubmissionsByQuestion(questionId);
-    if (submissions?.isOk === false) {
-      return res.status(400).json({ error: submissions?.error, isOk: false });
-    }
-    res.json({ submissions: submissions?.submissions, isOk: true });
-  } catch (error) {
-    console.error("Submission fetch error:", error);
-    res.status(500).json({ error: "Internal server error", isOk: false });
-  }
-};
-
-const addSubmissionComment = async (req, res) => {
-  const { questionId, submissionId } = req.params;
-  const { content, user } = req.body;
-  try {
-    const cmt = await query.postSubmissionComment(
-      questionId,
-      submissionId,
-      content,
-      user
-    );
-    if (cmt?.isOk === false) {
-      return res.status(400).json({ error: cmt?.error, isOk: false });
-    }
-    res.json({
-      allSubmission: cmt?.allSubmissions,
-      isOk: true,
-    });
-  } catch (error) {
-    console.error("  error:", error);
-    res.status(500).json({ error: "Internal server error", isOk: false });
-  }
-};
 const getCourseraCourses = async (req, res) => {
   const { keyword } = req.params;
   try {
@@ -141,7 +69,9 @@ const getCourseraCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    if (!resp) {
+    console.log(resp)
+    
+    if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
     res.status(200).json(resp);
@@ -155,6 +85,7 @@ const changeStatusCourses = async (req, res) => {
   try {
     const { courseCode } = req.params;
     const result = await query.getCourseDetail(courseCode);
+
     if (!result || result.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
@@ -164,6 +95,7 @@ const changeStatusCourses = async (req, res) => {
     } else if (result?.course?.status == "inactive") {
       newStatus = "active";
     }
+
     const updateResult = await query.changeStatusCourses(courseCode, newStatus);
     if (!updateResult || updateResult.length === 0) {
       return res.status(404).json({ message: "Không có" });
@@ -201,16 +133,68 @@ const viewCourseStudents = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const randomGroupForStudent = async (req, res) => {
+  try {
+    const courseID = req.query.courseId;
+    const amount = req.query.amount;
+    const studentList = await query.getCourseStudents(courseID);
+    if (!studentList || studentList.length === 0) {
+      return res.status(404).json({ message: "Không có sinh viên nào" });
+    }
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    function createTeams(studentList, amount) {
+      shuffleArray(studentList);
+      const teams = [];
+      const baseSize = Math.floor(studentList.length / amount);  
+      const remainder = studentList.length % amount;  
+      let currentTeam = [];
+      let teamNumber = 1;
+      for (let i = 0; i < studentList.length; i++) {
+        currentTeam.push(studentList[i]);
+        const isLastTeam = (teamNumber === amount) || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
+        if (isLastTeam || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)) {
+          teams.push({ team: teamNumber, members: currentTeam });
+          currentTeam = [];
+          teamNumber++;
+        }
+      }
+      if (currentTeam.length > 0) {
+        teams.push({ team: teamNumber, members: currentTeam });
+      }
+      return teams;
+    }
+    const teams = createTeams(studentList, amount);
+    const lessonGroups = [];
+    for (let i = 0; i < teams.length; i++) {
+      const team = teams[i];
+      const userIds = team.members.map(student => student._id); 
+      const lessonGroup = new LessonGroup({
+        userId: userIds,  
+        course: courseID, 
+        team: team.team  
+      });
+      const savedStudentGroup = await lessonGroup.save();
+      lessonGroups.push(savedStudentGroup);  
+    }
+    res.status(201).json({ message: "Teams created successfully", lessonGroups });
+  } catch (error) {
+    console.error("Lỗi:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 module.exports = {
   viewCourseDetail,
-  viewQuestionDetail,
   viewCourseMeetings,
-  addQuestionSubmission,
-  viewQuestionSubmissions,
-  addSubmissionComment,
   getCourseraCourses,
   viewAllCourses,
   changeStatusCourses,
   viewCourseByInstructor,
   viewCourseStudents,
+  randomGroupForStudent,
 };
