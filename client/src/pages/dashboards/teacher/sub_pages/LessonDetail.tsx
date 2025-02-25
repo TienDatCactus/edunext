@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { getQuestionByLesson } from "../../../../utils/api";
+import { deleteQuestionByTeacher, getQuestionByLesson } from "../../../../utils/api";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function LessonDetail() {
   const navigate = useNavigate();
@@ -37,6 +37,12 @@ function LessonDetail() {
     response: "Tự luận",
   };
 
+  const handleDelete = async (id :any) => {
+    if(window.confirm("Do you want delete this question?") ) {
+      const res = await deleteQuestionByTeacher(id);
+      window.location.reload();
+    }
+  } 
   const tabItemCheck = (q: Question) => {
     switch (q?.type) {
       case "quiz":
@@ -91,7 +97,7 @@ function LessonDetail() {
                         >
                           Chỉnh sửa
                         </Button>
-                        <Button type="primary" danger icon={<Trash />}>
+                        <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
                           Xóa
                         </Button>
                       </div>
@@ -225,7 +231,7 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />}>
+                <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
                   Xóa
                 </Button>
               </div>
@@ -304,7 +310,7 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />}>
+                <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
                   Xóa
                 </Button>
               </div>
