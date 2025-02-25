@@ -6,7 +6,15 @@ import {
   UploadSimple,
   UserCirclePlus,
 } from "@phosphor-icons/react";
-import { Button, DatePicker, Divider, Form, Modal, Select } from "antd";
+import {
+  Button,
+  DatePicker,
+  Divider,
+  Form,
+  message,
+  Modal,
+  Select,
+} from "antd";
 import { FormProps, useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
@@ -17,6 +25,7 @@ import TimetableCalendar from "./sub_elements/TimetableCalendar";
 import { currentYear } from "../../../course/home/HomePage";
 import { error, log } from "console";
 import { format } from "path";
+import { postTimetableInfo } from "../../../../utils/api";
 const Timetable: React.FC = () => {
   const [form] = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,13 +36,30 @@ const Timetable: React.FC = () => {
   };
 
   const onFinish: FormProps<any>["onFinish"] = async (props) => {
-    const { day, month, type, content } = props;
+    const { type, content } = props;
     const currentYear = dayjs().year();
-    const timeline = dayjs(`${currentYear}-${month}-${day}`, "YYYY-M-D", true); // `true` enables strict parsing
-    if (!timeline.isValid()) {
-      console.error("Invalid date selected");
+    const timeline =
+      selectedMonth && selectedDay
+        ? dayjs(
+            `${currentYear}-${selectedMonth}-${selectedDay}`,
+            "YYYY-M-D",
+            true
+          )
+        : null;
+    if (timeline?.isValid()) {
+      const resp = await postTimetableInfo(
+        user?._id || "",
+        String(timeline),
+        content,
+        type
+      );
+      if (resp) {
+        setIsModalOpen(false);
+        form.resetFields();
+        message.success("Thêm công việc vào thời khóa biểu thành công");
+      }
     } else {
-      console.log("Valid date:", timeline.format("YYYY-MM-DD"));
+      console.error("Invalid date selected");
     }
   };
 
@@ -119,7 +145,6 @@ const Timetable: React.FC = () => {
               <Form.Item
                 layout="vertical"
                 label="Ngày"
-                name="day"
                 rules={[
                   {
                     required: true,
@@ -136,7 +161,6 @@ const Timetable: React.FC = () => {
               <Form.Item
                 layout="vertical"
                 label="Tháng"
-                name="month"
                 rules={[
                   {
                     required: true,

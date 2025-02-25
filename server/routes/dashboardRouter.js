@@ -11,4 +11,9 @@ dashboardRouter.post(
   dashboardController.addNewTimeTable
 );
 
+dashboardRouter.get(
+  "/timetable/:id",
+  authenticateToken,
+  dashboardController.getUserTimeTable
+);
 module.exports = dashboardRouter;

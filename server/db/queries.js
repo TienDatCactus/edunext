@@ -27,7 +27,7 @@ const loginWithEmail = async (campus, email, password) => {
         isOk: false,
       };
     }
-    const timetable = await Timetable.findOne({
+    const timetable = await Timetable.find({
       user: new mongoose.Types.ObjectId(user._id),
     }).select("timeline");
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -40,8 +40,9 @@ const loginWithEmail = async (campus, email, password) => {
     const userObject = user.toObject();
     delete userObject.password;
     if (timetable) {
-      userObject.timetable = timetable.timeline;
+      userObject.timetable = timetable;
     }
+    console.log(userObject);
     return { user: userObject, isOk: true };
   } catch (error) {
     return {
@@ -448,8 +449,9 @@ const deleteQuestion = async (id) => {
 
 const updateQuestion = async (id, question) => {
   try {
-
-    const result = await Question.findByIdAndUpdate(id,  question, { new: true });
+    const result = await Question.findByIdAndUpdate(id, question, {
+      new: true,
+    });
 
     if (!result) {
       return {
@@ -466,7 +468,6 @@ const updateQuestion = async (id, question) => {
     return { error: error.message, isOk: false };
   }
 };
-
 
 const getCourseByInstructor = async (userId) => {
   try {
@@ -536,6 +537,5 @@ module.exports = {
   getCourseByInstructor,
   getCourseStudents,
   deleteQuestion,
-  updateQuestion
-
+  updateQuestion,
 };

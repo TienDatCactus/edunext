@@ -59,9 +59,21 @@ export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
 const Header = () => {
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
+
+  const navigate = useNavigate();
+  const location = window.location.pathname;
   const navItems: Array<{ name: string; link: string; active: boolean }> = [
-    { name: "Trang chủ", link: "/", active: true },
-    { name: "Các môn học", link: `/home/${year}/${month}`, active: false },
+    { name: "Trang chủ", link: "/", active: location === "/" },
+    {
+      name: "Các môn học",
+      link: `/home/${year}/${month}`,
+      active: location === `/home/${year}/${month}`,
+    },
+    {
+      name: "Khóa học bên ngoài",
+      link: `/home/others`,
+      active: location === "/home/others",
+    },
   ];
   const { user } = useUserStore();
   return (

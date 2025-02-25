@@ -140,7 +140,7 @@ export interface Question {
   status?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  type?:"quiz" | "code" | "response";
+  type?: "quiz" | "code" | "response";
 }
 export interface QuestionQuizContent {
   title?: string;
@@ -174,13 +174,12 @@ export interface UserToken {
   user?: User;
 }
 export interface TimelineEvent {
-  time: {
-    day: string;
-    month: string;
-    year: string;
+  id: string;
+  timeline: {
+    content: string;
+    time: string;
+    type: string;
   };
-  content: string;
-  type: string;
 }
 export interface User {
   name: string;

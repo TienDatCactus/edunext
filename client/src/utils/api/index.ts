@@ -190,15 +190,32 @@ const addQuestionByTeacher = async (questions: any) => {
   try {
     const res = await http.post(`${questionApi}/addQuestion`, questions);
     if (res?.data) return res?.data;
-
   } catch (error) {
     return error;
-    
   }
-}
-const postTimetable = async (courseCode: string, timetable: any) => {
+};
+const postTimetableInfo = async (
+  user: string,
+  timeline: string,
+  content: string,
+  type: string
+) => {
   try {
-    const resp = await http.post(`${dashboardApi}/timetable/${courseCode}`, {});
+    const resp = await http.post(`${dashboardApi}/timetable`, {
+      user,
+      timeline,
+      content,
+      type,
+    });
+    if (resp?.data) return resp?.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const getTimetableInfo = async (userId: string) => {
+  try {
+    const resp = await http.get(`${dashboardApi}/timetable/${userId}`);
+    if (resp?.data) return resp?.data;
   } catch (error) {
     console.error(error);
   }
@@ -218,5 +235,7 @@ export {
   getQuestionByLesson,
   changeCourseStatus,
   getCourseStudents,
-  addQuestionByTeacher
-}
+  addQuestionByTeacher,
+  postTimetableInfo,
+  getTimetableInfo,
+};

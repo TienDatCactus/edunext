@@ -1,33 +1,56 @@
-import { ChartPieSlice, FileJs, Notebook } from "@phosphor-icons/react";
-import { Badge, Button } from "antd";
+import {
+  ChartPieSlice,
+  FileJs,
+  Notebook,
+  SelectionPlus,
+} from "@phosphor-icons/react";
+import { Badge, Button, Tag } from "antd";
+import dayjs from "dayjs";
+import React from "react";
 
-const ListItem = () => {
+const ListItem: React.FC<{
+  prop: {
+    type: string;
+    content: string;
+    time: string;
+  };
+}> = ({ prop }) => {
   return (
-    <li className="grid grid-cols-12">
-      <div className="flex items-center col-span-2">
-        <p className="text-[12px] text-[#9b9ba0]">12:40PM</p>
+    <li className="">
+      <div className="flex items-center ">
+        <p className="text-[12px] text-[#9b9ba0]">
+          {dayjs(prop?.time).format("HH:mm A")}
+        </p>
       </div>
-      <div className="flex items-center justify-between col-span-8">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FileJs size={42} className="bg-[#e1d2ff] p-2" />
-          <div>
-            <h1 className="font-semibold text-[16px]">Machine Learning</h1>
+          <div className="flex items-start gap-2">
+            <h1 className="font-semibold text-[16px]">{prop?.content}</h1>
             <div className="flex items-center gap-2 text-[12px] text-[#575757]">
-              <p>Lecturer: Nigga dat</p>
-              <Badge color="#ccc" />
-              <p>Google Meet</p>
+              <Tag
+                color={
+                  prop?.type == "important"
+                    ? "red"
+                    : prop?.type == "note"
+                    ? "blue"
+                    : prop?.type == "warning"
+                    ? "yellow"
+                    : ""
+                }
+              >
+                {prop?.type == "important"
+                  ? "Quan trọng"
+                  : prop?.type == "note"
+                  ? "Ghi nhớ"
+                  : prop?.type == "warning"
+                  ? "Cần làm"
+                  : ""}
+              </Tag>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 *:border-none">
-          <Button icon={<Notebook size={26} />} />
-          <Button icon={<ChartPieSlice size={26} />} />
-        </div>
       </div>
-      <div className="*:text-end col-span-2">
-        <h1 className="text-[16px] font-semibold">Lesson 4</h1>
-        <p className="text-[12px] text-[#575757]">50 min</p>
-      </div>
+      <Button type="dashed" icon={<SelectionPlus />} />
     </li>
   );
 };

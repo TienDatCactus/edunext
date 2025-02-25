@@ -40,9 +40,9 @@ root.render(
       }}
     >
       <Suspense fallback={<LoadingScreen />}>
-        <ErrorBoundary>
-          <RouterProvider router={router} />
-        </ErrorBoundary>
+        {/* <ErrorBoundary> */}
+        <RouterProvider router={router} />
+        {/* </ErrorBoundary> */}
         {/* <Board knightPosition={knightPosition} /> */}
       </Suspense>
     </ConfigProvider>
