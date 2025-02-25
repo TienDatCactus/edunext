@@ -19,13 +19,12 @@ import {
   Tabs,
   Tag,
 } from "antd";
-import axios from "axios";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 import { getQuestionByLesson } from "../../../../utils/api";
+import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function LessonDetail() {
   const navigate = useNavigate();
   const { state } = useLocation();

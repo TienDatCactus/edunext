@@ -188,6 +188,7 @@ const getCourseStudents = async (courseId: string) => {
 
 const addQuestionByTeacher = async (questions: any) => {
   try {
+    console.log(questions);
     const res = await http.post(`${questionApi}/addQuestion`, questions);
     if (res?.data) return res?.data;
   } catch (error) {
@@ -210,6 +211,15 @@ const postTimetableInfo = async (
     if (resp?.data) return resp?.data;
   } catch (error) {
     console.error(error);
+  }
+};
+
+const deleteQuestionByTeacher = async (id: any) => {
+  try {
+    const res = await http.delete(`${questionApi}/delete/${id}`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
   }
 };
 const getTimetableInfo = async (userId: string) => {
@@ -236,6 +246,7 @@ export {
   changeCourseStatus,
   getCourseStudents,
   addQuestionByTeacher,
+  deleteQuestionByTeacher,
   postTimetableInfo,
   getTimetableInfo,
 };

@@ -1,5 +1,5 @@
 import { BellZ, Kanban } from "@phosphor-icons/react";
-import { Button, Divider, Popover } from "antd";
+import { Button, Divider, Popover, Spin } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../utils/api";
@@ -32,26 +32,28 @@ export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
         <p className="my-0 text-[12px]">{user?.email}</p>
       </div>
       <Divider className="my-2 border-[#ccc]" />
-      <ul className="p-2 pt-0">
-        <li>
-          <Button
-            className="border-none shadow-none hover:bg-[#ededed]"
-            block
-            onClick={() => navigate("/dashboard/account")}
-          >
-            Cài đặt
-          </Button>
-        </li>
-        <li>
-          <Button
-            className="border-none shadow-none hover:bg-[#ededed]"
-            block
-            onClick={doLogout}
-          >
-            Đăng xuất
-          </Button>
-        </li>
-      </ul>
+      <Spin spinning={loading}>
+        <ul className="p-2 pt-0">
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={() => navigate("/dashboard/account")}
+            >
+              Cài đặt
+            </Button>
+          </li>
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={doLogout}
+            >
+              Đăng xuất
+            </Button>
+          </li>
+        </ul>
+      </Spin>
     </div>
   );
 };

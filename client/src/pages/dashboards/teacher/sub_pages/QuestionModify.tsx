@@ -1,5 +1,5 @@
 import { FolderPlus, Plus } from "@phosphor-icons/react";
-import { Button, FloatButton, Tooltip } from "antd";
+import { Button, FloatButton, Spin, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/QuestionAddForm";
@@ -12,8 +12,8 @@ function QuestionModify() {
   const location = useLocation();
   const { state } = location;
   const [question] = useState<Question>(state?.lesson);
-  console.log(state);
   const [questionArray, setQuestionArray] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<
     (string & any[]) | (QuestionQuizContent & any[]) | undefined
   >();
@@ -37,15 +37,21 @@ function QuestionModify() {
       updatedQuestions[index] = newQuestion;
       setQuestionArray(updatedQuestions);
     } else {
-      // Nếu không có index (thêm câu hỏi mới), thêm vào mảng
       setQuestionArray([...questionArray, newQuestion]);
     }
   };
   const handleSubmit = async () => {
-    const res = await addQuestionByTeacher(questionArray);
-    console.log(res);
+    try {
+      setLoading(true);
+      const res = await addQuestionByTeacher(questionArray);
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
-  console.log(questions);
+  console.log(question);
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
@@ -56,42 +62,45 @@ function QuestionModify() {
           </p>
         )}
       </div>
-      <div className="flex flex-col min-h-screen gap-2">
-        {Array.isArray(question?.content)
-          ? questions &&
-            question?.content?.map((q, index) => (
-              <QuestionAddForm
-                key={index}
-                prop={{
-                  answer: q?.answer,
-                  correct: q?.correctAnswer,
-                  content: q?.title,
-                  type: question?.type,
-                  status: question?.status,
-                  id: question?._id,
-                }}
-              />
-            ))
-          : questions &&
-            questions.map((q, index) => (
-              <QuestionAddForm
-                key={index}
-                prop={{
-                  question: question,
-                  index: index + 1,
-                }}
-              />
-            ))}
-
-        <Button
-          type="dashed"
-          icon={<Plus size={16} />}
-          className="w-[100%] mt-4 border-dashed"
-          onClick={addQuestion}
-        >
-          Thêm câu hỏi
-        </Button>
-      </div>
+      <Spin spinning={loading}>
+        <div className="flex flex-col h-full gap-2">
+          {Array.isArray(question?.content)
+            ? questions &&
+              question?.content?.map((q, index) => (
+                <QuestionAddForm
+                  key={index}
+                  prop={{
+                    answer: q?.answer,
+                    correct: q?.correctAnswer,
+                    content: q?.title,
+                    type: question?.type,
+                    status: question?.status,
+                    id: question?._id,
+                  }}
+                />
+              ))
+            : questions &&
+              questions.map((q, index) => (
+                <QuestionAddForm
+                  key={index}
+                  prop={{
+                    number: q,
+                    index: index,
+                    lessonId: state.lessonId,
+                    addQuestion: handleAddQuestion,
+                  }}
+                />
+              ))}
+          <Button
+            type="dashed"
+            icon={<Plus size={16} />}
+            className="w-[100%] mt-4 border-dashed"
+            onClick={addQuestion}
+          >
+            Thêm câu hỏi
+          </Button>
+        </div>
+      </Spin>
       <Tooltip title="Thêm tất cả" placement="top">
         <FloatButton
           onClick={handleSubmit}

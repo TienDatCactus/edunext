@@ -55,13 +55,11 @@ import { FieldType } from "../../Access/LoginForm";
 const { Option } = Select;
 
 function QuestionAddForm({ prop }: { prop: any }) {
-  console.log(prop);
-  console.log(prop.type == "quiz");
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
     prop?.content || prop?.question?.content || "" || "" || ""
   );
-  const [type, setType] = useState("");
+  const [type, setType] = useState("quiz");
 
   const handleChange = (value: string) => {
     setType(value);
@@ -115,26 +113,28 @@ function QuestionAddForm({ prop }: { prop: any }) {
 
   const handleSubmit = () => {
     let question;
-    if (type === "quiz") {
+    if (type == "quiz") {
       question = {
-        content: {
-          title: md,
-          answers: answers,
-          correctAnswer: correctAnswer,
-        },
-        lessonId: prop.lessonId,
+        content: [
+          {
+            title: md,
+            answers: answers,
+            correctAnswer: correctAnswer,
+          },
+        ],
+        lesson: prop.lessonId,
         status: false,
         type: type,
       };
     } else {
       question = {
         content: md,
-        lessonId: prop.lessonId,
+        lesson: prop.lessonId,
         status: false,
         type: type,
       };
     }
-
+    console.log(question);
     prop.addQuestion(question, prop.index);
   };
   return (
@@ -264,23 +264,27 @@ function QuestionAddForm({ prop }: { prop: any }) {
               </Form.Item>
             )}
           </div>
-          <div className="flex items-center my-4">
-            <div>
-              Lựa chọn<span className="text-[red]">*</span>
-            </div>
-            <Divider
-              type="vertical"
-              style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
-            />
-            <div>
-              <span>Nhiều câu trả lời</span>
-              <Switch
-                defaultChecked={isMultipleAnswers}
-                onChange={(checked) => setIsMultipleAnswers(checked)}
-                className="mx-[10px]"
+          {(prop?.type == "quiz" ||
+            prop?.question?.type == "quiz" ||
+            type === "quiz") && (
+            <div className="flex items-center my-4">
+              <div>
+                Lựa chọn<span className="text-[red]">*</span>
+              </div>
+              <Divider
+                type="vertical"
+                style={{ borderWidth: 1, height: 20, margin: "0 20px" }}
               />
+              <div>
+                <span>Nhiều câu trả lời</span>
+                <Switch
+                  defaultChecked={isMultipleAnswers}
+                  onChange={(checked) => setIsMultipleAnswers(checked)}
+                  className="mx-[10px]"
+                />
+              </div>
             </div>
-          </div>
+          )}
           {(prop?.type == "quiz" ||
             prop?.question?.type == "quiz" ||
             type === "quiz") && (
