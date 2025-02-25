@@ -54,13 +54,11 @@ import { FieldType } from "../../Access/LoginForm";
 const { Option } = Select;
 
 function QuestionAddForm({ prop }: { prop: any }) {
-  console.log(prop);
-  console.log(prop.type == "quiz");
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
     prop?.content || prop?.question?.content || "" || "" || ""
   );
-  const [type, setType] = useState("");
+  const [type, setType] = useState("quiz");
 
   const handleChange = (value: string) => {
     setType(value);
@@ -121,14 +119,14 @@ function QuestionAddForm({ prop }: { prop: any }) {
           answers: answers,
           correctAnswer: correctAnswer,
         },
-        lessonId: prop.lessonId,
+        lesson: prop.lessonId,
         status: false,
         type: type,
       };
     } else {
       question = {
         content: md,
-        lessonId: prop.lessonId,
+        lesson: prop.lessonId,
         status: false,
         type: type,
       };

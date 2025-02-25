@@ -12,7 +12,6 @@ function QuestionModify() {
   const location = useLocation();
   const { state } = location;
   const [question] = useState<Question>(state?.lesson);
-  console.log(state);
   const [questionArray, setQuestionArray] = useState<Question[]>([]);
   const [questions, setQuestions] = useState<
     (string & any[]) | (QuestionQuizContent & any[]) | undefined
@@ -37,7 +36,7 @@ function QuestionModify() {
       updatedQuestions[index] = newQuestion;
       setQuestionArray(updatedQuestions);
     } else {
-      // Nếu không có index (thêm câu hỏi mới), thêm vào mảng
+
       setQuestionArray([...questionArray, newQuestion]);
     }
   };
@@ -45,7 +44,7 @@ function QuestionModify() {
     const res = await addQuestionByTeacher(questionArray);
     console.log(res);
   };
-  console.log(questions);
+  console.log(questionArray);
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
@@ -77,8 +76,10 @@ function QuestionModify() {
               <QuestionAddForm
                 key={index}
                 prop={{
-                  question: question,
-                  index: index + 1,
+                  number: q,
+                  index: index, 
+                  lessonId: state.lessonId,
+                  addQuestion: handleAddQuestion
                 }}
               />
             ))}

@@ -47,7 +47,7 @@ const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     const question = req.body;
-console.log(question);
+
     const updatedQuestion = await query.updateQuestion(id, question);
     if (updatedQuestion?.isOk === false) {
       return res.json({

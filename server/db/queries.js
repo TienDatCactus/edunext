@@ -381,8 +381,14 @@ const getUserById = async (id) => {
 
 const addQuestion = async (questions) => {
   try {
-    const result = await Question.insertMany(questions);
 
+    const transformedQuestions = questions.map((question) => {
+      if (typeof question.lesson === 'string') {
+        question.lesson = new mongoose.Types.ObjectId(question.lesson); 
+      }
+      return question;
+    });
+    const result = await Question.insertMany(questions);
     return { result, isOk: true };
   } catch (error) {
     return { error, isOk: false };

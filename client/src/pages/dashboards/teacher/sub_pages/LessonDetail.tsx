@@ -39,6 +39,7 @@ function LessonDetail() {
   };
 
   const tabItemCheck = (q: Question) => {
+    console.log(q);
     switch (q?.type) {
       case "quiz":
         return (

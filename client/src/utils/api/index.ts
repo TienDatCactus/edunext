@@ -203,6 +203,16 @@ const postTimetable = async (courseCode: string, timetable: any) => {
     console.error(error);
   }
 };
+
+const deleteQuestionByTeacher = async (id : any) => {
+  try {
+    const res = await http.delete(`${questionApi}/delete/${id}`)
+    if (res) return res?.data;
+
+  } catch (error) {
+    return error
+  }
+} 
 export {
   getCampuses,
   getCourseDetail,
@@ -218,5 +228,6 @@ export {
   getQuestionByLesson,
   changeCourseStatus,
   getCourseStudents,
-  addQuestionByTeacher
+  addQuestionByTeacher,
+  deleteQuestionByTeacher
 }
