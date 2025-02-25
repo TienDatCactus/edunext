@@ -6,7 +6,6 @@ import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/Qu
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { addQuestionByTeacher } from "../../../../utils/api";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
-import { prop } from "@mdxeditor/editor";
 
 function QuestionModify() {
   const location = useLocation();
@@ -51,7 +50,6 @@ function QuestionModify() {
       setLoading(false);
     }
   };
-  console.log(question);
   return (
     <DashboardLayout>
       <div className="p-4 my-2 bg-white rounded-lg shadow-lg">
@@ -72,10 +70,12 @@ function QuestionModify() {
                   prop={{
                     answer: q?.answer,
                     correct: q?.correctAnswer,
+                    lessonId: state?.lesson?.lesson || state?.lessonId,
+                    question: state?.lesson,
                     content: q?.title,
-                    type: question?.type,
-                    status: question?.status,
-                    id: question?._id,
+                    type: q?.type,
+                    status: q?.status,
+                    id: q?._id,
                   }}
                 />
               ))
@@ -86,19 +86,22 @@ function QuestionModify() {
                   prop={{
                     number: q,
                     index: index,
-                    lessonId: state.lessonId,
+                    question: state?.lesson,
+                    lessonId: state?.lesson?.lesson || state?.lessonId,
                     addQuestion: handleAddQuestion,
                   }}
                 />
               ))}
-          <Button
+
+          {question === undefined ? (<Button
             type="dashed"
             icon={<Plus size={16} />}
             className="w-[100%] mt-4 border-dashed"
             onClick={addQuestion}
           >
             Thêm câu hỏi
-          </Button>
+          </Button>) : (<span></span>)}
+          
         </div>
       </Spin>
       <Tooltip title="Thêm tất cả" placement="top">

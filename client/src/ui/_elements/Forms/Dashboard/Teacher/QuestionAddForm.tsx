@@ -48,9 +48,10 @@ import {
   Switch,
 } from "antd";
 import Dragger from "antd/es/upload/Dragger";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { QuestionQuizContent } from "../../../../../utils/interfaces";
 import { FieldType } from "../../Access/LoginForm";
+import { updateQuestionByTeacher } from "../../../../../utils/api";
 
 const { Option } = Select;
 
@@ -61,6 +62,11 @@ function QuestionAddForm({ prop }: { prop: any }) {
   );
   const [type, setType] = useState("quiz");
 
+  useEffect(() => {
+    if (prop?.question?.type) {
+      setType(prop?.question?.type);
+    }
+  }, [prop]);
   const handleChange = (value: string) => {
     setType(value);
   };
@@ -69,9 +75,10 @@ function QuestionAddForm({ prop }: { prop: any }) {
     console.log(`switch to ${checked}`);
   };
 
+
   const [answers, setAnswers] = useState<
     string | QuestionQuizContent | string[]
-  >(prop?.answer || ["Answer 1", "Answer 2"]);
+  >(prop?.question.content[0].answers || ["Answer 1", "Answer 2"]);
 
   const [isMultipleAnswers, setIsMultipleAnswers] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<number | null | undefined>(
@@ -112,8 +119,8 @@ function QuestionAddForm({ prop }: { prop: any }) {
   };
 
   const handleSubmit = () => {
-    let question;
-    if (type == "quiz") {
+    let question = {};
+    if (type === "quiz") {
       question = {
         content: [
           {
@@ -134,8 +141,32 @@ function QuestionAddForm({ prop }: { prop: any }) {
         type: type,
       };
     }
-    console.log(question);
     prop.addQuestion(question, prop.index);
+  };
+
+  const handleUpdateQuestion = async () => {
+    let question = {};
+    if (type === "quiz") {
+      question = {
+        content: [
+          {
+            title: md,
+            answers: answers,
+            correctAnswer: correctAnswer,
+          },
+        ],
+     
+        status: prop.question.status,
+        type: prop.question.type,
+      };
+    } else {
+      question = {
+        content: md,
+        status: prop.question.status,
+        type: prop.question.type,
+      };
+    }
+    const res = updateQuestionByTeacher(prop.question.id, question);
   };
   return (
     <Badge.Ribbon text={`#${prop?.id || prop?.index}`} placement="start">
@@ -391,12 +422,28 @@ function QuestionAddForm({ prop }: { prop: any }) {
                 >
                   Thêm lựa chọn
                 </Button>
-                <Button type="primary" icon={<MonitorArrowUp size={16} />}>
-                  {prop ? "Cập nhật" : "Thêm câu hỏi"}
+                <Button
+                  type="primary"
+                  icon={<MonitorArrowUp size={16} />}
+                  onClick={handleUpdateQuestion}
+                >
+                  Cập nhật
                 </Button>
               </div>
             </div>
           )}
+          {type !== "quiz" ? (
+            <Button
+              type="primary"
+              icon={<MonitorArrowUp size={16} />}
+              onClick={handleUpdateQuestion}
+            >
+              Cập nhật
+            </Button>
+          ) : (
+            ""
+          )}
+
           <Divider className="border-[#ccc]" />
         </Form>
         <div className="flex items-end justify-between">

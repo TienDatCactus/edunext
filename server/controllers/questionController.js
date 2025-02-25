@@ -56,7 +56,7 @@ const updateQuestion = async (req, res) => {
       });
     } else if (updatedQuestion?.isOk === true) {
       res.json({
-        updatedQuestion: updatedQuestion?.updatedQuestion,
+        data: updatedQuestion?.updatedQuestion,
         isOk: updatedQuestion?.isOk,
       });
     }

@@ -388,7 +388,6 @@ const addQuestion = async (questions) => {
       }
       return question;
     });
-    console.log("transfomr", transformedQuestions);
     const result = await Question.insertMany(questions);
     return { result, isOk: true };
   } catch (error) {

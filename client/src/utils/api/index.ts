@@ -230,6 +230,15 @@ const getTimetableInfo = async (userId: string) => {
     console.error(error);
   }
 };
+
+const updateQuestionByTeacher = async (id : any, question : any) => {
+  try {
+    const res = await http.put(`${questionApi}/edit/${id}`, question);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+}
 export {
   getCampuses,
   getCourseDetail,
@@ -249,4 +258,5 @@ export {
   deleteQuestionByTeacher,
   postTimetableInfo,
   getTimetableInfo,
+  updateQuestionByTeacher
 };
