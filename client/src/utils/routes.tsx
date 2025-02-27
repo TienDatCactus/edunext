@@ -20,7 +20,7 @@ const QuestionModify = lazy(
   () => import("../pages/dashboards/teacher/sub_pages/QuestionModify")
 );
 const LessonDetail = lazy(
-  () => import("../pages/dashboards/teacher/sub_pages/LessonDetail")
+  () => import("../pages/dashboards/teacher/sub_pages/QuestionList")
 );
 const LessonsByTeacher = lazy(
   () => import("../pages/dashboards/teacher/LessonsByTeacher")

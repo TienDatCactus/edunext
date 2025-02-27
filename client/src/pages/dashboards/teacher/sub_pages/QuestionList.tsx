@@ -13,6 +13,7 @@ import {
   Button,
   Collapse,
   Divider,
+  Popconfirm,
   Progress,
   Spin,
   Table,
@@ -23,7 +24,10 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
-import { deleteQuestionByTeacher, getQuestionByLesson } from "../../../../utils/api";
+import {
+  deleteQuestionByTeacher,
+  getQuestionByLesson,
+} from "../../../../utils/api";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function LessonDetail() {
   const navigate = useNavigate();
@@ -37,12 +41,18 @@ function LessonDetail() {
     response: "Tự luận",
   };
 
-  const handleDelete = async (id :any) => {
-    if(window.confirm("Do you want delete this question?") ) {
-      const res = await deleteQuestionByTeacher(id);
-      window.location.reload();
+  const handleDelete = async (id: any) => {
+    try {
+      setLoading(true);
+      const resp = await deleteQuestionByTeacher(id);
+      if (resp) window.location.reload();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  } 
+  };
+
   const tabItemCheck = (q: Question) => {
     switch (q?.type) {
       case "quiz":
@@ -97,9 +107,18 @@ function LessonDetail() {
                         >
                           Chỉnh sửa
                         </Button>
-                        <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
-                          Xóa
-                        </Button>
+                        <Popconfirm
+                          title={`Xóa câu hỏi #${q?._id}`}
+                          description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                          onConfirm={() => handleDelete(q?._id)}
+                          okText="Có"
+                          placement="topLeft"
+                          cancelText="Hủy"
+                        >
+                          <Button type="primary" danger icon={<Trash />}>
+                            Xóa
+                          </Button>
+                        </Popconfirm>
                       </div>
                     </div>
                     <div className="flex items-center *:text-[#898989] text-[0.75rem]">
@@ -231,9 +250,18 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
-                  Xóa
-                </Button>
+                <Popconfirm
+                  title={`Xóa câu hỏi #${q?._id}`}
+                  description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                  onConfirm={() => handleDelete(q?._id)}
+                  okText="Có"
+                  placement="topLeft"
+                  cancelText="Hủy"
+                >
+                  <Button type="primary" danger icon={<Trash />}>
+                    Xóa
+                  </Button>
+                </Popconfirm>
               </div>
             </div>
             <Divider className="my-0 border-[#ccc]" />
@@ -310,9 +338,18 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />} onClick={() => handleDelete(q?._id)}>
-                  Xóa
-                </Button>
+                <Popconfirm
+                  title={`Xóa câu hỏi #${q?._id}`}
+                  description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                  onConfirm={() => handleDelete(q?._id)}
+                  okText="Có"
+                  placement="topLeft"
+                  cancelText="Hủy"
+                >
+                  <Button type="primary" danger icon={<Trash />}>
+                    Xóa
+                  </Button>
+                </Popconfirm>
               </div>
             </div>
             <Divider className="my-0 border-[#ccc]" />
