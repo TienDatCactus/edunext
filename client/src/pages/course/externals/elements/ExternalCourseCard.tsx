@@ -1,9 +1,12 @@
-import { Col, Tag } from "antd";
-import React from "react";
-import { animate, motion } from "motion/react";
-import { ExternalCourse } from "../../../../utils/interfaces";
 import { CellSignalHigh } from "@phosphor-icons/react";
+import { Button, Col, Tag } from "antd";
+import { motion } from "motion/react";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ExternalCourse } from "../../../../utils/interfaces";
+import { LinkBreak } from "phosphor-react";
 const ExternalCourseCard: React.FC<{ props: ExternalCourse }> = ({ props }) => {
+  const navigate = useNavigate();
   return (
     <Col span={8}>
       <li className="bg-[#fdfbf9] rounded-lg border-[#d9d9d9] border">
@@ -38,23 +41,34 @@ const ExternalCourseCard: React.FC<{ props: ExternalCourse }> = ({ props }) => {
                 Level : <span>Beginner</span>
               </p>
             </div>
-            <motion.ul
-              className="flex items-center gap-2 overflow-hidden"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              {!!props?.domainTypes?.length &&
-                props?.domainTypes.map((item, index) => {
-                  return (
-                    <li key={index}>
-                      <Tag className="border-[1.5px] quick-sand border-black rounded-none text-[0.625rem]">
-                        {item.domainId}
-                      </Tag>
-                    </li>
-                  );
-                })}
-            </motion.ul>
+            <div className="w-full overflow-hidden">
+              <motion.ul
+                className="flex items-center gap-2 whitespace-nowrap"
+                animate={{ x: ["0%", "-100%"] }}
+                transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+              >
+                {!!props?.domainTypes?.length &&
+                  [...props?.domainTypes, ...props?.domainTypes].map(
+                    (item, index) => {
+                      return (
+                        <li key={index}>
+                          <Tag className="border-[1.5px] quick-sand border-black rounded-none text-[0.625rem]">
+                            {item.domainId}
+                          </Tag>
+                        </li>
+                      );
+                    }
+                  )}
+              </motion.ul>
+            </div>
+            <div className="flex justify-end mt-2">
+              <Button type="dashed" icon={<LinkBreak />}>
+                <Link to={props?.previewLink} target="_blank">
+                  {" "}
+                  View
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </li>

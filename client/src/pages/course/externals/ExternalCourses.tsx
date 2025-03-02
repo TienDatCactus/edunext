@@ -1,5 +1,4 @@
 import { Archive, CaretDown } from "@phosphor-icons/react";
-import { X } from "@phosphor-icons/react/dist/ssr";
 import { Button, Col, Dropdown, Row, Skeleton, Space } from "antd";
 import { MenuProps } from "antd/es/menu";
 import React, { useEffect } from "react";
@@ -11,6 +10,7 @@ import {
   useUserStore,
 } from "../../../utils/zustand/Store";
 import ExternalCourseCard from "./elements/ExternalCourseCard";
+import { X } from "phosphor-react";
 const items: MenuProps["items"] = [
   {
     key: "1",
