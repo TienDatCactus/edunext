@@ -62,7 +62,6 @@ const Header = () => {
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
 
-  const navigate = useNavigate();
   const location = window.location.pathname;
   const navItems: Array<{ name: string; link: string; active: boolean }> = [
     { name: "Trang chủ", link: "/", active: location === "/" },
@@ -73,7 +72,7 @@ const Header = () => {
     },
     {
       name: "Khóa học bên ngoài",
-      link: `/home/others`,
+      link: `/externals`,
       active: location === "/home/others",
     },
   ];

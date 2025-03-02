@@ -133,6 +133,19 @@ export interface LessonItem {
   lessonGroups?: string[];
   question?: Question[];
 }
+export interface ExternalCourse {
+  id: string;
+  name: string;
+  description: string;
+  photoUrl: string;
+  language: string;
+  domainTypes: Array<{
+    domainId: string;
+    subdomainId: string;
+  }>;
+  workload: string;
+  previewLink: string;
+}
 export interface Question {
   _id?: string;
   content?: string | QuestionQuizContent;
