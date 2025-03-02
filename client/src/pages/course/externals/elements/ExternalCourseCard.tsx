@@ -1,6 +1,8 @@
 import { Col, Tag } from "antd";
 import React from "react";
-import { animate, motion } from "motion/react";
+// import { animate, motion } from "motion/react";
+import { motion } from "framer-motion";
+
 import { ExternalCourse } from "../../../../utils/interfaces";
 import { CellSignalHigh } from "@phosphor-icons/react";
 const ExternalCourseCard: React.FC<{ props: ExternalCourse }> = ({ props }) => {
