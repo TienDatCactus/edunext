@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { getCurrentSeason } from "./customHooks";
 import ExternalCourses from "../pages/course/externals/ExternalCourses";
+import CourseList from "../pages/dashboards/admin/CourseList";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -137,6 +138,15 @@ const router = createBrowserRouter([
     ],
     errorElement: <NotFound />,
   },
+  {
+    path: "admin",
+    children: [
+      {
+        path: "course",
+        element: <CourseList />
+      }
+    ]
+  }
 ]);
 
 export default router;

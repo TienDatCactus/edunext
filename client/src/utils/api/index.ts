@@ -238,6 +238,16 @@ const updateQuestionByTeacher = async (id: any, question: any) => {
     return error;
   }
 };
+
+const getAllCourses = async () => {
+  try {
+    const res = await http.get(`${courseApi}`);
+    if (res) return res?.data;
+
+  } catch (error) {
+    return error;
+  }
+}
 export {
   getCampuses,
   getCourseDetail,
@@ -258,4 +268,5 @@ export {
   postTimetableInfo,
   getTimetableInfo,
   updateQuestionByTeacher,
+  getAllCourses
 };
