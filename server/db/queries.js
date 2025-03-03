@@ -396,7 +396,7 @@ const addQuestion = async (questions) => {
 };
 const getAllCourses = async () => {
   try {
-    const course = await Course.find();
+    const course = await Course.find().populate("instructor").populate("semester").populate("assignments");
     return { course, isOk: true };
   } catch (error) {
     return { error, isOk: false };

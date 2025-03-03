@@ -1,6 +1,9 @@
 import type { TableProps } from "antd";
-import { Table } from "antd";
+import { Button, Space, Table, Modal } from "antd";
+
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
+import { useEffect, useState } from "react";
+import { getAllCourses } from "../../../utils/api";
 
 interface DataType {
   key: string;
@@ -12,41 +15,86 @@ interface DataType {
 
 const columns: TableProps<DataType>["columns"] = [
   {
-    title: "Name",
+    title: "Tên khóa học",
     dataIndex: "name",
     key: "name",
-    render: (text) => <a>{text}</a>,
   },
   {
-    title: "Description",
+    title: "Mô tả",
     dataIndex: "description",
     key: "description",
   },
   {
-    title: "Code",
+    title: "Mã",
     dataIndex: "code",
     key: "code",
   },
   {
-    title: "Status",
+    title: "Trạng thái",
     dataIndex: "status",
     key: "status",
-  }
-];
-
-const data: DataType[] = [
+  },
   {
-    key: "1",
-    name: "Advanced Programming",
-    description: "Advanced concepts in software development",
-    code: "CS401",
-    status: "active",
+    title: '',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <Button type="primary">Sửa</Button>
+        <Button type="primary" danger>Xóa</Button>
+      </Space>
+    ),
   },
 ];
 
+
+
 function CourseList() {
+
+  const  [courseList, setCourseList] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchCourses = async () => {
+    const courses = await getAllCourses();
+    setCourseList(courses?.course);
+  }
+  useEffect(() => {
+    fetchCourses();
+  }, [])
+
+  const data: DataType[] = courseList?.map((course: any) => {
+    return {
+      key: course._id,
+      name: course.courseName,
+      description: course.description,
+      code: course.courseCode,
+      status: course.status,
+    }
+  })
+  
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+ 
   return (
     <DashboardLayout>
+      <h1 className="text-[40px] ">Danh sách khóa học</h1>
+
+      <Button type="primary" onClick={showModal} className="my-[20px] float-right">
+        Thêm
+      </Button>
+      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
       <Table<DataType> columns={columns} dataSource={data} />
     </DashboardLayout>
   );
