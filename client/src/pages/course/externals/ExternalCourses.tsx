@@ -1,5 +1,5 @@
 import { Archive, CaretDown } from "@phosphor-icons/react";
-import { Button, Col, Dropdown, Row, Skeleton, Space } from "antd";
+import { Button, Col, Dropdown, Row, Skeleton, Space, Spin } from "antd";
 import { MenuProps } from "antd/es/menu";
 import React, { useEffect } from "react";
 import coursera from "../../../assets/icons/coursera-svgrepo-com.svg";
@@ -88,14 +88,14 @@ const ExternalCourses: React.FC = () => {
               </a>
             </div>
             <ul>
-              <Skeleton loading={loading} active>
+              <Spin spinning={loading}>
                 <Row gutter={[16, 16]}>
                   {!!coursera?.length &&
                     coursera?.map((course, index) => (
                       <ExternalCourseCard key={index} props={course} />
                     ))}
                 </Row>
-              </Skeleton>
+              </Spin>
             </ul>
           </Col>
         </Row>

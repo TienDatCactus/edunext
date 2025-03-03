@@ -65,7 +65,7 @@ const ExternalCourseCard: React.FC<{ props: ExternalCourse }> = ({ props }) => {
             </div>
             <div className="flex justify-end mt-2">
               <Button type="dashed" icon={<LinkBreak />}>
-                <Link to={props?.previewLink} target="_blank">
+                <Link to={props?.previewLink} target="_blank  ">
                   {" "}
                   View
                 </Link>
