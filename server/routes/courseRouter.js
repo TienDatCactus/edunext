@@ -10,8 +10,12 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get("/",authenticateToken, courseController.viewAllCourses);
-courseRouter.post("/group",authenticateToken, courseController.randomGroupForStudent);
+courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
+courseRouter.post(
+  "/group",
+  authenticateToken,
+  courseController.randomGroupForStudent
+);
 
 courseRouter.get(
   "/:courseCode/meetings",
@@ -35,6 +39,7 @@ courseRouter.put(
   authenticateToken,
   courseController.changeStatusCourses
 );
-
-
+courseRouter.post("/addCourse", courseController.addCourse);
+courseRouter.put("/editCourse/:courseId", courseController.editCourse);
+courseRouter.delete("/deleteCourse/:courseId", courseController.deleteCourse);
 module.exports = courseRouter;
