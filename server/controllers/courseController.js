@@ -108,6 +108,8 @@ const getUdemyCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
+    console.log(resp);
+
 
     if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
@@ -233,6 +235,74 @@ const randomGroupForStudent = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const addCourse = async (req, res) => {
+  try {
+    const {
+      courseName,
+      description,
+      courseCode,
+      instructor = "",
+      semester = "",
+      forMajor,
+      status = "active",
+      assignments = [],
+      lessons = [],
+    } = req.body;
+    const newCourse =  new Course({
+      courseName,
+      description,
+      courseCode,
+      instructor,
+      semester,
+      forMajor,
+      status,
+      assignments,
+      lessons,
+    });
+    if (!newCourse) {
+     return res.status(404).json({ error: "Lỗi máy chủ" });
+    }
+    const saveCourse = await newCourse.save();
+    res.status(201).json({ message: "Add successfully", saveCourse });
+  } catch (error) {
+    console.error(error);
+  }
+};
+const editCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const {
+      courseName,
+      description,
+      courseCode,
+      forMajor,
+    } = req.body;
+    const newCourse = await Course.findByIdAndUpdate(courseId, {
+      courseName,
+      description,
+      courseCode,
+      forMajor,
+    });
+    if (!newCourse) {
+      return res.status(404).json({ error: "Lỗi máy chủ" });
+    }
+    res.status(200).json({ newCourse, isOk: true });
+  } catch (error) {
+    console.error(error);
+  }
+};
+const deleteCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findByIdAndDelete(courseId);
+    if (!course) {
+      return res.status(404).json({ error: "Lỗii máy chủ" });
+    }
+    res.status(200).json({ message: "Delete successfully", isOk: true });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const viewCountStatistics = async (req, res) => {
   try {
@@ -260,6 +330,9 @@ module.exports = {
   viewCourseByInstructor,
   viewCourseStudents,
   randomGroupForStudent,
+  addCourse,
+  editCourse,
+  deleteCourse
   getUdemyCourses,
   viewCountStatistics,
 };

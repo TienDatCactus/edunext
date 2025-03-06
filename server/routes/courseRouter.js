@@ -44,6 +44,9 @@ courseRouter.put(
   authenticateToken,
   courseController.changeStatusCourses
 );
+courseRouter.post("/addCourse", courseController.addCourse);
+courseRouter.put("/editCourse/:courseId", courseController.editCourse);
+courseRouter.delete("/deleteCourse/:courseId", courseController.deleteCourse);
 courseRouter.get(
   "/:questionId/count-statistics",
   // authenticateToken,
