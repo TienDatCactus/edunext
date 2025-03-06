@@ -4,7 +4,11 @@ const questionRouter = Router();
 const questionController = require("../controllers/questionController");
 const authenticateToken = require("../validators/authenticate");
 
-questionRouter.post("/addQuestion", authenticateToken, questionController.createQuestions);
+questionRouter.post(
+  "/addQuestion",
+  authenticateToken,
+  questionController.createQuestions
+);
 questionRouter.get(
   "/getQuestions/:lessonId",
   authenticateToken,
@@ -13,22 +17,22 @@ questionRouter.get(
 questionRouter.put("/edit/:id", questionController.updateQuestion);
 questionRouter.delete("/delete/:id", questionController.deletedQuestion);
 questionRouter.get(
-  "/question/:questionId",
+  "/:questionId",
   authenticateToken,
   questionController.viewQuestionDetail
 );
 questionRouter.get(
-  "/question/:questionId/submissions",
+  "/:questionId/submissions",
   authenticateToken,
   questionController.viewQuestionSubmissions
 );
 questionRouter.post(
-  "/question/:questionId",
+  "/submit/:questionId",
   authenticateToken,
   questionController.addQuestionSubmission
 );
 questionRouter.post(
-  "/question/:questionId/submission/:submissionId/comment",
+  "/:questionId/submission/:submissionId/comment",
   authenticateToken,
   questionController.addSubmissionComment
 );

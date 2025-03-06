@@ -13,6 +13,7 @@ import relativeTime from "dayjs/plugin/relativeTime"; // ES 2015
 import "swiper/css";
 import ErrorBoundary from "./utils/ErrorBoundary";
 import "@mdxeditor/editor/style.css";
+import AppRouter from "./utils/routes";
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
 
@@ -41,7 +42,7 @@ root.render(
     >
       <Suspense fallback={<LoadingScreen />}>
         {/* <ErrorBoundary> */}
-        <RouterProvider router={router} />
+        <AppRouter />
         {/* </ErrorBoundary> */}
         {/* <Board knightPosition={knightPosition} /> */}
       </Suspense>

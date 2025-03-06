@@ -1,24 +1,33 @@
-
-
 import { CellSignalHigh } from "@phosphor-icons/react";
-import { Button, Col, Tag } from "antd";
+import { Button, Col, Skeleton, Tag } from "antd";
 import { motion } from "motion/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ExternalCourse } from "../../../../utils/interfaces";
 import { LinkBreak } from "phosphor-react";
 const ExternalCourseCard: React.FC<{ props: ExternalCourse }> = ({ props }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
   return (
     <Col span={8}>
       <li className="bg-[#fdfbf9] rounded-lg border-[#d9d9d9] border">
         <div className="relative rounded-t-lg">
+          <Skeleton.Image
+            active
+            className={`${
+              !imageLoaded ? "flex" : "hidden"
+            } w-full h-52 object-cover rounded-t-md`}
+          />
           <img
+            onLoad={() => setImageLoaded(true)}
             loading="lazy"
             src={props?.photoUrl}
             alt={props?.name}
-            className="object-cover w-full rounded-t-md min-h-48 max-h-52"
+            className={`${
+              !imageLoaded && "hidden"
+            } object-cover w-full rounded-t-md min-h-48 max-h-52`}
           />
+
           <Tag className="absolute top-2 left-2 bg-[#edc769] rounded-md border-none dm-sans">
             {props?.language}
           </Tag>

@@ -78,29 +78,6 @@ const loginWithId = async (campus, id) => {
   }
 };
 
-const getCurrentSemester = async (year, month) => {
-  try {
-    const semester = await Semester.findOne({
-      year,
-      semesterName: month.toUpperCase(),
-    });
-
-    if (!semester) {
-      return {
-        error: "Học kì không hợp lệ",
-        isOk: false,
-      };
-    }
-
-    return semester.toObject();
-  } catch (error) {
-    return {
-      error: "Lỗi lấy thông tin học kỳ",
-      isOk: false,
-    };
-  }
-};
-
 const getCurrentCourses = async (id) => {
   try {
     const user = await User.findOne({
@@ -396,7 +373,10 @@ const addQuestion = async (questions) => {
 };
 const getAllCourses = async () => {
   try {
-    const course = await Course.find().populate("instructor").populate("semester").populate("assignments");
+    const course = await Course.find()
+      .populate("instructor")
+      .populate("semester")
+      .populate("assignments");
     return { course, isOk: true };
   } catch (error) {
     return { error, isOk: false };
@@ -523,6 +503,32 @@ const getCourseStudents = async (courseId) => {
     return { error: error.message, isOk: false };
   }
 };
+
+const getCountStatistics = async (questionId) => {
+  try {
+    const questionSubmissions = await Submission.find({
+      question: questionId,
+    });
+    const totalSubmissions = questionSubmissions.length;
+    const submissionsComments = await Promise.all(
+      !!questionSubmissions?.length &&
+        questionSubmissions.map(async (submission) => {
+          const comments = await Comment.find({
+            submission: String(submission._id),
+          });
+          return comments;
+        })
+    );
+    const totalComments = submissionsComments.reduce(
+      (sum, comments) => sum + comments.length,
+      0
+    );
+    return { totalSubmissions, totalComments, isOk: true };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -543,4 +549,5 @@ module.exports = {
   getCourseStudents,
   deleteQuestion,
   updateQuestion,
+  getCountStatistics,
 };

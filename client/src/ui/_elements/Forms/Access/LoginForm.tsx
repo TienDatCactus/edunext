@@ -59,15 +59,18 @@ const LoginForm = () => {
       setLoading(true);
       const resp = await login(campus, email, password);
       if (resp?.isOk === true) {
-        message.success(resp?.message);
         setUser(resp?.user?.user);
-        setTimeout(() => {
-          navigate(`/home/${year}/${month}`);
-        }, 1000);
+        message.success(resp?.message);
+        if (resp?.user?.user?.role === 1 || resp?.user?.user?.role === 2) {
+          navigate(`/home/${year}/${month}`, { replace: true });
+        } else {
+          navigate(`/admin/course`, {
+            replace: true,
+          });
+        }
       } else {
         message.error(resp?.error);
       }
-      return null;
     } catch (error) {
       message.error("Đã xảy ra lỗi, vui lòng thử lại sau !");
     } finally {
@@ -75,9 +78,7 @@ const LoginForm = () => {
     }
   };
   useEffect(() => {
-    return () => {
-      loginCampuses();
-    };
+    loginCampuses();
   }, []);
   return (
     <>

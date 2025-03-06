@@ -1,9 +1,12 @@
-const { default: axios, all } = require("axios");
+const { default: axios, all, request } = require("axios");
 const query = require("../db/queries");
-const { error } = require("console");
+const { error, log } = require("console");
 const { default: mongoose, Types } = require("mongoose");
 const { User, Course, Lesson, LessonGroup } = require("../db/model");
 const { json } = require("express");
+const { locale } = require("dayjs");
+const { url } = require("inspector");
+const { features } = require("process");
 
 const viewCourseDetail = async (req, res) => {
   const { courseCode } = req.params;
@@ -66,10 +69,46 @@ const getCourseraCourses = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
+const getUdemyCourses = async (req, res) => {
+  const { keywords, pages } = req.query;
+
+  if (!keywords) {
+    return res.status(400).json({ error: "Missing keywords" });
+  }
+  const options = {
+    method: "POST",
+    url: `https://udemy-api2.p.rapidapi.com/v1/udemy/category/${keywords}`,
+    headers: {
+      "x-rapidapi-key": "23f6c4678fmsh60a151904aa61e4p1df63bjsn03ca2aad09db",
+      "x-rapidapi-host": "udemy-api2.p.rapidapi.com",
+      "Content-Type": "application/json",
+    },
+    data: {
+      page: pages,
+      page_size: 1,
+      ratings: "",
+      instructional_level: [],
+      lang: [],
+      price: [],
+      duration: [],
+      subtitles_lang: [],
+      sort: "popularity",
+      features: [],
+      locale: "en_US",
+      extract_pricing: true,
+    },
+  };
+  try {
+    const response = await axios.request(options);
+    console.table(JSON.stringify(response.data, null, 2));
+  } catch (error) {
+    console.error(error);
+  }
+};
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    
+
     if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
@@ -150,14 +189,19 @@ const randomGroupForStudent = async (req, res) => {
     function createTeams(studentList, amount) {
       shuffleArray(studentList);
       const teams = [];
-      const baseSize = Math.floor(studentList.length / amount);  
-      const remainder = studentList.length % amount;  
+      const baseSize = Math.floor(studentList.length / amount);
+      const remainder = studentList.length % amount;
       let currentTeam = [];
       let teamNumber = 1;
       for (let i = 0; i < studentList.length; i++) {
         currentTeam.push(studentList[i]);
-        const isLastTeam = (teamNumber === amount) || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
-        if (isLastTeam || currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)) {
+        const isLastTeam =
+          teamNumber === amount ||
+          currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
+        if (
+          isLastTeam ||
+          currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)
+        ) {
           teams.push({ team: teamNumber, members: currentTeam });
           currentTeam = [];
           teamNumber++;
@@ -172,16 +216,36 @@ const randomGroupForStudent = async (req, res) => {
     const lessonGroups = [];
     for (let i = 0; i < teams.length; i++) {
       const team = teams[i];
-      const userIds = team.members.map(student => student._id); 
+      const userIds = team.members.map((student) => student._id);
       const lessonGroup = new LessonGroup({
-        userId: userIds,  
-        course: courseID, 
-        team: team.team  
+        userId: userIds,
+        course: courseID,
+        team: team.team,
       });
       const savedStudentGroup = await lessonGroup.save();
-      lessonGroups.push(savedStudentGroup);  
+      lessonGroups.push(savedStudentGroup);
     }
-    res.status(201).json({ message: "Teams created successfully", lessonGroups });
+    res
+      .status(201)
+      .json({ message: "Teams created successfully", lessonGroups });
+  } catch (error) {
+    console.error("Lỗi:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const viewCountStatistics = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    const resp = await query.getCountStatistics(questionId);
+    if (!resp || resp.length === 0) {
+      return res.status(404).json({ message: "Không có" });
+    }
+    res.status(200).json({
+      totalSubmissions: resp.totalSubmissions,
+      totalComments: resp.totalComments,
+      isOk: true,
+    });
   } catch (error) {
     console.error("Lỗi:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -196,4 +260,6 @@ module.exports = {
   viewCourseByInstructor,
   viewCourseStudents,
   randomGroupForStudent,
+  getUdemyCourses,
+  viewCountStatistics,
 };

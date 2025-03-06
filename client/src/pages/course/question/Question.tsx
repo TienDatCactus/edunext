@@ -2,9 +2,11 @@ import QuestionMarkdown from "../../../ui/_elements/Markdown/QuestionMarkdown";
 import QuestionLayout from "../../../ui/layouts/QuestionLayout";
 
 import { Tabs, TabsProps } from "antd";
-import Group from "./sub_elements/Group";
+import Group from "./sub_elements/LessonGroups";
 import { useQuestionStore } from "../../../utils/zustand/Store";
 import { CodeEditor } from "../../../ui/_elements/Markdown/CodeEditor";
+import QuizEditor from "../../../ui/_elements/Markdown/QuizEditor";
+import StudentsAnswers from "./sub_elements/StudentsAnswers";
 
 const Question = () => {
   const { question } = useQuestionStore();
@@ -18,12 +20,19 @@ const Question = () => {
           <QuestionMarkdown />
         ) : type == "code" ? (
           <CodeEditor />
+        ) : type == "quiz" ? (
+          <QuizEditor question={question} />
         ) : null,
     },
     {
       key: "2",
-      label: "Nhóm",
+      label: "Nhóm lớp",
       children: <Group />,
+    },
+    {
+      key: "3",
+      label: "Các câu trả lời",
+      children: <StudentsAnswers />,
     },
   ];
   return (

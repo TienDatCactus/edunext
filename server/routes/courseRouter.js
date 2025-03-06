@@ -10,8 +10,12 @@ courseRouter.get(
   authenticateToken,
   courseController.viewCourseDetail
 );
-courseRouter.get("/",authenticateToken, courseController.viewAllCourses);
-courseRouter.post("/group",authenticateToken, courseController.randomGroupForStudent);
+courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
+courseRouter.post(
+  "/group",
+  authenticateToken,
+  courseController.randomGroupForStudent
+);
 
 courseRouter.get(
   "/:courseCode/meetings",
@@ -24,6 +28,11 @@ courseRouter.get(
   authenticateToken,
   courseController.getCourseraCourses
 );
+courseRouter.post(
+  "/api/udemy",
+  // authenticateToken,
+  courseController.getUdemyCourses
+);
 
 courseRouter.get(
   "/instructor/:userId",
@@ -35,6 +44,9 @@ courseRouter.put(
   authenticateToken,
   courseController.changeStatusCourses
 );
-
-
+courseRouter.get(
+  "/:questionId/count-statistics",
+  // authenticateToken,
+  courseController.viewCountStatistics
+);
 module.exports = courseRouter;

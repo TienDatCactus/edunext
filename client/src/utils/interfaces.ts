@@ -260,7 +260,27 @@ export interface DASHBOARD_KEY_PROPS {
       }
     ];
   };
-  classes?: {
+  students?: {
+    path: string | URL;
+    key: string;
+    children?: [
+      {
+        path: string | URL;
+        key: string;
+      }
+    ];
+  };
+  teachers?: {
+    path: string | URL;
+    key: string;
+    children?: [
+      {
+        path: string | URL;
+        key: string;
+      }
+    ];
+  };
+  course?: {
     path: string | URL;
     key: string;
     children?: [

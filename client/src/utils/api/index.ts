@@ -65,7 +65,7 @@ const getCourseDetail = async (courseCode: string) => {
 
 const getQuestionDetail = async (questionId: string) => {
   try {
-    const resp = await http.get(`${questionApi}/question/${questionId}`);
+    const resp = await http.get(`${questionApi}/${questionId}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
@@ -89,7 +89,7 @@ const postQuestionSubmission = async (
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    const resp = await http.post(`${questionApi}/question/${questionId}`, {
+    const resp = await http.post(`${questionApi}/submit/${questionId}`, {
       userId: user?.user?._id,
       content,
     });
@@ -111,9 +111,7 @@ const getCampuses = async () => {
 };
 const getQuestionSubmission = async (questionId: string) => {
   try {
-    const resp = await http.get(
-      `${courseApi}/question/${questionId}/submissions`
-    );
+    const resp = await http.get(`${questionApi}/${questionId}/submissions`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
@@ -243,11 +241,19 @@ const getAllCourses = async () => {
   try {
     const res = await http.get(`${courseApi}`);
     if (res) return res?.data;
-
   } catch (error) {
     return error;
   }
-}
+};
+const getCountStatistics = async (questionId: string) => {
+  console.log(questionId);
+  try {
+    const resp = await http.get(`${courseApi}/${questionId}/count-statistics`);
+    if (resp?.data) return resp?.data;
+  } catch (error) {
+    return error;
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -268,5 +274,6 @@ export {
   postTimetableInfo,
   getTimetableInfo,
   updateQuestionByTeacher,
-  getAllCourses
+  getAllCourses,
+  getCountStatistics,
 };

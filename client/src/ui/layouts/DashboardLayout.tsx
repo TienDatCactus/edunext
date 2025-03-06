@@ -25,6 +25,8 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const DASHBOARD_KEYS: DASHBOARD_KEY_PROPS =
     user?.role == "2"
       ? ROUTE_KEYS?.dashboard?.teacher
+      : user?.role == "3"
+      ? ROUTE_KEYS?.dashboard?.admin
       : ROUTE_KEYS?.dashboard?.student;
   const DASHBOARD_LOCATION = location.pathname.split(
     "/"
@@ -36,7 +38,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       type: "group",
       children: [
         {
-          key: "13",
+          key: DASHBOARD_KEYS?.account?.key || "1",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.account)
@@ -51,7 +53,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           ),
         },
         {
-          key: "14",
+          key: DASHBOARD_KEYS?.timetable?.key || "2",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.timetable)
@@ -75,7 +77,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       type: "group",
       children: [
         {
-          key: "13",
+          key: DASHBOARD_KEYS?.landing?.key || "1",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.landing)
@@ -97,7 +99,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       type: "group",
       children: [
         {
-          key: "14",
+          key: DASHBOARD_KEYS?.timetable?.key || "2",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.timetable)
@@ -112,7 +114,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           ),
         },
         {
-          key: "15",
+          key: DASHBOARD_KEYS?.account?.key || "3",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.account)
@@ -134,7 +136,7 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       type: "group",
       children: [
         {
-          key: "16",
+          key: DASHBOARD_KEYS?.courses?.key || "4",
           className: "py-6",
           onClick: () => {
             if (DASHBOARD_KEYS?.courses)
@@ -163,16 +165,59 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
             />
           ),
         },
+      ],
+    },
+  ];
+  const adminItems: MenuItem[] = [
+    {
+      key: "grp",
+      type: "group",
+      label: <p>Cài đặt chung</p>,
+      children: [
         {
-          key: "18  ",
+          key: DASHBOARD_KEYS?.course?.key || "1",
           className: "py-6",
           onClick: () => {
-            if (DASHBOARD_KEYS?.classes)
-              window.location.replace(DASHBOARD_KEYS?.classes?.path);
+            if (DASHBOARD_KEYS?.course)
+              window.location.replace(DASHBOARD_KEYS?.course?.path);
           },
-          label: <p className="text-[14px] font-medium">Lớp học</p>,
+          label: (
+            <p className="text-[14px] font-medium truncate">
+              Danh sách môn học
+            </p>
+          ),
           icon: (
-            <Student
+            <Chalkboard
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+        {
+          key: DASHBOARD_KEYS?.students?.key || "2",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.students)
+              window.location.replace(DASHBOARD_KEYS?.students?.path);
+          },
+          label: <p className="text-[14px] font-medium">Học sinh</p>,
+          icon: (
+            <Archive
+              size={34}
+              className="p-2 bg-white border rounded-md shadow-md"
+            />
+          ),
+        },
+        {
+          key: DASHBOARD_KEYS?.teachers?.key || "3",
+          className: "py-6",
+          onClick: () => {
+            if (DASHBOARD_KEYS?.teachers)
+              window.location.replace(DASHBOARD_KEYS?.teachers?.path);
+          },
+          label: <p className="text-[14px] font-medium">Giáo viên</p>,
+          icon: (
+            <Archive
               size={34}
               className="p-2 bg-white border rounded-md shadow-md"
             />
@@ -200,7 +245,13 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}
           mode="inline"
-          items={user?.role == "1" ? studentItems : teacherItems}
+          items={
+            user?.role == "1"
+              ? studentItems
+              : user?.role == "2"
+              ? teacherItems
+              : adminItems
+          }
           selectedKeys={[DASHBOARD_KEYS[DASHBOARD_LOCATION]?.key || ""]}
         />
         <Divider className="my-2" />

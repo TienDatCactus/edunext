@@ -8,7 +8,7 @@ import { useCourseStore, useUserStore } from "../../../../utils/zustand/Store";
 
 const LessonDetail: React.FC<LessonDetailProps> = ({ lessonId, lesson }) => {
   const { detail } = useCourseStore();
-  console.log(lesson);
+
   return (
     <>
       <Collapse

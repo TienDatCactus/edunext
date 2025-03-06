@@ -1,5 +1,5 @@
 import { BellZ, Kanban } from "@phosphor-icons/react";
-import { Button, Divider, Popover, Spin } from "antd";
+import { Button, Divider, message, Popover, Spin } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../utils/api";
@@ -10,12 +10,24 @@ import { useUserStore } from "../../../utils/zustand/Store";
 export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const routeSwap = () => {
+    console.log(user?.role);
+    switch (Number(user?.role)) {
+      case 3:
+        window.location.href = "/admin/course";
+        return "";
+      case 2:
+        return "landing";
+      case 1:
+        return "account";
+    }
+  };
   const doLogout = async () => {
     try {
       setLoading(true);
       const resp = await logout();
       if (resp) {
-        console.log("Logout success");
+        message.success("Đăng xuất thành công");
       }
     } catch (e) {
       console.log(e);
@@ -38,7 +50,7 @@ export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
             <Button
               className="border-none shadow-none hover:bg-[#ededed]"
               block
-              onClick={() => navigate("/dashboard/account")}
+              onClick={() => navigate(`/dashboard/${routeSwap()}`)}
             >
               Cài đặt
             </Button>
@@ -73,7 +85,7 @@ const Header = () => {
     {
       name: "Khóa học bên ngoài",
       link: `/externals`,
-      active: location === "/home/others",
+      active: location === "/externals",
     },
   ];
   const { user } = useUserStore();

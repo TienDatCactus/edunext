@@ -3,7 +3,7 @@ import { Button, Col, Dropdown, Row, Skeleton, Space, Spin } from "antd";
 import { MenuProps } from "antd/es/menu";
 import React, { useEffect } from "react";
 import coursera from "../../../assets/icons/coursera-svgrepo-com.svg";
-import edx from "../../../assets/icons/edx-svgrepo-com.svg";
+import udemy from "../../../assets/icons/udemy-svgrepo-com.svg";
 import MainLayout from "../../../ui/layouts/MainLayout";
 import {
   useExternalCourseStore,
@@ -15,14 +15,14 @@ const items: MenuProps["items"] = [
   {
     key: "1",
     className: "flex items-center",
-    icon: <img loading="lazy" src={edx} alt="edx" className="w-6 h-6" />,
+    icon: <img loading="lazy" src={udemy} alt="edx" className="w-4 h-4" />,
     label: (
       <a
         target="_blank"
         rel="noopener noreferrer"
         href="https://www.antgroup.com"
       >
-        edX
+        Udemy
       </a>
     ),
   },

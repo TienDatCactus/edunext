@@ -7,11 +7,12 @@ import {
 } from "@phosphor-icons/react";
 import { Badge, Button, Collapse, Table, TableProps, Tag } from "antd";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useCourseStore, useUserStore } from "../../../../utils/zustand/Store";
 import { Question } from "./../../../../utils/interfaces";
 import pagination from "antd/es/pagination";
+import { getCountStatistics } from "../../../../utils/api";
 
 const QuestionItem: React.FC<{
   question?: Question;
@@ -20,6 +21,27 @@ const QuestionItem: React.FC<{
 }> = ({ question, index, deadline }) => {
   const { detail } = useCourseStore();
   const { user } = useUserStore();
+  console.log(question);
+  const [loading, setLoading] = useState(false);
+  const [statistics, setStatistics] = useState<any>(null);
+  const getStatistics = async () => {
+    try {
+      setLoading(true);
+      const resp = await getCountStatistics(question?._id || "");
+      if (resp) {
+        setStatistics(resp);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    return () => {
+      getStatistics();
+    };
+  }, []);
   const swapper = {
     quiz: "Trắc nghiệm",
     code: "Lập trình",
@@ -63,10 +85,10 @@ const QuestionItem: React.FC<{
 
   const data: DataType[] = [
     {
-      answers: 12,
-      comments: 22,
-      toDeadline: dayjs(deadline).fromNow(),
-      groups: 0,
+      answers: statistics?.totalSubmissions || 0,
+      comments: statistics?.totalComments || 0,
+      toDeadline: dayjs(deadline).toNow(),
+      groups: statistics?.groups || 0,
     },
   ];
 
@@ -136,6 +158,7 @@ const QuestionItem: React.FC<{
               children: (
                 <div>
                   <Table<DataType>
+                    loading={loading}
                     pagination={{ position: ["none", "none"] }}
                     columns={columns}
                     dataSource={data}
