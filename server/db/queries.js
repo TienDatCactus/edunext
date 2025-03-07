@@ -529,6 +529,16 @@ const getCountStatistics = async (questionId) => {
   }
 };
 
+
+const getAllLessons = async () => {
+  try {
+    const lessons = await Lesson.find();
+    return { lessons, isOk: true };
+  } catch (error) {
+    return { error, isOk: false };
+  }
+};
+
 module.exports = {
   loginWithEmail,
   loginWithId,
@@ -550,4 +560,5 @@ module.exports = {
   deleteQuestion,
   updateQuestion,
   getCountStatistics,
+  getAllLessons
 };

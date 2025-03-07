@@ -6,6 +6,7 @@ import {
   courseApi,
   dashboardApi,
   homeApi,
+  lessonApi,
   questionApi,
 } from "./urls";
 
@@ -254,6 +255,74 @@ const getCountStatistics = async (questionId: string) => {
     return error;
   }
 };
+
+
+//Lesson 
+
+const getAllLessons = async () => {
+  try {
+    const resp = await http.get(`${lessonApi}/`);
+    if (resp?.data) return resp?.data;
+  } catch (error) {
+    return error;
+  }
+
+}
+
+// Course Admin
+const editCourse = async (courseId: string, course: any) => {
+  try {
+    const res = await http.put(`${courseApi}/editCourse/${courseId}`, course);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+}
+const addCourse = async (course: any) => {
+  try {
+  const res = await http.post(`${courseApi}/addCourse`, course);
+  if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const deleteCourse = async (courseId: string) => {
+  try {
+    const res = await http.delete(`${courseApi}/deleteCourse/${courseId}`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const getAllAssignment = async () => {
+  try {
+    const res = await http.get(`${dashboardApi}/assignment`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+}
+
+const getAllUser = async () => { 
+  try {
+    const res = await http.get(`${dashboardApi}/user`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+ }
+
+ const getAllSemester = async () => { 
+  try {
+    const res = await http.get(`${dashboardApi}/semester`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+ }
+
 export {
   getCampuses,
   getCourseDetail,
@@ -276,4 +345,11 @@ export {
   updateQuestionByTeacher,
   getAllCourses,
   getCountStatistics,
+  editCourse,
+  getAllLessons,
+  getAllAssignment,
+  getAllUser,
+  getAllSemester,
+  addCourse,
+  deleteCourse
 };

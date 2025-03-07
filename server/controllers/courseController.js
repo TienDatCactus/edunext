@@ -108,8 +108,6 @@ const getUdemyCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    console.log(resp);
-
     if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
