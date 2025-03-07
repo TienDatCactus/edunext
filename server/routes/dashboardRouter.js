@@ -16,4 +16,19 @@ dashboardRouter.get(
   authenticateToken,
   dashboardController.getUserTimeTable
 );
+
+dashboardRouter.get(
+  "/assignment",
+  dashboardController.getAllAssignment
+);
+
+dashboardRouter.get(
+  "/user",
+  dashboardController.getAllUsers
+);
+
+dashboardRouter.get(
+  "/semester",
+  dashboardController.getAllSemester
+);
 module.exports = dashboardRouter;
