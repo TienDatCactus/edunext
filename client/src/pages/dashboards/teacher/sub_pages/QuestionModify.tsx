@@ -92,6 +92,7 @@ function QuestionModify() {
                     lessonId: state?.lesson?.lesson || state?.lessonId,
                     addQuestion: handleAddQuestion,
                     handleSubmit: handleSubmit,
+                    question: question,
                   }}
                 />
               ))}

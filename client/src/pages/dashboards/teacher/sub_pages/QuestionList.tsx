@@ -154,9 +154,9 @@ function LessonDetail() {
                       (item, index) => ({
                         title: item?.title,
                         correctAnswer:
-                          item?.answer &&
+                          item?.answers &&
                           item?.correctAnswer !== undefined &&
-                          item?.answer[item?.correctAnswer],
+                          item?.answers[item?.correctAnswer],
                       })
                     )}
                     columns={[
@@ -373,9 +373,9 @@ function LessonDetail() {
       children: (
         <div className="flex flex-col gap-4">
           {!!questions?.length &&
-            questions?.map((question: Question, index: number) =>
-              tabItemCheck(question)
-            )}
+            questions?.map((question: Question, index: number) => (
+              <div key={index}> {tabItemCheck(question)}</div>
+            ))}
         </div>
       ),
     },

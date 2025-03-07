@@ -61,15 +61,26 @@ import { debounce } from "../../../../../utils/customHooks";
 
 const { Option } = Select;
 
+interface TestCase {
+  input: string;
+  expectedOutput: string;
+}
+
 function QuestionAddForm({ prop }: { prop: any }) {
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>(
-    prop?.content || prop?.question?.content || "" || "" || ""
+    typeof (prop?.content || prop?.question?.content) === "string"
+      ? prop?.content || prop?.question?.content || ""
+      : ""
   );
+  console.log(prop);
   const navigate = useNavigate();
   const [type, setType] = useState("quiz");
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(0);
+  const [testCases, setTestCases] = useState<TestCase[]>(
+    prop?.question?.content?.cases || [{ input: "", expectedOutput: "" }]
+  );
 
   const onChanges = (value: number) => {
     console.log("onChange:", value);
@@ -86,7 +97,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
 
   const [answers, setAnswers] = useState<
     string | QuestionQuizContent | string[]
-  >(prop?.question?.content[0].answers || ["Answer 1", "Answer 2"]);
+  >(prop?.question?.content[0]?.answers || ["Answer 1", "Answer 2"]);
 
   const [isMultipleAnswers, setIsMultipleAnswers] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<number | null | undefined>(
@@ -154,6 +165,13 @@ function QuestionAddForm({ prop }: { prop: any }) {
         status: false,
         type: type,
       };
+    } else if (type === "code") {
+      question = {
+        content: { cases: [...testCases] },
+        lesson: prop.lessonId,
+        status: false,
+        type: type,
+      };
     } else {
       question = {
         content: md,
@@ -162,33 +180,41 @@ function QuestionAddForm({ prop }: { prop: any }) {
         type: type,
       };
     }
+    console.log(question);
     prop.addQuestion(question, prop.index);
   };
 
   const handleUpdateQuestion = async () => {
+    let question = {};
+    if (type === "quiz") {
+      question = {
+        content: [
+          {
+            title: md,
+            answers: answers,
+            correctAnswer: correctAnswer,
+          },
+        ],
+        status: prop.question.status,
+        type: prop.question.type,
+      };
+    } else if (type === "code") {
+      question = {
+        content: { cases: [...testCases] },
+        lesson: prop.lessonId,
+        status: false,
+        type: type,
+      };
+    } else {
+      question = {
+        content: md,
+        status: prop.question.status,
+        type: prop.question.type,
+      };
+    }
+
     try {
       setLoading(true);
-      let question = {};
-      if (type === "quiz") {
-        question = {
-          content: [
-            {
-              title: md,
-              answers: answers,
-              correctAnswer: correctAnswer,
-            },
-          ],
-
-          status: prop.question.status,
-          type: prop.question.type,
-        };
-      } else {
-        question = {
-          content: md,
-          status: prop.question.status,
-          type: prop.question.type,
-        };
-      }
       const resp = await updateQuestionByTeacher(prop.question.id, question);
       if (resp) {
         message.success("Cập nhật câu hỏi thành công");
@@ -202,6 +228,10 @@ function QuestionAddForm({ prop }: { prop: any }) {
       setLoading(false);
     }
   };
+
+  const debouncedUpdate = debounce(handleUpdateQuestion, 1000);
+
+  console.log(testCases);
   const FormCheck: React.FC = () => {
     switch (type) {
       case "quiz":
@@ -563,7 +593,9 @@ function QuestionAddForm({ prop }: { prop: any }) {
                       },
                       {
                         value: "code",
-                        disabled: prop?.type && prop?.type != "code",
+                        disabled:
+                          prop?.question?.type &&
+                          prop?.question?.type != "code",
                         label: (
                           <div className="flex items-center gap-1 *:font-semibold">
                             <CodeBlock weight="bold" />
@@ -750,7 +782,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
               <div className="min-h-[550px] border rounded-md p-[20px] bg-white">
                 <div className="flex items-center justify-between mt-4">
                   <Select
-                    defaultValue={prop?.question?.type || "quiz"}
+                    defaultValue={type}
                     onChange={handleChange}
                     suffixIcon={<CaretDown weight="bold" color="black" />}
                     className="[&_.ant-select-selector]:border-[0px] [&_.ant-select-selector]:bg-[#f6f6f6] [&_.ant-select-selector]:rounded-md w-36"
@@ -809,53 +841,107 @@ function QuestionAddForm({ prop }: { prop: any }) {
                 </div>
                 <Form initialValues={{ remember: true }} autoComplete="off">
                   <div className="grid grid-cols-12 gap-2">
-                    <Form.Item
-                      className={`${
-                        prop?.type != "quiz" ? "col-span-8" : "col-span-12"
-                      }`}
-                    >
-                      <MDXEditor
-                        markdown={md}
-                        className="p-2 border-[#ccc] border rounded-md shadow-md"
-                        contentEditableClassName="min-h-[180px]"
-                        plugins={[
-                          headingsPlugin(),
-                          listsPlugin(),
-                          thematicBreakPlugin(),
-                          quotePlugin(),
-                          linkPlugin(),
-                          linkDialogPlugin(),
-                          thematicBreakPlugin(),
-                          diffSourcePlugin(),
-                          imagePlugin(),
-                          tablePlugin(),
-                          toolbarPlugin({
-                            toolbarClassName: "my-classname",
-                            toolbarContents: () => (
-                              <>
-                                <BlockTypeSelect />
-                                <CodeToggle />
-                                <InsertImage />
-                                <InsertTable />
-                                <InsertThematicBreak />
-                                <ListsToggle />
-                                <BoldItalicUnderlineToggles />
-                              </>
-                            ),
-                          }),
-                        ]}
-                        ref={ref}
-                        onChange={handleEditorChange}
-                      />
+                    <Form.Item className="col-span-12">
+                      <div className="space-y-4">
+                        <div className="space-y-4">
+                          {testCases.map((testCase, index) => (
+                            <>
+                              <div key={index} className="">
+                                <div className="flex items-center justify-between mb-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-center w-6 h-6 text-blue-600 bg-blue-100 rounded-full">
+                                      {index + 1}
+                                    </div>
+                                    <h4 className="font-medium">
+                                      Test Case {index + 1}
+                                    </h4>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      type="text"
+                                      danger
+                                      icon={<Trash size={16} />}
+                                      onClick={() => {
+                                        const newTestCases = testCases.filter(
+                                          (_, i) => i !== index
+                                        );
+                                        setTestCases(newTestCases);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700">
+                                      Dữ liệu đầu vào
+                                    </label>
+                                    <Input
+                                      value={testCase.input}
+                                      onChange={(e) => {
+                                        const newTestCases = [...testCases];
+                                        newTestCases[index].input =
+                                          e.target.value;
+                                        setTestCases(newTestCases);
+                                      }}
+                                      placeholder="Nhập..."
+                                      className="font-mono h-14"
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block mb-1 text-sm font-medium text-gray-700">
+                                      Kết quả mong đợi
+                                    </label>
+                                    <Input
+                                      value={testCase.expectedOutput}
+                                      onChange={(e) => {
+                                        const newTestCases = [...testCases];
+                                        newTestCases[index].expectedOutput =
+                                          e.target.value;
+                                        setTestCases(newTestCases);
+                                      }}
+                                      placeholder="Nhập..."
+                                      className="font-mono h-14"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <Divider className="my-2 border-[#d9d9d9]" />
+                            </>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Button
+                            type="primary"
+                            icon={<Plus size={16} />}
+                            onClick={() => {
+                              const newTestCases = [
+                                ...testCases,
+                                {
+                                  input: "",
+                                  expectedOutput: "",
+                                  isHidden: false,
+                                },
+                              ];
+                              setTestCases(newTestCases);
+                            }}
+                          >
+                            Thêm test case
+                          </Button>
+                        </div>
+                      </div>
                     </Form.Item>
                   </div>
-                  <Button
-                    type="primary"
-                    icon={<MonitorArrowUp size={16} />}
-                    onClick={handleUpdateQuestion}
-                  >
-                    Cập nhật
-                  </Button>
+                  <div className="flex justify-end">
+                    <Button
+                      type="primary"
+                      icon={<MonitorArrowUp size={16} />}
+                      onClick={handleUpdateQuestion}
+                    >
+                      Cập nhật
+                    </Button>
+                  </div>
 
                   <Divider className="border-[#ccc]" />
                 </Form>
@@ -981,39 +1067,130 @@ function QuestionAddForm({ prop }: { prop: any }) {
                   type == "response" ? "col-span-8" : "col-span-12"
                 }`}
               >
-                <MDXEditor
-                  markdown={md}
-                  className="p-2 border-[#ccc] border rounded-md shadow-md"
-                  contentEditableClassName="min-h-[180px]"
-                  plugins={[
-                    headingsPlugin(),
-                    listsPlugin(),
-                    thematicBreakPlugin(),
-                    quotePlugin(),
-                    linkPlugin(),
-                    linkDialogPlugin(),
-                    thematicBreakPlugin(),
-                    diffSourcePlugin(),
-                    imagePlugin(),
-                    tablePlugin(),
-                    toolbarPlugin({
-                      toolbarClassName: "my-classname",
-                      toolbarContents: () => (
-                        <>
-                          <BlockTypeSelect />
-                          <CodeToggle />
-                          <InsertImage />
-                          <InsertTable />
-                          <InsertThematicBreak />
-                          <ListsToggle />
-                          <BoldItalicUnderlineToggles />
-                        </>
-                      ),
-                    }),
-                  ]}
-                  ref={ref}
-                  onChange={handleEditorChange}
-                />
+                {type == "code" ? (
+                  <div className="space-y-4 min-h-[300px]">
+                    <div className="space-y-4">
+                      {testCases.map((testCase, index) => (
+                        <div key={index}>
+                          <div>
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-center w-6 h-6 text-blue-600 bg-blue-100 rounded-full">
+                                  {index + 1}
+                                </div>
+                                <h4 className="font-medium">
+                                  Test Case {index + 1}
+                                </h4>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  type="text"
+                                  danger
+                                  icon={<Trash size={16} />}
+                                  onClick={() => {
+                                    const newTestCases = testCases.filter(
+                                      (_, i) => i !== index
+                                    );
+                                    setTestCases(newTestCases);
+                                  }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                  Dữ liệu đầu vào
+                                </label>
+                                <Input
+                                  value={testCase.input}
+                                  onChange={(e) => {
+                                    const newTestCases = [...testCases];
+                                    newTestCases[index].input = e.target.value;
+                                    setTestCases(newTestCases);
+                                  }}
+                                  placeholder="Nhập..."
+                                  className="font-mono h-14"
+                                />
+                              </div>
+                              <div>
+                                <label className="block mb-1 text-sm font-medium text-gray-700">
+                                  Kết quả mong đợi
+                                </label>
+                                <Input
+                                  value={testCase.expectedOutput}
+                                  onChange={(e) => {
+                                    const newTestCases = [...testCases];
+                                    newTestCases[index].expectedOutput =
+                                      e.target.value;
+                                    setTestCases(newTestCases);
+                                  }}
+                                  placeholder="Nhập..."
+                                  className="font-mono h-14"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <Divider className="my-2 border-[#d9d9d9]" />
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Button
+                        type="primary"
+                        icon={<Plus size={16} />}
+                        onClick={() => {
+                          const newTestCases = [
+                            ...testCases,
+                            {
+                              input: "",
+                              expectedOutput: "",
+                              isHidden: false,
+                            },
+                          ];
+                          setTestCases(newTestCases);
+                        }}
+                      >
+                        Thêm test case
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <MDXEditor
+                    markdown={md}
+                    className="p-2 border-[#ccc] border rounded-md shadow-md"
+                    contentEditableClassName="min-h-[180px]"
+                    plugins={[
+                      headingsPlugin(),
+                      listsPlugin(),
+                      thematicBreakPlugin(),
+                      quotePlugin(),
+                      linkPlugin(),
+                      linkDialogPlugin(),
+                      thematicBreakPlugin(),
+                      diffSourcePlugin(),
+                      imagePlugin(),
+                      tablePlugin(),
+                      toolbarPlugin({
+                        toolbarClassName: "my-classname",
+                        toolbarContents: () => (
+                          <>
+                            <BlockTypeSelect />
+                            <CodeToggle />
+                            <InsertImage />
+                            <InsertTable />
+                            <InsertThematicBreak />
+                            <ListsToggle />
+                            <BoldItalicUnderlineToggles />
+                          </>
+                        ),
+                      }),
+                    ]}
+                    ref={ref}
+                    onChange={handleEditorChange}
+                  />
+                )}
               </Form.Item>
               {type == "response" && (
                 <Form.Item className="col-span-4 ">

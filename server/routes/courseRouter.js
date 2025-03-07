@@ -3,7 +3,6 @@ const courseRouter = Router();
 const courseController = require("../controllers/courseController");
 
 const authenticateToken = require("../validators/authenticate");
-const questionController = require("../controllers/questionController");
 
 courseRouter.get(
   "/:courseCode",

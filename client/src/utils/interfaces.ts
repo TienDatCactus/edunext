@@ -157,7 +157,7 @@ export interface Question {
 }
 export interface QuestionQuizContent {
   title?: string;
-  answer?: string[];
+  answers?: string[];
   correctAnswer?: number;
 }
 export interface CourseInfoProps {

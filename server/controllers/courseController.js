@@ -110,7 +110,6 @@ const viewAllCourses = async (req, res) => {
     const resp = await query.getAllCourses();
     console.log(resp);
 
-
     if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
@@ -248,7 +247,7 @@ const addCourse = async (req, res) => {
       assignments = [],
       lessons = [],
     } = req.body;
-    const newCourse =  new Course({
+    const newCourse = new Course({
       courseName,
       description,
       courseCode,
@@ -260,7 +259,7 @@ const addCourse = async (req, res) => {
       lessons,
     });
     if (!newCourse) {
-     return res.status(404).json({ error: "Lỗi máy chủ" });
+      return res.status(404).json({ error: "Lỗi máy chủ" });
     }
     const saveCourse = await newCourse.save();
     res.status(201).json({ message: "Add successfully", saveCourse });
@@ -271,12 +270,7 @@ const addCourse = async (req, res) => {
 const editCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const {
-      courseName,
-      description,
-      courseCode,
-      forMajor,
-    } = req.body;
+    const { courseName, description, courseCode, forMajor } = req.body;
     const newCourse = await Course.findByIdAndUpdate(courseId, {
       courseName,
       description,
@@ -332,7 +326,7 @@ module.exports = {
   randomGroupForStudent,
   addCourse,
   editCourse,
-  deleteCourse
-  getUdemyCourses,
+  deleteCourse,
   viewCountStatistics,
+  getUdemyCourses,
 };
