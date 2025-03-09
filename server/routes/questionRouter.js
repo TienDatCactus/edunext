@@ -36,4 +36,9 @@ questionRouter.post(
   authenticateToken,
   questionController.addSubmissionComment
 );
+questionRouter.post(
+  "/:questionId/submitCode",
+  authenticateToken,
+  questionController.submitCode
+);
 module.exports = questionRouter;

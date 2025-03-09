@@ -148,12 +148,18 @@ export interface ExternalCourse {
 }
 export interface Question {
   _id?: string;
-  content?: string | QuestionQuizContent;
+  content?: string | QuestionQuizContent | QuestionCodeContent;
   lesson?: string;
   status?: boolean;
   createdAt?: string;
   updatedAt?: string;
   type?: "quiz" | "code" | "response";
+}
+export interface QuestionCodeContent {
+  cases?: Array<{
+    input: String;
+    expectedOutput: String;
+  }>;
 }
 export interface QuestionQuizContent {
   title?: string;

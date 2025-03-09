@@ -14,6 +14,8 @@ const {
   Timetable,
 } = require("./model");
 const { mongoose } = require("mongoose");
+const { default: axios, post } = require("axios");
+const { env } = require("process");
 
 const loginWithEmail = async (campus, email, password) => {
   try {
@@ -146,7 +148,7 @@ const getCourseDetail = async (courseCode) => {
           });
           if (resp) {
             const lessonWithQuestions = await Question.find({
-              lesson: new mongoose.Types.ObjectId(resp?._id),
+              lesson: String(resp?._id),
             });
 
             resp = {
@@ -189,7 +191,6 @@ const getQuestionById = async (questionId) => {
         isOk: false,
       };
     }
-    console.log(question);
     return { question: question, isOk: true };
   } catch (error) {
     return {
@@ -359,12 +360,6 @@ const getUserById = async (id) => {
 
 const addQuestion = async (questions) => {
   try {
-    const transformedQuestions = questions.map((question) => {
-      if (typeof question.lesson === "string") {
-        question.lesson = new mongoose.Types.ObjectId(question.lesson);
-      }
-      return question;
-    });
     const result = await Question.insertMany(questions);
     return { result, isOk: true };
   } catch (error) {
@@ -398,9 +393,9 @@ const changeStatusCourses = async (courseCode, newStatus) => {
 };
 const getQuestions = async (lessonId) => {
   try {
-    const objectIdLessonId = new mongoose.Types.ObjectId(lessonId);
-
-    const questions = await Question.find({ lesson: objectIdLessonId });
+    const questions = await Question.find({
+      lesson: lessonId,
+    });
     if (questions.length === 0) {
       return {
         error: "Không tìm thấy thông tin question",
@@ -434,9 +429,14 @@ const deleteQuestion = async (id) => {
 
 const updateQuestion = async (id, question) => {
   try {
-    const result = await Question.findByIdAndUpdate(id, question, {
-      new: true,
-    });
+    const result = await Question.findByIdAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+      {
+        $set: question,
+      }
+    );
 
     if (!result) {
       return {
@@ -529,13 +529,118 @@ const getCountStatistics = async (questionId) => {
   }
 };
 
-
 const getAllLessons = async () => {
   try {
     const lessons = await Lesson.find();
     return { lessons, isOk: true };
   } catch (error) {
     return { error, isOk: false };
+  }
+};
+const compareOutput = async (userCode, questionId) => {
+  try {
+    const q = await Question.findOne({
+      _id: new mongoose.Types.ObjectId(questionId),
+    });
+
+    if (!q) {
+      return { error: "Question not found", isOk: false };
+    }
+
+    const check =
+      typeof q?.content === "object" &&
+      "cases" in q?.content &&
+      Array.isArray(q?.content?.cases) &&
+      q?.content?.cases.length > 0;
+
+    if (!check) {
+      return { error: "No test cases found", isOk: false };
+    }
+
+    // Test each case using Judge0 API
+    const results = await Promise.all(
+      q.content.cases.map(async (testCase) => {
+        const submissionToken = await submitToJudge0({
+          source_code: userCode,
+          language_id: 63, // JavaScript Node.js 12.14.0
+          stdin: testCase?.input,
+          expected_output: testCase?.expectedOutput,
+          cpu_time_limit: 5,
+          memory_limit: 128000, // 128 MB
+          redirect_stderr_to_stdout: false,
+        });
+
+        // Wait for the result
+        const result = await getJudge0Result(submissionToken);
+        return {
+          input: testCase?.input,
+          expectedOutput: testCase?.expectedOutput,
+          actualOutput: result.stdout,
+          passed: result.stdout == testCase.expectedOutput,
+          error: result.stderr,
+          status: result.status,
+        };
+      })
+    );
+
+    return results;
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const submitToJudge0 = async ({
+  source_code,
+  language_id,
+  stdin,
+  expected_output,
+}) => {
+  try {
+    const response = await axios.post(
+      "https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true",
+      {
+        source_code,
+        language_id,
+        stdin,
+        expected_output,
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
+          "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        },
+      }
+    );
+    return response?.data?.token;
+  } catch (error) {
+    throw new Error("Failed to submit code to Judge0: " + error.message);
+  }
+};
+
+const getJudge0Result = async (token) => {
+  try {
+    const response = await axios.get(
+      `https://judge0-ce.p.rapidapi.com/submissions/${token}`,
+      {
+        headers: {
+          "X-RapidAPI-Key": process.env.JUDGE0_API_KEY,
+          "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        },
+      }
+    );
+    let data;
+    if (response) {
+      data = response?.data;
+    }
+    console.log(data);
+    return {
+      stdout: data.stdout || "",
+      stderr: data.stderr || "",
+      status: data.status,
+    };
+  } catch (error) {
+    throw new Error("Failed to get result from Judge0: " + error.message);
   }
 };
 
@@ -560,5 +665,6 @@ module.exports = {
   deleteQuestion,
   updateQuestion,
   getCountStatistics,
-  getAllLessons
+  getAllLessons,
+  compareOutput,
 };

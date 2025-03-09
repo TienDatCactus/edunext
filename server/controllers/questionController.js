@@ -157,6 +157,21 @@ const addSubmissionComment = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
+
+const submitCode = async (req, res) => {
+  const { questionId } = req.params;
+  const { code } = req.body;
+  try {
+    const result = await query.compareOutput(code, questionId);
+    if (result?.isOk === false) {
+      return res.status(400).json({ error: result?.error, isOk: false });
+    }
+    res.json({ result, isOk: true });
+  } catch (error) {
+    console.error("Submission error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
 module.exports = {
   createQuestions,
   getAllQuestions,
@@ -165,5 +180,6 @@ module.exports = {
   viewQuestionDetail,
   viewQuestionSubmissions,
   addQuestionSubmission,
-  addSubmissionComment
+  addSubmissionComment,
+  submitCode,
 };

@@ -1,10 +1,18 @@
 import { Code, Dot, PaperPlaneTilt, Play } from "@phosphor-icons/react";
-import { Button, Divider, Spin } from "antd";
+import { Button, Divider, message, Spin } from "antd";
 import { useState } from "react";
 import Markdown from "react-markdown";
 import Editor, { EditorConstructionOptions } from "react-monaco-editor";
 import { executeCode } from "../../../utils/api/externals";
-export const CodeEditor = () => {
+import { useLocation } from "react-router-dom";
+import { submitCode } from "../../../utils/api";
+
+interface CodeEditorProps {
+  qId?: string;
+  lId?: string;
+}
+
+export const CodeEditor: React.FC<CodeEditorProps> = ({ qId }) => {
   const [code, setCode] = useState("// Write your code here");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,6 +32,20 @@ export const CodeEditor = () => {
       const resp = await executeCode(code);
       if (resp) setOutput(resp || "No output");
       console.log(resp);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSubmitCode = async () => {
+    if (!qId) return;
+    try {
+      setLoading(true);
+      const resp = await submitCode(code, qId);
+      if (resp?.isOk) {
+        message.success("Gửi bài thành công");
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -90,7 +112,11 @@ export const CodeEditor = () => {
         </div>
       </div>
       <div className="flex justify-end my-2">
-        <Button icon={<PaperPlaneTilt size={18} />} type="primary">
+        <Button
+          onClick={handleSubmitCode}
+          icon={<PaperPlaneTilt size={18} />}
+          type="primary"
+        >
           Gửi
         </Button>
       </div>

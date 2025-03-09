@@ -1,7 +1,7 @@
 import { FolderPlus, Plus } from "@phosphor-icons/react";
 import { Button, FloatButton, message, Spin, Tooltip } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import QuestionAddForm from "../../../../ui/_elements/Forms/Dashboard/Teacher/QuestionAddForm";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { addQuestionByTeacher } from "../../../../utils/api";
@@ -10,6 +10,7 @@ import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function QuestionModify() {
   const location = useLocation();
   const { state } = location;
+  const navigate = useNavigate();
   const [question] = useState<Question>(state?.lesson);
   const [questionArray, setQuestionArray] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
@@ -45,6 +46,9 @@ function QuestionModify() {
       const res = await addQuestionByTeacher(questionArray);
       if (res) {
         message.success("Thêm câu hỏi thành công");
+        setTimeout(() => {
+          navigate(-1);
+        }, 1000);
       }
     } catch (error) {
       console.error(error);

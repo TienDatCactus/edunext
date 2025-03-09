@@ -256,8 +256,7 @@ const getCountStatistics = async (questionId: string) => {
   }
 };
 
-
-//Lesson 
+//Lesson
 
 const getAllLessons = async () => {
   try {
@@ -266,8 +265,7 @@ const getAllLessons = async () => {
   } catch (error) {
     return error;
   }
-
-}
+};
 
 // Course Admin
 const editCourse = async (courseId: string, course: any) => {
@@ -277,15 +275,15 @@ const editCourse = async (courseId: string, course: any) => {
   } catch (error) {
     return error;
   }
-}
+};
 const addCourse = async (course: any) => {
   try {
-  const res = await http.post(`${courseApi}/addCourse`, course);
-  if (res) return res?.data;
+    const res = await http.post(`${courseApi}/addCourse`, course);
+    if (res) return res?.data;
   } catch (error) {
     return error;
   }
-}
+};
 
 const deleteCourse = async (courseId: string) => {
   try {
@@ -294,7 +292,7 @@ const deleteCourse = async (courseId: string) => {
   } catch (error) {
     return error;
   }
-}
+};
 
 const getAllAssignment = async () => {
   try {
@@ -303,25 +301,36 @@ const getAllAssignment = async () => {
   } catch (error) {
     return error;
   }
-}
+};
 
-const getAllUser = async () => { 
+const getAllUser = async () => {
   try {
     const res = await http.get(`${dashboardApi}/user`);
     if (res) return res?.data;
   } catch (error) {
     return error;
   }
- }
+};
 
- const getAllSemester = async () => { 
+const getAllSemester = async () => {
   try {
     const res = await http.get(`${dashboardApi}/semester`);
     if (res) return res?.data;
   } catch (error) {
     return error;
   }
- }
+};
+const submitCode = async (code: string, questionId: string) => {
+  try {
+    const resp = await http.post(`${questionApi}/${questionId}/submitCode`, {
+      code,
+    });
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
 
 export {
   getCampuses,
@@ -351,5 +360,6 @@ export {
   getAllUser,
   getAllSemester,
   addCourse,
-  deleteCourse
+  deleteCourse,
+  submitCode,
 };

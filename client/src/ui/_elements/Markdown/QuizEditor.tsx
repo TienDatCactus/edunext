@@ -5,6 +5,8 @@ import { PaperPlaneTilt } from "phosphor-react";
 
 interface QuizViewerProps {
   question: StoreQuestion;
+  qId?: string;
+  lId?: string;
 }
 
 const QuizEditor: React.FC<QuizViewerProps> = ({ question }) => {

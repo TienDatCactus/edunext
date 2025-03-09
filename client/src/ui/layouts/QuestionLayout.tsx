@@ -7,6 +7,8 @@ import {
   Form,
   Popconfirm,
   Spin,
+  Table,
+  TableColumnsType,
   TimePicker,
 } from "antd";
 import dayjs from "dayjs";
@@ -16,7 +18,6 @@ import { getCurrentSeason } from "../../utils/customHooks";
 import { useCourseStore, useQuestionStore } from "../../utils/zustand/Store";
 import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
 import MainLayout from "./MainLayout";
-import { time } from "console";
 
 const format = "HH:mm:ss";
 const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
@@ -29,7 +30,6 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const location = useLocation();
   const questionId = location.state?.questionId;
   const { fetchQuestionById, question, loading } = useQuestionStore();
-
   const [remainQuestions, setRemainQuestions] = useState<
     {
       questionId?: number;
@@ -47,18 +47,56 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
     });
 
   useEffect(() => {
-    return () => {
-      fetchQuestionById(questionId);
-    };
-  }, []);
+    fetchQuestionById(questionId);
+  }, [questionId]);
   const onFinish = (values: any) => {
     console.log(values.date.$d.toISOString());
     console.log(values.time);
   };
+  const columns: TableColumnsType = [
+    {
+      title: "Input",
+      dataIndex: "input",
+      key: "input",
+      render: (text: any) => (
+        <p className="text-[0.875rem] whitespace-pre-wrap font-mono">{text}</p>
+      ),
+    },
+    {
+      title: "Output",
+      dataIndex: "output",
+      key: "output",
+      render: (text: any) => (
+        <p className="text-[0.875rem] whitespace-pre-wrap font-mono">{text}</p>
+      ),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+    },
+  ];
+  const [dataSource, setDataSource] = useState<
+    { key: number; input: any; output: any }[]
+  >([]);
+  useEffect(() => {
+    setDataSource(
+      typeof question?.content === "object" &&
+        "cases" in question?.content &&
+        Array.isArray(question?.content?.cases)
+        ? question?.content?.cases?.map((item: any, index: number) => ({
+            key: index,
+            input: item.input,
+            output: item.expectedOutput,
+          }))
+        : []
+    );
+  }, [question]);
+
   return (
     <MainLayout>
       <Spin spinning={loading}>
-        <div className="grid justify-around grid-cols-12 gap-4 px-8 min-h-[800px] ">
+        <div className="grid justify-around grid-cols-12 gap-4 px-8 min-h-[800px]">
           <div className="col-span-8">
             <div>
               <Breadcrumb
@@ -78,12 +116,50 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                 <h1 className="font-semibold text-[20px]">
                   Câu hỏi dạng {swapper[question?.type || "code"]}
                 </h1>
-                <Divider className="border-[#868686]  my-3" />
-                <p className="text-[1.25rem] font-semibold">
-                  {typeof question?.content === "string"
-                    ? question.content
-                    : ""}
-                </p>
+                <Divider className="border-[#868686] my-3" />
+                {question?.type === "code" && (
+                  <div className="bg-[#f5f5f5] my-4 p-2 rounded-md">
+                    <Table
+                      pagination={false}
+                      dataSource={dataSource}
+                      loading={loading}
+                      columns={columns}
+                    />
+                  </div>
+                )}
+                <div className="text-[1.25rem] font-semibold">
+                  {question?.type === "quiz" ? (
+                    <div className="space-y-4">
+                      {Array.isArray(question?.content) &&
+                        question?.content?.map((q, i) => (
+                          <div key={i} className="space-y-2">
+                            <p>{q.title}</p>
+                            <div className="pl-4 space-y-2">
+                              {q.answers?.map(
+                                (answer: string, index: number) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <span className="text-gray-500">
+                                      {String.fromCharCode(65 + index)}.
+                                    </span>
+                                    <p>{answer}</p>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="whitespace-pre-wrap">
+                      {typeof question?.content === "string"
+                        ? question.content
+                        : ""}
+                    </div>
+                  )}
+                </div>
                 <div className="flex items-center justify-between">
                   <Badge dot>
                     <div className="flex items-center gap-2 *:text-[#878787] *:text-[0.875rem]">

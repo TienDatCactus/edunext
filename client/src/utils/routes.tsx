@@ -93,7 +93,7 @@ const AppRouter = () => {
           path: ":courseCode",
           children: [
             {
-              path: "lesson/:lessonId/question",
+              path: "lesson/question",
               element: <Question />,
             },
             {

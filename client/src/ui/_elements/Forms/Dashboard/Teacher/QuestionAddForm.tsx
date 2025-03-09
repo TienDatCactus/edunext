@@ -78,19 +78,37 @@ function QuestionAddForm({ prop }: { prop: any }) {
   const [type, setType] = useState("quiz");
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(0);
-  const [testCases, setTestCases] = useState<TestCase[]>(
-    prop?.question?.content?.cases || [{ input: "", expectedOutput: "" }]
-  );
+  const [testCases, setTestCases] = useState<TestCase[]>([
+    { input: "", expectedOutput: "" },
+  ]);
 
-  const onChanges = (value: number) => {
-    console.log("onChange:", value);
-    setCurrent(value);
-  };
+  useEffect(() => {
+    if (prop?.question?.content) {
+      const content = prop.question.content;
+      if (typeof content === "object" && "cases" in content) {
+        const cases = content.cases || [];
+        setTestCases(
+          Array.isArray(cases) && cases.length > 0
+            ? cases.map((item: any) => ({
+                input: item.input || "",
+                expectedOutput: item.expectedOutput || "",
+              }))
+            : [{ input: "", expectedOutput: "" }]
+        );
+      }
+    }
+  }, [prop?.question]);
+
   useEffect(() => {
     if (prop?.question?.type) {
       setType(prop?.question?.type);
     }
   }, [prop]);
+
+  const onChanges = (value: number) => {
+    console.log("onChange:", value);
+    setCurrent(value);
+  };
   const handleChange = (value: string) => {
     setType(value);
   };
