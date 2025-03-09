@@ -5,14 +5,9 @@ import React from "react";
 import { LessonDetailProps } from "../../../../utils/interfaces";
 import QuestionItem from "./QuestionItem";
 
-const LessonDetail: React.FC<LessonDetailProps> = ({
-  content,
-  deadline,
-  lessonId,
-  questions,
-  tag,
-  title,
-}) => {
+const LessonDetail: React.FC<LessonDetailProps> = ({ lessonId, lesson }) => {
+  const { detail } = useCourseStore();
+
   return (
     <>
       <Collapse

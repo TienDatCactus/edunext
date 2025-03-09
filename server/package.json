@@ -21,7 +21,6 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "body-parser": "^1.20.3",
-    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },

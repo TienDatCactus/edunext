@@ -3,7 +3,6 @@ const courseRouter = Router();
 const courseController = require("../controllers/courseController");
 
 const authenticateToken = require("../validators/authenticate");
-const questionController = require("../controllers/questionController");
 
 courseRouter.get(
   "/:courseCode",
@@ -11,26 +10,12 @@ courseRouter.get(
   courseController.viewCourseDetail
 );
 courseRouter.get("/", authenticateToken, courseController.viewAllCourses);
-courseRouter.get(
-  "/question/:questionId",
-  authenticateToken,
-  courseController.viewQuestionDetail
-);
-courseRouter.get(
-  "/question/:questionId/submissions",
-  authenticateToken,
-  courseController.viewQuestionSubmissions
-);
 courseRouter.post(
-  "/question/:questionId",
+  "/group",
   authenticateToken,
-  courseController.addQuestionSubmission
+  courseController.randomGroupForStudent
 );
-courseRouter.post(
-  "/question/:questionId/submission/:submissionId/comment",
-  authenticateToken,
-  courseController.addSubmissionComment
-);
+
 courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,
@@ -42,6 +27,12 @@ courseRouter.get(
   authenticateToken,
   courseController.getCourseraCourses
 );
+courseRouter.post(
+  "/api/udemy",
+  // authenticateToken,
+  courseController.getUdemyCourses
+);
+
 courseRouter.get(
   "/instructor/:userId",
   authenticateToken,
@@ -59,4 +50,12 @@ courseRouter.get(
   courseController.sortCoursesByStatus
 );
 
+courseRouter.post("/addCourse", courseController.addCourse);
+courseRouter.put("/editCourse/:courseId", courseController.editCourse);
+courseRouter.delete("/deleteCourse/:courseId", courseController.deleteCourse);
+courseRouter.get(
+  "/:questionId/count-statistics",
+  // authenticateToken,
+  courseController.viewCountStatistics
+);
 module.exports = courseRouter;

@@ -27,7 +27,7 @@ const loginWithEmail = async (campus, email, password) => {
         isOk: false,
       };
     }
-    const timetable = await Timetable.findOne({
+    const timetable = await Timetable.find({
       user: new mongoose.Types.ObjectId(user._id),
     }).select("timeline");
     const isValidPassword = await bcrypt.compare(password, user.password);
@@ -40,8 +40,9 @@ const loginWithEmail = async (campus, email, password) => {
     const userObject = user.toObject();
     delete userObject.password;
     if (timetable) {
-      userObject.timetable = timetable.timeline;
+      userObject.timetable = timetable;
     }
+    console.log(userObject);
     return { user: userObject, isOk: true };
   } catch (error) {
     return {
@@ -72,29 +73,6 @@ const loginWithId = async (campus, id) => {
   } catch (error) {
     return {
       error: "Lỗi đăng nhập",
-      isOk: false,
-    };
-  }
-};
-
-const getCurrentSemester = async (year, month) => {
-  try {
-    const semester = await Semester.findOne({
-      year,
-      semesterName: month.toUpperCase(),
-    });
-
-    if (!semester) {
-      return {
-        error: "Học kì không hợp lệ",
-        isOk: false,
-      };
-    }
-
-    return semester.toObject();
-  } catch (error) {
-    return {
-      error: "Lỗi lấy thông tin học kỳ",
       isOk: false,
     };
   }
@@ -381,8 +359,13 @@ const getUserById = async (id) => {
 
 const addQuestion = async (questions) => {
   try {
+    const transformedQuestions = questions.map((question) => {
+      if (typeof question.lesson === "string") {
+        question.lesson = new mongoose.Types.ObjectId(question.lesson);
+      }
+      return question;
+    });
     const result = await Question.insertMany(questions);
-
     return { result, isOk: true };
   } catch (error) {
     return { error, isOk: false };
@@ -390,12 +373,16 @@ const addQuestion = async (questions) => {
 };
 const getAllCourses = async () => {
   try {
-    const course = await Course.find();
+    const course = await Course.find()
+      .populate("instructor")
+      .populate("semester")
+      .populate("assignments");
     return { course, isOk: true };
   } catch (error) {
     return { error, isOk: false };
   }
 };
+
 const changeStatusCourses = async (courseCode, newStatus) => {
   try {
     const updatedCourse = await Course.findOneAndUpdate(
@@ -447,8 +434,9 @@ const deleteQuestion = async (id) => {
 
 const updateQuestion = async (id, question) => {
   try {
-
-    const result = await Question.findByIdAndUpdate(id,  question, { new: true });
+    const result = await Question.findByIdAndUpdate(id, question, {
+      new: true,
+    });
 
     if (!result) {
       return {
@@ -465,7 +453,6 @@ const updateQuestion = async (id, question) => {
     return { error: error.message, isOk: false };
   }
 };
-
 
 const getCourseByInstructor = async (userId) => {
   try {
@@ -517,33 +504,28 @@ const getCourseStudents = async (courseId) => {
   }
 };
 
-const getCoursesByStatus = async (status) => {
+const getCountStatistics = async (questionId) => {
   try {
-    const courses = await Course.find({ status }).sort({ createdAt: -1 });
-    return {
-      courses,
-      isOk: true,
-    };
+    const questionSubmissions = await Submission.find({
+      question: questionId,
+    });
+    const totalSubmissions = questionSubmissions.length;
+    const submissionsComments = await Promise.all(
+      !!questionSubmissions?.length &&
+        questionSubmissions.map(async (submission) => {
+          const comments = await Comment.find({
+            submission: String(submission._id),
+          });
+          return comments;
+        })
+    );
+    const totalComments = submissionsComments.reduce(
+      (sum, comments) => sum + comments.length,
+      0
+    );
+    return { totalSubmissions, totalComments, isOk: true };
   } catch (error) {
-    return {
-      error: "Failed to fetch courses by status",
-      isOk: false,
-    };
-  }
-};
-
-const getLessonsByStatus = async (status) => {
-  try {
-    const lessons = await Lesson.find({ status }).sort({ createdAt: -1 });
-    return {
-      lessons,
-      isOk: true,
-    };
-  } catch (error) {
-    return {
-      error: "Failed to fetch lessons by status",
-      isOk: false,
-    };
+    return { error: error.message, isOk: false };
   }
 };
 
@@ -565,10 +547,7 @@ module.exports = {
   changeStatusCourses,
   getCourseByInstructor,
   getCourseStudents,
-  changeStatusCoursesToInactive,
-  changeStatusCoursesToActive,
-  getLessonsByStatus,
-  getCoursesByStatus,
   deleteQuestion,
-  updateQuestion
+  updateQuestion,
+  getCountStatistics,
 };

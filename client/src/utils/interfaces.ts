@@ -131,6 +131,19 @@ export interface LessonItem {
   lessonGroups?: string[];
   question?: Question[];
 }
+export interface ExternalCourse {
+  id: string;
+  name: string;
+  description: string;
+  photoUrl: string;
+  language: string;
+  domainTypes: Array<{
+    domainId: string;
+    subdomainId: string;
+  }>;
+  workload: string;
+  previewLink: string;
+}
 export interface Question {
   _id?: string;
   content?: string | QuestionQuizContent;
@@ -142,7 +155,7 @@ export interface Question {
 }
 export interface QuestionQuizContent {
   title?: string;
-  answer?: string[];
+  answers?: string[];
   correctAnswer?: number;
 }
 export interface CourseInfoProps {
@@ -172,13 +185,12 @@ export interface UserToken {
   user?: User;
 }
 export interface TimelineEvent {
-  time: {
-    day: string;
-    month: string;
-    year: string;
+  id: string;
+  timeline: {
+    content: string;
+    time: string;
+    type: string;
   };
-  content: string;
-  type: string;
 }
 export interface User {
   name: string;
@@ -246,7 +258,27 @@ export interface DASHBOARD_KEY_PROPS {
       }
     ];
   };
-  classes?: {
+  students?: {
+    path: string | URL;
+    key: string;
+    children?: [
+      {
+        path: string | URL;
+        key: string;
+      }
+    ];
+  };
+  teachers?: {
+    path: string | URL;
+    key: string;
+    children?: [
+      {
+        path: string | URL;
+        key: string;
+      }
+    ];
+  };
+  course?: {
     path: string | URL;
     key: string;
     children?: [

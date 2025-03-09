@@ -29,6 +29,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const location = useLocation();
   const questionId = location.state?.questionId;
   const { fetchQuestionById, question, loading } = useQuestionStore();
+
   const [remainQuestions, setRemainQuestions] = useState<
     {
       questionId?: number;
@@ -78,7 +79,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                   Câu hỏi dạng {swapper[question?.type || "code"]}
                 </h1>
                 <Divider className="border-[#868686]  my-3" />
-                <p className="font-light">
+                <p className="text-[1.25rem] font-semibold">
                   {typeof question?.content === "string"
                     ? question.content
                     : ""}

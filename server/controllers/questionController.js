@@ -49,7 +49,7 @@ const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
     const question = req.body;
-console.log(question);
+
     const updatedQuestion = await query.updateQuestion(id, question);
     if (updatedQuestion?.isOk === false) {
       return res.json({
@@ -58,7 +58,7 @@ console.log(question);
       });
     } else if (updatedQuestion?.isOk === true) {
       res.json({
-        updatedQuestion: updatedQuestion?.updatedQuestion,
+        data: updatedQuestion?.updatedQuestion,
         isOk: updatedQuestion?.isOk,
       });
     }
@@ -89,11 +89,85 @@ const deletedQuestion = async (req, res) => {
   }
 };
 
+const viewQuestionDetail = async (req, res) => {
+  const { questionId } = req.params;
+  try {
+    const question = await query.getQuestionById(questionId);
+    if (question?.isOk === false) {
+      return res.status(400).json({ error: question?.error, isOk: false });
+    }
+    res.json({ question: question?.question, isOk: true });
+  } catch (error) {
+    console.error("Question fetch error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+
+const viewQuestionSubmissions = async (req, res) => {
+  const { questionId } = req.params;
+  try {
+    const submissions = await query.getSubmissionsByQuestion(questionId);
+    if (submissions?.isOk === false) {
+      return res.status(400).json({ error: submissions?.error, isOk: false });
+    }
+    res.json({ submissions: submissions?.submissions, isOk: true });
+  } catch (error) {
+    console.error("Submission fetch error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+const addQuestionSubmission = async (req, res) => {
+  const { questionId } = req.params;
+  const { content, userId } = req.body;
+  try {
+    const newSubmission = await query.postQuestionSubmission(
+      content,
+      questionId,
+      userId
+    );
+    if (newSubmission?.isOk === false) {
+      return res.status(400).json({ error: newSubmission?.error, isOk: false });
+    }
+    res.json({
+      allSubmission: newSubmission?.allSubmissions,
+      isOk: true,
+    });
+  } catch (error) {
+    console.error("Submission error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
+const addSubmissionComment = async (req, res) => {
+  const { questionId, submissionId } = req.params;
+  const { content, user } = req.body;
+  try {
+    const cmt = await query.postSubmissionComment(
+      questionId,
+      submissionId,
+      content,
+      user
+    );
+    if (cmt?.isOk === false) {
+      return res.status(400).json({ error: cmt?.error, isOk: false });
+    }
+    res.json({
+      allSubmission: cmt?.allSubmissions,
+      isOk: true,
+    });
+  } catch (error) {
+    console.error("  error:", error);
+    res.status(500).json({ error: "Internal server error", isOk: false });
+  }
+};
 module.exports = {
   createQuestions,
   getAllQuestions,
   updateQuestion,
   deletedQuestion,
+  viewQuestionDetail,
+  viewQuestionSubmissions,
+  addQuestionSubmission,
+  addSubmissionComment
 };
 const resetQuestionDeadline = async (req, res) => {
   try {

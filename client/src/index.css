@@ -37,7 +37,25 @@ body {
   width: 10px;
   display: none;
 }
+/* PART 1 - Before Lazy Load */
+img[data-opt-src]:not([data-opt-lazy-loaded]) {
+  opacity: 0;
+  will-change: opacity;
 
+  /* Optionally remove blur filter */
+  -moz-filter: none;
+  -o-filter: none;
+  -ms-filter: none;
+  filter: none;
+}
+
+/* PART 2 - Upon Lazy Load */
+img[data-opt-lazy-loaded] {
+  -webkit-transition: all 1s ease;
+  -moz-transition: all 1s ease;
+  transition: all 1s ease;
+  opacity: 1;
+}
 .loader {
   color: rgb(124, 124, 124);
   font-family: "Poppins", sans-serif;

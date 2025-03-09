@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect, useRef } from "react";
 
 const getCurrentSeason = () => {
   const month = new Date().getMonth() + 1; // getMonth() returns 0-11
@@ -40,4 +41,16 @@ const useErrorBoundary = () => {
   return { error, setError };
 };
 
-export { getCurrentSeason, useErrorBoundary };
+function debounce(func: (...args: any[]) => void, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+export { getCurrentSeason, useErrorBoundary, debounce };

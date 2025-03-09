@@ -1,5 +1,5 @@
 import { BellZ, Kanban } from "@phosphor-icons/react";
-import { Button, Divider, Popover } from "antd";
+import { Button, Divider, message, Popover, Spin } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../utils/api";
@@ -10,12 +10,24 @@ import { useUserStore } from "../../../utils/zustand/Store";
 export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const routeSwap = () => {
+    console.log(user?.role);
+    switch (Number(user?.role)) {
+      case 3:
+        window.location.href = "/admin/course";
+        return "";
+      case 2:
+        return "landing";
+      case 1:
+        return "account";
+    }
+  };
   const doLogout = async () => {
     try {
       setLoading(true);
       const resp = await logout();
       if (resp) {
-        console.log("Logout success");
+        message.success("Đăng xuất thành công");
       }
     } catch (e) {
       console.log(e);
@@ -32,26 +44,28 @@ export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
         <p className="my-0 text-[12px]">{user?.email}</p>
       </div>
       <Divider className="my-2 border-[#ccc]" />
-      <ul className="p-2 pt-0">
-        <li>
-          <Button
-            className="border-none shadow-none hover:bg-[#ededed]"
-            block
-            onClick={() => navigate("/dashboard/account")}
-          >
-            Cài đặt
-          </Button>
-        </li>
-        <li>
-          <Button
-            className="border-none shadow-none hover:bg-[#ededed]"
-            block
-            onClick={doLogout}
-          >
-            Đăng xuất
-          </Button>
-        </li>
-      </ul>
+      <Spin spinning={loading}>
+        <ul className="p-2 pt-0">
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={() => navigate(`/dashboard/${routeSwap()}`)}
+            >
+              Cài đặt
+            </Button>
+          </li>
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={doLogout}
+            >
+              Đăng xuất
+            </Button>
+          </li>
+        </ul>
+      </Spin>
     </div>
   );
 };
@@ -59,9 +73,20 @@ export const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
 const Header = () => {
   const year = new Date().getFullYear().toString();
   const month = getCurrentSeason();
+
+  const location = window.location.pathname;
   const navItems: Array<{ name: string; link: string; active: boolean }> = [
-    { name: "Trang chủ", link: "/", active: true },
-    { name: "Các môn học", link: `/home/${year}/${month}`, active: false },
+    { name: "Trang chủ", link: "/", active: location === "/" },
+    {
+      name: "Các môn học",
+      link: `/home/${year}/${month}`,
+      active: location === `/home/${year}/${month}`,
+    },
+    {
+      name: "Khóa học bên ngoài",
+      link: `/externals`,
+      active: location === "/externals",
+    },
   ];
   const { user } = useUserStore();
   return (

@@ -12,8 +12,8 @@ const loginControl = async (req, res) => {
   try {
     if (id !== undefined) {
       user = await query.loginWithId(campus, id);
-      if (user?.isOk === false)z
-        return res.json({ error: user?.error, isOk: user?.isOk });
+      if (user?.isOk === false) z;
+      return res.json({ error: user?.error, isOk: user?.isOk });
     } else {
       user = await query.loginWithEmail(campus, email, password);
       if (user?.isOk === false)

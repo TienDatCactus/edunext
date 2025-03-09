@@ -6,7 +6,15 @@ import {
   UploadSimple,
   UserCirclePlus,
 } from "@phosphor-icons/react";
-import { Button, DatePicker, Divider, Form, Modal, Select } from "antd";
+import {
+  Button,
+  DatePicker,
+  Divider,
+  Form,
+  message,
+  Modal,
+  Select,
+} from "antd";
 import { FormProps, useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
@@ -14,19 +22,45 @@ import React, { useState } from "react";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
 import { useUserStore } from "../../../../utils/zustand/Store";
 import TimetableCalendar from "./sub_elements/TimetableCalendar";
+import { currentYear } from "../../../course/home/HomePage";
+import { error, log } from "console";
+import { format } from "path";
+import { postTimetableInfo } from "../../../../utils/api";
 const Timetable: React.FC = () => {
   const [form] = useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const onFinish: FormProps<any>["onFinish"] = async (props) => {
-    const { day, month, type, content } = props;
-    console.log(dayjs(day).format("D"));
-    console.log(dayjs().get("year"));
-    console.log(dayjs(month).format("M"));
+    const { type, content } = props;
+    const currentYear = dayjs().year();
+    const timeline =
+      selectedMonth && selectedDay
+        ? dayjs(
+            `${currentYear}-${selectedMonth}-${selectedDay}`,
+            "YYYY-M-D",
+            true
+          )
+        : null;
+    if (timeline?.isValid()) {
+      const resp = await postTimetableInfo(
+        user?._id || "",
+        String(timeline),
+        content,
+        type
+      );
+      if (resp) {
+        setIsModalOpen(false);
+        form.resetFields();
+        message.success("Thêm công việc vào thời khóa biểu thành công");
+      }
+    } else {
+      console.error("Invalid date selected");
+    }
   };
 
   const handleCancel = () => {
@@ -111,7 +145,6 @@ const Timetable: React.FC = () => {
               <Form.Item
                 layout="vertical"
                 label="Ngày"
-                name="day"
                 rules={[
                   {
                     required: true,
@@ -119,12 +152,15 @@ const Timetable: React.FC = () => {
                   },
                 ]}
               >
-                <DatePicker className="w-full" format="dddd" />
+                <DatePicker
+                  className="w-full"
+                  format="D"
+                  onChange={(date) => setSelectedDay(date ? date.date() : null)}
+                />
               </Form.Item>
               <Form.Item
                 layout="vertical"
                 label="Tháng"
-                name="month"
                 rules={[
                   {
                     required: true,
@@ -134,9 +170,11 @@ const Timetable: React.FC = () => {
               >
                 <DatePicker
                   className="w-full"
-                  defaultValue={dayjs().startOf("month")}
                   picker="month"
                   format="MMMM"
+                  onChange={(date) =>
+                    setSelectedMonth(date ? date.month() + 1 : null)
+                  } // Convert 0-based month index to 1-based
                 />
               </Form.Item>
               <Form.Item
@@ -162,11 +200,11 @@ const Timetable: React.FC = () => {
                       label: "Cần làm",
                     },
                     {
-                      value: "success",
+                      value: "note",
                       label: "Ghi nhớ",
                     },
                     {
-                      value: "error",
+                      value: "important",
                       label: "Quan trọng",
                     },
                   ]}

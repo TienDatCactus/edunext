@@ -9,12 +9,25 @@ import {
   Trash,
 } from "@phosphor-icons/react";
 import type { TabsProps } from "antd";
-import { Button, Collapse, Divider, Progress, Table, Tabs, Tag } from "antd";
-import axios from "axios";
+import {
+  Button,
+  Collapse,
+  Divider,
+  Popconfirm,
+  Progress,
+  Spin,
+  Table,
+  Tabs,
+  Tag,
+} from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../../ui/layouts/DashboardLayout";
+import {
+  deleteQuestionByTeacher,
+  getQuestionByLesson,
+} from "../../../../utils/api";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 function LessonDetail() {
   const navigate = useNavigate();
@@ -26,17 +39,19 @@ function LessonDetail() {
     code: "Lập trình",
     response: "Tự luận",
   };
-  const lessonId = "6788be800862e875d6ac1dca";
-  const fetchQuestions = async () => {
+
+  const handleDelete = async (id: any) => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/question/getQuestions/${lessonId}`
-      );
-      if (res) {
-        setQuestions(res.data.data);
-      }
-    } catch (error) {}
+      setLoading(true);
+      const resp = await deleteQuestionByTeacher(id);
+      if (resp) window.location.reload();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const tabItemCheck = (q: Question) => {
     switch (q?.type) {
       case "quiz":
@@ -91,9 +106,18 @@ function LessonDetail() {
                         >
                           Chỉnh sửa
                         </Button>
-                        <Button type="primary" danger icon={<Trash />}>
-                          Xóa
-                        </Button>
+                        <Popconfirm
+                          title={`Xóa câu hỏi #${q?._id}`}
+                          description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                          onConfirm={() => handleDelete(q?._id)}
+                          okText="Có"
+                          placement="topLeft"
+                          cancelText="Hủy"
+                        >
+                          <Button type="primary" danger icon={<Trash />}>
+                            Xóa
+                          </Button>
+                        </Popconfirm>
                       </div>
                     </div>
                     <div className="flex items-center *:text-[#898989] text-[0.75rem]">
@@ -129,9 +153,9 @@ function LessonDetail() {
                       (item, index) => ({
                         title: item?.title,
                         correctAnswer:
-                          item?.answer &&
+                          item?.answers &&
                           item?.correctAnswer !== undefined &&
-                          item?.answer[item?.correctAnswer],
+                          item?.answers[item?.correctAnswer],
                       })
                     )}
                     columns={[
@@ -225,9 +249,18 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />}>
-                  Xóa
-                </Button>
+                <Popconfirm
+                  title={`Xóa câu hỏi #${q?._id}`}
+                  description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                  onConfirm={() => handleDelete(q?._id)}
+                  okText="Có"
+                  placement="topLeft"
+                  cancelText="Hủy"
+                >
+                  <Button type="primary" danger icon={<Trash />}>
+                    Xóa
+                  </Button>
+                </Popconfirm>
               </div>
             </div>
             <Divider className="my-0 border-[#ccc]" />
@@ -304,9 +337,18 @@ function LessonDetail() {
                 >
                   Chỉnh sửa
                 </Button>
-                <Button type="primary" danger icon={<Trash />}>
-                  Xóa
-                </Button>
+                <Popconfirm
+                  title={`Xóa câu hỏi #${q?._id}`}
+                  description="Bạn có chắc chắn muốn xóa câu hỏi này không?"
+                  onConfirm={() => handleDelete(q?._id)}
+                  okText="Có"
+                  placement="topLeft"
+                  cancelText="Hủy"
+                >
+                  <Button type="primary" danger icon={<Trash />}>
+                    Xóa
+                  </Button>
+                </Popconfirm>
               </div>
             </div>
             <Divider className="my-0 border-[#ccc]" />
@@ -330,9 +372,9 @@ function LessonDetail() {
       children: (
         <div className="flex flex-col gap-4">
           {!!questions?.length &&
-            questions?.map((question: Question, index: number) =>
-              tabItemCheck(question)
-            )}
+            questions?.map((question: Question, index: number) => (
+              <div key={index}> {tabItemCheck(question)}</div>
+            ))}
         </div>
       ),
     },
@@ -353,7 +395,7 @@ function LessonDetail() {
   }, []);
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between my-2">
+      <div className="flex items-center justify-between p-2 bg-white rounded-md shadow-sm">
         <h1 className="text-[2.125rem] font-bold">Danh sách câu hỏi</h1>
         <Button
           type="primary"
