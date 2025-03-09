@@ -159,32 +159,24 @@ const addSubmissionComment = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
-module.exports = {
-  createQuestions,
-  getAllQuestions,
-  updateQuestion,
-  deletedQuestion,
-  viewQuestionDetail,
-  viewQuestionSubmissions,
-  addQuestionSubmission,
-  addSubmissionComment
-};
+
 const resetQuestionDeadline = async (req, res) => {
   try {
     const { id } = req.params;
-    const { newDeadline } = req.body;
+    const { date, time } = req.body;
 
-    if (!newDeadline) {
+    if (!date || !time) {
       return res.status(400).json({
-        error: "New deadline is required",
+        error: "Date and time are required",
         isOk: false,
       });
     }
 
+    const newDeadline = `${date}T${time}`;
+
     const updatedQuestion = await Question.findByIdAndUpdate(
       id,
       {
-        createdAt: dayjs().toDate(),
         updatedAt: dayjs(newDeadline).toDate(),
       },
       { new: true }
@@ -212,4 +204,14 @@ const resetQuestionDeadline = async (req, res) => {
   }
 };
 
-module.exports = { createQuestion, getAllQuestions, resetQuestionDeadline };
+module.exports = {
+  createQuestions,
+  getAllQuestions,
+  updateQuestion,
+  deletedQuestion,
+  viewQuestionDetail,
+  viewQuestionSubmissions,
+  addQuestionSubmission,
+  addSubmissionComment,
+  resetQuestionDeadline
+};

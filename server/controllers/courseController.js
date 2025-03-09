@@ -315,6 +315,38 @@ const viewCountStatistics = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+const sortCoursesByStatus = async (req, res) => {
+  try {
+    const { status } = req.query;
+    if (!status) {
+      return res.status(400).json({
+        message: "Status parameter is required",
+        isOk: false,
+      });
+    }
+
+    const courses = await Course.find({ status: status });
+    if (!courses || courses.length === 0) {
+      return res.status(404).json({
+        message: "Không tìm thấy khóa học nào với trạng thái này",
+        isOk: false,
+      });
+    }
+
+    res.status(200).json({
+      courses: courses,
+      isOk: true,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lọc khóa học theo trạng thái:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      isOk: false,
+    });
+  }
+};
+
 module.exports = {
   viewCourseDetail,
   viewCourseMeetings,
@@ -329,4 +361,5 @@ module.exports = {
   deleteCourse,
   viewCountStatistics,
   getUdemyCourses,
+  sortCoursesByStatus,
 };
