@@ -12,6 +12,7 @@ const {
   Comment,
   Campus,
   Timetable,
+  LessonGroup,
 } = require("./model");
 const { mongoose } = require("mongoose");
 const { default: axios, post } = require("axios");
@@ -486,16 +487,16 @@ const getCourseByInstructor = async (userId) => {
 };
 const getCourseStudents = async (courseId) => {
   try {
-    console.log(courseId);
     const semester = await Semester.findOne({
       courses: { $in: [new mongoose.Types.ObjectId(courseId)] },
     });
     const semesterId = semester._id;
     const students = await User.find({
-      semester: new mongoose.Types.ObjectId(semesterId),
+      semester: semesterId,
       role: 1,
     });
-    if (students.length === 0) {
+    console.log(students);
+    if (students.length == 0) {
       return { error: "Không tìm thấy sinh viên", isOk: false };
     }
     return students;
@@ -524,6 +525,32 @@ const getCountStatistics = async (questionId) => {
       0
     );
     return { totalSubmissions, totalComments, isOk: true };
+  } catch (error) {
+    return { error: error.message, isOk: false };
+  }
+};
+
+const getCourseGroups = async (lessonId) => {
+  try {
+    const course = await Lesson.findOne({
+      _id: new mongoose.Types.ObjectId(lessonId),
+    });
+    if (!course) {
+      return {
+        error: "No groups / course found !",
+        isOK: false,
+      };
+    }
+    const groups = await LessonGroup.find({
+      course: new mongoose.Types.ObjectId(course?.course),
+    }).populate("userId");
+    if (groups) {
+      console.log(groups);
+      return {
+        groups: groups,
+        isOk: true,
+      };
+    }
   } catch (error) {
     return { error: error.message, isOk: false };
   }
@@ -667,4 +694,5 @@ module.exports = {
   getCountStatistics,
   getAllLessons,
   compareOutput,
+  getCourseGroups,
 };

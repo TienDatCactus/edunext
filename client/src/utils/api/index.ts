@@ -1,3 +1,4 @@
+import React from "react";
 import { User, UserToken } from "../interfaces";
 import { useUserStore } from "../zustand/Store";
 import http from "./axios";
@@ -331,7 +332,29 @@ const submitCode = async (code: string, questionId: string) => {
     return error;
   }
 };
-
+const arrangeGroup = async (
+  lessonId: string,
+  amount: string | number | null
+) => {
+  try {
+    const resp = await http.post(`${courseApi}/group?lessonId=${lessonId}`, {
+      amount,
+    });
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const getCourseGroup = async (lessonId: string) => {
+  try {
+    const resp = await http.get(`${courseApi}/group/${lessonId}`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -362,4 +385,6 @@ export {
   addCourse,
   deleteCourse,
   submitCode,
+  arrangeGroup,
+  getCourseGroup,
 };

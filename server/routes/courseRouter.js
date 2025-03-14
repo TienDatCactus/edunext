@@ -17,6 +17,11 @@ courseRouter.post(
 );
 
 courseRouter.get(
+  "/group/:lessonId",
+  authenticateToken,
+  courseController.viewCourseGroups
+);
+courseRouter.get(
   "/:courseCode/meetings",
   authenticateToken,
   courseController.viewCourseMeetings

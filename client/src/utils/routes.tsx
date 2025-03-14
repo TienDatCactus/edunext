@@ -139,7 +139,7 @@ const AppRouter = () => {
         {
           path: "account",
           element: user ? (
-            <ProtectedRoute user={user} allowedRoles={[1]} />
+            <ProtectedRoute user={user} allowedRoles={[1, 2]} />
           ) : (
             <NotFound />
           ),
