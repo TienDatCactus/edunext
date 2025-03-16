@@ -601,9 +601,9 @@ const compareOutput = async (userCode, questionId) => {
         const result = await getJudge0Result(submissionToken);
         return {
           input: testCase?.input,
-          expectedOutput: testCase?.expectedOutput,
-          actualOutput: result.stdout,
-          passed: result.stdout == testCase.expectedOutput,
+          expectedOutput: testCase?.expectedOutput?.trim(),
+          actualOutput: result.stdout?.trim(),
+          passed: result.stdout?.trim() === testCase?.expectedOutput?.trim(),
           error: result.stderr,
           status: result.status,
         };

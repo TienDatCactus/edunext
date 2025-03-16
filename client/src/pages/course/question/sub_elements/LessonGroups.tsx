@@ -2,6 +2,7 @@ import {
   Badge,
   Breadcrumb,
   Button,
+  Drawer,
   Empty,
   Form,
   InputNumber,
@@ -16,14 +17,19 @@ import { useQuestionStore } from "../../../../utils/zustand/Store";
 import { arrangeGroup, getCourseGroup } from "../../../../utils/api";
 import { useLocation } from "react-router-dom";
 import { DotsThreeVertical } from "phosphor-react";
+import { User } from "../../../../utils/interfaces";
+import { title } from "process";
+import { s } from "framer-motion/dist/types.d-6pKw1mTI";
+import dayjs from "dayjs";
 const { Text, Link } = Typography;
 const Group: React.FC = () => {
-  const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [groups, setGroups] = useState<
     [
       {
         _id?: string;
-        userId?: string[];
+        userId?: User[];
         course?: string;
         team?: string;
         id?: string;
@@ -33,8 +39,25 @@ const Group: React.FC = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [number, setNumber] = useState<string | number | null>("0");
+  const [students, setStudents] = useState<User[] | undefined>();
   const showModal = () => {
-    setOpen(true);
+    setOpenModal(true);
+  };
+  const showDrawer = (team?: string) => {
+    try {
+      const resp = groups?.find((g) => g.team === team);
+      if (resp) {
+        console.log(resp);
+        setStudents(resp.userId);
+        setOpenDrawer(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onClose = () => {
+    setOpenDrawer(false);
   };
   const { state } = useLocation();
   const handleOk = async () => {
@@ -70,11 +93,11 @@ const Group: React.FC = () => {
   }, []);
   const handleCancel = () => {
     console.log("Clicked cancel button");
-    setOpen(false);
+    setOpenModal(false);
   };
 
   return (
-    <div>
+    <div className="min-h-[300px]">
       <Breadcrumb
         className="px-4 py-2 bg-white border rounded-md shadow-md"
         items={[
@@ -90,42 +113,21 @@ const Group: React.FC = () => {
         ]}
       />
       <Spin spinning={loading}>
-        <ul className="w-full min-h-[300px] mx-auto my-2 flex flex-col gap-4">
+        <ul className="grid flex-wrap grid-cols-12 gap-4 mx-auto my-2">
           {!!groups?.length &&
             groups?.map((g, i) => (
-              <li className="flex justify-between px-4 py-2 border rounded-md shadow-md">
-                <div className="flex flex-col gap-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <img
-                        loading="lazy"
-                        src="https://ui-avatars.com/api/?background=random"
-                        alt="ava"
-                        className="w-10 h-10 rounded-full"
-                      />
-                      <div>
-                        <h1 className="font-semibold text-[16px]">
-                          Nguyen Tien Dat
-                        </h1>
-                        <span className="text-[12px]">#HE180012</span>
-                      </div>
-                    </div>
-                    <p></p>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-1 *:border-none">
-                      <Tag>Frontend</Tag>
-                      <Tag>HE</Tag>
-                      <Tag>Nigger</Tag>
-                    </div>
-                    <div className="flex items-center gap-2 text-[12px] text-[#5f6c76]">
-                      <p>Joined: 20/10/2021</p>
-                      <Badge color="#5f6c76" />
-                      <p>Role: Student</p>
-                    </div>
-                  </div>
+              <li
+                key={i}
+                className="flex items-center justify-between col-span-3 px-4 py-2 border rounded-md shadow-md"
+              >
+                <div className="flex items-center gap-2 *:text-[18px] *:font-semibold">
+                  <p>Nhóm</p>
+                  <span>{g?.team}</span>
                 </div>
-                <Button icon={<DotsThreeVertical size={22} />} />
+                <Button
+                  icon={<DotsThreeVertical size={22} />}
+                  onClick={() => showDrawer(g?.team)}
+                />
               </li>
             ))}
           {!groups && (
@@ -147,7 +149,7 @@ const Group: React.FC = () => {
                     </Button>
                     <Modal
                       title="Tạo nhóm"
-                      open={open}
+                      open={openModal}
                       onOk={handleOk}
                       confirmLoading={confirmLoading}
                       onCancel={handleCancel}
@@ -186,6 +188,7 @@ const Group: React.FC = () => {
                           >
                             <div className="flex justify-center">
                               <InputNumber
+                                max={10}
                                 className="min-w-[140px] mb-2 "
                                 status={30 % Number(number) != 0 ? "error" : ""}
                                 value={number}
@@ -202,6 +205,58 @@ const Group: React.FC = () => {
             />
           )}
         </ul>
+        <Drawer title="Danh sách nhóm" onClose={onClose} open={openDrawer}>
+          <ul>
+            {!!students?.length &&
+              students?.map((s, i) => {
+                return (
+                  <li
+                    key={i}
+                    className="flex justify-between px-4 py-2 border rounded-md shadow-md"
+                  >
+                    <div className="flex flex-col gap-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <img
+                            loading="lazy"
+                            src={`https://ui-avatars.com/api/?background=random&name=${s?.name}`}
+                            alt="ava"
+                            className="w-10 h-10 rounded-full"
+                          />
+                          <div>
+                            <h1 className="font-semibold text-[16px]">
+                              {s?.name}
+                            </h1>
+                            <span className="text-[12px]">{s?.FEID}</span>
+                          </div>
+                        </div>
+                        <p></p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-1 *:border-none *:quick-sand">
+                          <Tag>{s?.role == "1" ? "Học sinh" : "Giáo viên"}</Tag>
+                          <Tag>{s?.email}</Tag>
+                        </div>
+                        <div className="flex items-center gap-4 text-[12px] text-[#5f6c76]">
+                          <p>
+                            Tham gia vào : <span>{dayjs().toNow()}</span>
+                          </p>
+                          <Badge color="#5f6c76" />
+                          <p>
+                            Vai trò:{" "}
+                            <span>
+                              {s?.role == "1" ? "Học sinh" : "Giáo viên"}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <Button icon={<DotsThreeVertical size={22} />} />
+                  </li>
+                );
+              })}
+          </ul>
+        </Drawer>
       </Spin>
     </div>
   );

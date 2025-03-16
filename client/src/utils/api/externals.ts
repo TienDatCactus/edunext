@@ -7,8 +7,6 @@ export const executeCode = async (code: string) => {
   try {
     const encodedCode = btoa(code);
     const postUrl = `https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=false&fields=*`;
-    console.log(process.env.REACT_APP_JUDGE_API_POST_URL);
-    console.log(process.env.REACT_APP_JUDGE_API_GET_URL);
     const resp = await axios.post(
       postUrl,
       {

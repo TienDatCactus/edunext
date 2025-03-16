@@ -9,13 +9,18 @@ import {
   Spin,
   Table,
   TableColumnsType,
+  Tag,
   TimePicker,
 } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getCurrentSeason } from "../../utils/customHooks";
-import { useCourseStore, useQuestionStore } from "../../utils/zustand/Store";
+import {
+  useCodeStore,
+  useCourseStore,
+  useQuestionStore,
+} from "../../utils/zustand/Store";
 import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
 import MainLayout from "./MainLayout";
 
@@ -36,6 +41,8 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       status?: boolean;
     }[]
   >();
+
+  const { actualOutput, codeloading } = useCodeStore();
   const swapper = {
     quiz: "Trắc nghiệm",
     code: "Lập trình",
@@ -74,11 +81,24 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      render: (text: any) => (
+        <Spin spinning={codeloading}>
+          <Tag
+            color={`${
+              text == "Đúng" ? "green" : text == "Sai" ? "red" : "yellow"
+            }`}
+            className="font-mono"
+          >
+            {text}
+          </Tag>
+        </Spin>
+      ),
     },
   ];
   const [dataSource, setDataSource] = useState<
-    { key: number; input: any; output: any }[]
+    { key: number; input: any; output: any; status: string }[]
   >([]);
+
   useEffect(() => {
     setDataSource(
       typeof question?.content === "object" &&
@@ -88,10 +108,16 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
             key: index,
             input: item.input,
             output: item.expectedOutput,
+            status:
+              actualOutput?.[index]?.actualOutput == item.expectedOutput
+                ? "Đúng"
+                : actualOutput?.[index]?.actualOutput === undefined
+                ? "Chưa kiểm tra"
+                : "Sai",
           }))
         : []
     );
-  }, [question]);
+  }, [question, actualOutput]);
 
   return (
     <MainLayout>

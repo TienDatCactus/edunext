@@ -248,7 +248,6 @@ const getAllCourses = async () => {
   }
 };
 const getCountStatistics = async (questionId: string) => {
-  console.log(questionId);
   try {
     const resp = await http.get(`${courseApi}/${questionId}/count-statistics`);
     if (resp?.data) return resp?.data;
@@ -326,6 +325,7 @@ const submitCode = async (code: string, questionId: string) => {
     const resp = await http.post(`${questionApi}/${questionId}/submitCode`, {
       code,
     });
+    console.log(code);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {

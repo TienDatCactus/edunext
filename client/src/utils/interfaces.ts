@@ -85,6 +85,17 @@ export interface ExternalCourseState {
   error: string | null;
   fetchCourseraCourses: (keyword: string) => Promise<void>;
 }
+export interface CodeState {
+  code?: string;
+  output?: string;
+  lineCount?: number;
+  codeloading?: boolean;
+  actualOutput?: any;
+  runCode: (code: string) => Promise<void>;
+  setCode: (code: string) => void;
+  handleEditorChange: (value: string) => void;
+  handleSubmitCode: (code: string, qId: string) => Promise<boolean | undefined>;
+}
 export interface CourseState {
   courses: CourseItem[];
 

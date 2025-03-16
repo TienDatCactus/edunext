@@ -53,7 +53,7 @@ courseRouter.put("/editCourse/:courseId", courseController.editCourse);
 courseRouter.delete("/deleteCourse/:courseId", courseController.deleteCourse);
 courseRouter.get(
   "/:questionId/count-statistics",
-  // authenticateToken,
+  authenticateToken,
   courseController.viewCountStatistics
 );
 module.exports = courseRouter;

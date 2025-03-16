@@ -6,6 +6,8 @@ import Editor, { EditorConstructionOptions } from "react-monaco-editor";
 import { executeCode } from "../../../utils/api/externals";
 import { useLocation } from "react-router-dom";
 import { submitCode } from "../../../utils/api";
+import { c } from "framer-motion/dist/types.d-6pKw1mTI";
+import { useCodeStore } from "../../../utils/zustand/Store";
 
 interface CodeEditorProps {
   qId?: string;
@@ -13,45 +15,15 @@ interface CodeEditorProps {
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({ qId }) => {
-  const [code, setCode] = useState("// Write your code here");
-  const [output, setOutput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [lineCount, setLineCount] = useState(1);
-  const handleEditorChange = (value: string | undefined) => {
-    if (value) {
-      const lines = value.split("\n").length;
-      setLineCount(lines);
-      setCode(value);
-    } else {
-      setLineCount(1);
-    }
-  };
-  const runCode = async () => {
-    try {
-      setLoading(true);
-      const resp = await executeCode(code);
-      if (resp) setOutput(resp || "No output");
-      console.log(resp);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const handleSubmitCode = async () => {
-    if (!qId) return;
-    try {
-      setLoading(true);
-      const resp = await submitCode(code, qId);
-      if (resp?.isOk) {
-        message.success("Gửi bài thành công");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    handleEditorChange,
+    runCode,
+    lineCount,
+    code,
+    codeloading,
+    output,
+    handleSubmitCode,
+  } = useCodeStore();
   return (
     <>
       <div className="pb-2 border rounded-lg shadow-md">
@@ -71,8 +43,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ qId }) => {
             <Button
               type="default"
               icon={<Play />}
-              onClick={runCode}
-              loading={loading}
+              onClick={() => runCode(code || "")}
+              loading={codeloading}
             >
               Test
             </Button>
@@ -101,7 +73,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ qId }) => {
             />
           </div>
           <div className="col-span-6">
-            <Spin spinning={loading}>
+            <Spin spinning={codeloading}>
               <Markdown>
                 {` \`\`\`javascript
             ${output}
@@ -113,7 +85,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ qId }) => {
       </div>
       <div className="flex justify-end my-2">
         <Button
-          onClick={handleSubmitCode}
+          onClick={() => handleSubmitCode(code || "", qId || "")}
           icon={<PaperPlaneTilt size={18} />}
           type="primary"
         >
