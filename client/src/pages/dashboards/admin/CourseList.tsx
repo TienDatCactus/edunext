@@ -272,7 +272,7 @@ function CourseList() {
     const doLogout = async () => {
       try {
         setLoading(true);
-        const resp = await logout();
+        await logout();
       } catch (e) {
         console.log(e);
       } finally {

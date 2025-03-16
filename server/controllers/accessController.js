@@ -5,20 +5,40 @@ const jwt = require("jsonwebtoken");
 let refreshTokens = [];
 
 const loginControl = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, FEID } = req.body;
   const { id } = req.body;
   const { campus } = req.body;
   let user = null;
   try {
-    if (id !== undefined) {
-      user = await query.loginWithId(campus, id);
-      if (user?.isOk === false) z;
-      return res.json({ error: user?.error, isOk: user?.isOk });
-    } else {
-      user = await query.loginWithEmail(campus, email, password);
-      if (user?.isOk === false)
-        return res.json({ error: user?.error, isOk: user?.isOk });
+    // Handle Google login
+    if (FEID) {
+      // For Google login, we already have the user object from passport
+      user = {
+        isOk: true,
+        user: req.body,
+      };
     }
+    // Handle regular ID login
+    else if (id !== undefined) {
+      user = await query.loginWithId(campus, id);
+      if (user?.isOk === false) {
+        return res.json({ error: user?.error, isOk: user?.isOk });
+      }
+    }
+    // Handle regular email/password login
+    else if (email && password) {
+      console.log(email, password, campus);
+      user = await query.loginWithEmail(campus, email, password);
+      if (user?.isOk === false) {
+        return res.json({ error: user?.error, isOk: user?.isOk });
+      }
+    } else {
+      return res.json({
+        error: "Phương thức đăng nhập không khả dụng",
+        isOk: false,
+      });
+    }
+
     if (user.isOk === true) {
       const accessToken = generateAccessToken(user);
       const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
@@ -44,7 +64,7 @@ const loginControl = async (req, res) => {
     if (error.code === "ER_DUP_ENTRY" || error.message.includes("duplicate")) {
       return res.json({ error: "Email already exists", isOk: false });
     }
-    console.error("Registration error:", error);
+    console.error("Login error:", error);
     return res.json({ error: "Internal server error", isOk: false });
   }
 };
