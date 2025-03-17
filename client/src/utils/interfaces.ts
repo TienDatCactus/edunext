@@ -217,6 +217,7 @@ export interface User {
   FEID: string;
   _id: string;
   role: string;
+  forMajor: string;
   timetable: TimelineEvent[];
 }
 

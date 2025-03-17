@@ -303,15 +303,6 @@ const getAllAssignment = async () => {
   }
 };
 
-const getAllUser = async () => {
-  try {
-    const res = await http.get(`${dashboardApi}/user`);
-    if (res) return res?.data;
-  } catch (error) {
-    return error;
-  }
-};
-
 const getAllSemester = async () => {
   try {
     const res = await http.get(`${dashboardApi}/semester`);
@@ -355,6 +346,16 @@ const getCourseGroup = async (lessonId: string) => {
     console.error(error);
   }
 };
+
+const getAllUsers = async () => {
+  try {
+    const resp = await http.get(`${dashboardApi}/users`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
+  }
+};
 export {
   getCampuses,
   getCourseDetail,
@@ -380,11 +381,11 @@ export {
   editCourse,
   getAllLessons,
   getAllAssignment,
-  getAllUser,
   getAllSemester,
   addCourse,
   deleteCourse,
   submitCode,
   arrangeGroup,
   getCourseGroup,
+  getAllUsers,
 };

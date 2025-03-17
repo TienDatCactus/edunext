@@ -47,12 +47,13 @@ const getAllAssignment = async (req, res) => {
     console.error("Lỗi:", error);
     res.status(500).json({ error: "Lỗi máy chủ " });
   }
-
-}
+};
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({
+      role: { $in: [1, 2] },
+    });
     if (!users || users.length === 0) {
       return res.status(404).json({ message: "Không có người dùng" });
     }
@@ -61,8 +62,7 @@ const getAllUsers = async (req, res) => {
     console.error("Lỗi:", error);
     res.status(500).json({ error: "Lỗi máy chủ " });
   }
-
-}
+};
 
 const getAllSemester = async (req, res) => {
   try {
@@ -75,13 +75,12 @@ const getAllSemester = async (req, res) => {
     console.error("Lỗi:", error);
     res.status(500).json({ error: "Lỗi máy chủ " });
   }
-}
-
+};
 
 module.exports = {
   addNewTimeTable,
   getUserTimeTable,
   getAllAssignment,
   getAllUsers,
-  getAllSemester
+  getAllSemester,
 };

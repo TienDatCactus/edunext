@@ -18,7 +18,7 @@ dashboardRouter.get(
 
 dashboardRouter.get("/assignment", dashboardController.getAllAssignment);
 
-dashboardRouter.get("/user", dashboardController.getAllUsers);
+dashboardRouter.get("/users", dashboardController.getAllUsers);
 
 dashboardRouter.get("/semester", dashboardController.getAllSemester);
 module.exports = dashboardRouter;

@@ -29,7 +29,7 @@ import {
   getAllCourses,
   getAllLessons,
   getAllSemester,
-  getAllUser,
+  getAllUsers,
   logout,
 } from "../../../utils/api";
 import { User } from "../../../utils/interfaces";
@@ -114,7 +114,7 @@ function CourseList() {
   const fetChUser = async () => {
     try {
       setLoading(true);
-      const res = await getAllUser();
+      const res = await getAllUsers();
       if (res) {
         setUserList(res?.users);
       } else {
