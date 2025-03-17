@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { model } = require("mongoose");
 
 // Common options for all schemas
 const commonOptions = {
@@ -161,22 +162,31 @@ const QuestionSchema = new Schema(
 );
 
 // Assignment Schema - Optimized
-const AssignmentSchema = new Schema(
-  {
-    courseId: {
-      type: Schema.Types.Mixed,
-      ref: "Course",
-      required: true,
-      index: true,
-    },
-    title: { type: Schema.Types.String, required: true, index: true },
-    description: { type: Schema.Types.String },
-    startDate: { type: Schema.Types.Date, index: true },
-    dueDate: { type: Schema.Types.Date, index: true },
-    courseId: { type: Schema.Types.Mixed, ref: "Course" },
+const AssignmentSchema = new Schema({
+  courseId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true
   },
-  commonOptions
-);
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  startDate: {
+    type: Date,
+    required: true
+  },
+  dueDate: {
+    type: Date,
+    required: true
+  }
+}, {
+  timestamps: true
+});
 
 // Submission Schema - Optimized
 const SubmissionSchema = new Schema(
@@ -229,7 +239,7 @@ module.exports = {
   Lesson: mongoose.model("Lesson", LessonSchema),
   LessonGroup: mongoose.model("LessonGroup", LessonGroupSchema),
   Question: mongoose.model("Question", QuestionSchema),
-  Assignment: mongoose.model("Assignment", AssignmentSchema),
+  Assignment: model('Assignment', AssignmentSchema),
   Submission: mongoose.model("Submission", SubmissionSchema),
   CourseClass: mongoose.model("CourseClass", CourseClassSchema),
   Timetable: mongoose.model("Timetable", TimetableSchema),

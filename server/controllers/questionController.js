@@ -228,7 +228,7 @@ module.exports = {
   viewQuestionSubmissions,
   addQuestionSubmission,
   addSubmissionComment,
-  resetQuestionDeadline
+  resetQuestionDeadline,
   addSubmissionComment,
   submitCode,
 };
