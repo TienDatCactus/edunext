@@ -166,9 +166,10 @@ const QuestionItem: React.FC<{
                   />
                   <div className="flex justify-end mt-2">
                     <Link
-                      to={`/course/${detail?.courseCode}/lesson/${question?.lesson}/question`}
+                      to={`/course/${detail?.courseCode}/lesson/question`}
                       state={{
                         questionId: question?._id,
+                        lessonId: question?.lesson,
                       }}
                     >
                       <Button type="primary" icon={<Eye size={20} />}>

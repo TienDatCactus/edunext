@@ -1,3 +1,4 @@
+import React from "react";
 import { User, UserToken } from "../interfaces";
 import { useUserStore } from "../zustand/Store";
 import http from "./axios";
@@ -6,6 +7,7 @@ import {
   courseApi,
   dashboardApi,
   homeApi,
+  lessonApi,
   questionApi,
 } from "./urls";
 
@@ -233,12 +235,112 @@ const getAllCourses = async () => {
   }
 };
 const getCountStatistics = async (questionId: string) => {
-  console.log(questionId);
   try {
     const resp = await http.get(`${courseApi}/${questionId}/count-statistics`);
     if (resp?.data) return resp?.data;
   } catch (error) {
     return error;
+  }
+};
+
+//Lesson
+
+const getAllLessons = async () => {
+  try {
+    const resp = await http.get(`${lessonApi}/`);
+    if (resp?.data) return resp?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Course Admin
+const editCourse = async (courseId: string, course: any) => {
+  try {
+    const res = await http.put(`${courseApi}/editCourse/${courseId}`, course);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+};
+const addCourse = async (course: any) => {
+  try {
+    const res = await http.post(`${courseApi}/addCourse`, course);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const deleteCourse = async (courseId: string) => {
+  try {
+    const res = await http.delete(`${courseApi}/deleteCourse/${courseId}`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getAllAssignment = async () => {
+  try {
+    const res = await http.get(`${dashboardApi}/assignment`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const getAllSemester = async () => {
+  try {
+    const res = await http.get(`${dashboardApi}/semester`);
+    if (res) return res?.data;
+  } catch (error) {
+    return error;
+  }
+};
+const submitCode = async (code: string, questionId: string) => {
+  try {
+    const resp = await http.post(`${questionApi}/${questionId}/submitCode`, {
+      code,
+    });
+    console.log(code);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    return error;
+  }
+};
+const arrangeGroup = async (
+  lessonId: string,
+  amount: string | number | null
+) => {
+  try {
+    const resp = await http.post(`${courseApi}/group?lessonId=${lessonId}`, {
+      amount,
+    });
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const getCourseGroup = async (lessonId: string) => {
+  try {
+    const resp = await http.get(`${courseApi}/group/${lessonId}`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getAllUsers = async () => {
+  try {
+    const resp = await http.get(`${dashboardApi}/users`);
+    if (resp?.data) return resp?.data;
+    return null;
+  } catch (error) {
+    console.error(error);
   }
 };
 export {
@@ -263,4 +365,14 @@ export {
   updateQuestionByTeacher,
   getAllCourses,
   getCountStatistics,
+  editCourse,
+  getAllLessons,
+  getAllAssignment,
+  getAllSemester,
+  addCourse,
+  deleteCourse,
+  submitCode,
+  arrangeGroup,
+  getCourseGroup,
+  getAllUsers,
 };

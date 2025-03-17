@@ -36,6 +36,11 @@ questionRouter.post(
   authenticateToken,
   questionController.addSubmissionComment
 );
+questionRouter.post(
+  "/:questionId/submitCode",
+  authenticateToken,
+  questionController.submitCode
+);
 
 questionRouter.put(
   "/reset-deadline/:id",

@@ -20,7 +20,13 @@ const UserSchema = new Schema(
       trim: true,
       index: true,
     },
-    password: { type: Schema.Types.String, required: true, select: false },
+    password: {
+      type: Schema.Types.String,
+      required: function () {
+        return !this.FEID;
+      },
+      select: false,
+    },
     FEID: {
       type: Schema.Types.String,
       required: true,
@@ -134,7 +140,7 @@ const LessonGroupSchema = new Schema(
   {
     userId: [{ type: Schema.Types.Mixed, ref: "User", index: true }],
     course: { type: Schema.Types.Mixed, ref: "Course", index: true },
-    team: String
+    team: String,
   },
   commonOptions
 );
@@ -198,9 +204,7 @@ const TimetableSchema = new Schema(
     timeline: {
       type: Schema.Types.Mixed,
       required: true,
-      
     },
-  
   },
   commonOptions
 );

@@ -1,7 +1,6 @@
 const { Router } = require("express");
 const dashboardRouter = Router();
 const dashboardController = require("../controllers/dashboardController");
-const passportConfig = require("../validators/passport");
 const jwt = require("jsonwebtoken");
 const authenticateToken = require("../validators/authenticate");
 
@@ -16,4 +15,10 @@ dashboardRouter.get(
   authenticateToken,
   dashboardController.getUserTimeTable
 );
+
+dashboardRouter.get("/assignment", dashboardController.getAllAssignment);
+
+dashboardRouter.get("/users", dashboardController.getAllUsers);
+
+dashboardRouter.get("/semester", dashboardController.getAllSemester);
 module.exports = dashboardRouter;

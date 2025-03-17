@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  CodeState,
   CourseState,
   ExternalCourseState,
   QuestionState,
@@ -7,10 +8,16 @@ import {
   UserState,
   UserToken,
 } from "../interfaces";
-import { getCourseDetail, getCourses, getQuestionDetail } from "../api";
-import { getCourseraCourses } from "../api/externals";
+import {
+  getCourseDetail,
+  getCourses,
+  getQuestionDetail,
+  submitCode,
+} from "../api";
+import { executeCode, getCourseraCourses } from "../api/externals";
+import { message } from "antd";
 
-export const useCourseStore = create<CourseState>((set, get) => ({
+export const useCourseStore = create<CourseState>((set) => ({
   courses: [],
   detail: {},
   selectedCourse: null,
@@ -112,7 +119,7 @@ export const useCourseStore = create<CourseState>((set, get) => ({
   },
 }));
 
-export const useQuestionStore = create<QuestionState>((set, get) => ({
+export const useQuestionStore = create<QuestionState>((set) => ({
   question: {},
   selectedQuestion: null,
   loading: false,
@@ -202,11 +209,10 @@ export const useUserStore = create<UserState>((set) => ({
   },
 }));
 
-export const useExternalCourseStore = create<ExternalCourseState>(
-  (set, get) => ({
-    coursera: [],
-    loading: false,
-    error: null,
+export const useExternalCourseStore = create<ExternalCourseState>((set) => ({
+  coursera: [],
+  loading: false,
+  error: null,
 
     fetchCourseraCourses: async (keyword) => {
       try {
@@ -221,3 +227,51 @@ export const useExternalCourseStore = create<ExternalCourseState>(
     },
   })
 );
+
+export const useCodeStore = create<CodeState>((set) => ({
+  code: "",
+  output: "",
+  actualOutput: {},
+  codeloading: false,
+  lineCount: 1,
+
+  setCode: (code: string) => set({ code }),
+
+  handleEditorChange: (value: string) => {
+    if (value) {
+      const lines = value.split("\n").length;
+      set({ lineCount: lines, code: value.trimEnd() });
+    } else {
+      set({ lineCount: 1 });
+    }
+  },
+
+  runCode: async (code: string) => {
+    set({ codeloading: true });
+    try {
+      const resp = await executeCode(code);
+      if (resp) set({ output: resp || "No output" });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ codeloading: false });
+    }
+  },
+
+  handleSubmitCode: async (code: string, qId: string) => {
+    if (!qId) return message.error("Vui lòng nhập code trước khi gửi");
+
+    set({ codeloading: true });
+    try {
+      const resp = await submitCode(code, qId);
+      if (resp?.isOk) {
+        set({ actualOutput: resp?.result });
+        return message.success("Gửi bài thành công");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ codeloading: false });
+    }
+  },
+}));

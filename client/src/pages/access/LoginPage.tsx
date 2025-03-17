@@ -1,10 +1,67 @@
 import { GoogleLogo, IdentificationBadge, Kanban } from "@phosphor-icons/react";
-import { Button, Divider } from "antd";
+import { Button, Divider, message } from "antd";
 import React from "react";
+import { replace, useNavigate } from "react-router-dom";
 import bg from "../../assets/images/pexels-googledeepmind-25626517.jpg";
 import LoginForm from "../../ui/_elements/Forms/Access/LoginForm";
+import { getCurrentSeason } from "../../utils/customHooks";
+import { useUserStore } from "../../utils/zustand/Store";
+import { login } from "../../utils/api";
+import { log } from "console";
+import { UserToken } from "../../utils/interfaces";
 
 const LoginPage: React.FC = () => {
+  const { setUser } = useUserStore();
+  const navigate = useNavigate();
+  const year = new Date().getFullYear().toString();
+  const month = getCurrentSeason();
+  const handleGoogleLogin = async () => {
+    const width = 500;
+    const height = 500;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const popup = window.open(
+      "http://localhost:5000/auth/google", // Make sure this matches your backend URL
+      "googleLoginPopup",
+      `width=${width},height=${height},top=${top},left=${left}`
+    );
+
+    const popupTick = setInterval(() => {
+      if (popup?.closed) {
+        clearInterval(popupTick);
+        window.removeEventListener("message", handleMessage);
+      }
+    }, 500);
+
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== "http://localhost:5000") {
+        return;
+      }
+
+      const data = event.data;
+      if (data.isOk) {
+        setUser(data.user.user);
+        localStorage.setItem(
+          "edu-token",
+          JSON.stringify(data.user as UserToken)
+        );
+        message.success("Đăng nhập thành công!");
+        if (data.user.user.role == 1 || data.user.user.role == 2) {
+          navigate(`/home/${year}/${month}`, { replace: true });
+        } else {
+          navigate(`/admin/course`, { replace: true });
+        }
+      } else {
+        message.error(data.error || "Đăng nhập Google thất bại!");
+      }
+
+      window.removeEventListener("message", handleMessage);
+      popup?.close();
+    };
+
+    window.addEventListener("message", handleMessage);
+  };
+
   return (
     <div
       className="flex items-center justify-center play-fair h-svh"
@@ -28,7 +85,11 @@ const LoginPage: React.FC = () => {
                 </p>
               </div>
               <div className="flex items-center gap-4 *:py-5 *:rounded-2xl  justify-center">
-                <Button icon={<GoogleLogo size={22} />} className="play-fair">
+                <Button
+                  icon={<GoogleLogo size={22} />}
+                  onClick={handleGoogleLogin}
+                  className="play-fair"
+                >
                   Đăng nhập với Google
                 </Button>
                 <Button

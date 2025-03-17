@@ -88,6 +88,17 @@ export interface ExternalCourseState {
   error: string | null;
   fetchCourseraCourses: (keyword: string) => Promise<void>;
 }
+export interface CodeState {
+  code?: string;
+  output?: string;
+  lineCount?: number;
+  codeloading?: boolean;
+  actualOutput?: any;
+  runCode: (code: string) => Promise<void>;
+  setCode: (code: string) => void;
+  handleEditorChange: (value: string) => void;
+  handleSubmitCode: (code: string, qId: string) => Promise<boolean | undefined>;
+}
 export interface CourseState {
   courses: CourseItem[];
   detail: CourseItem;
@@ -146,12 +157,18 @@ export interface ExternalCourse {
 }
 export interface Question {
   _id?: string;
-  content?: string | QuestionQuizContent;
+  content?: string | QuestionQuizContent | QuestionCodeContent;
   lesson?: string;
   status?: boolean;
   createdAt?: string;
   updatedAt?: string;
   type?: "quiz" | "code" | "response";
+}
+export interface QuestionCodeContent {
+  cases?: Array<{
+    input: String;
+    expectedOutput: String;
+  }>;
 }
 export interface QuestionQuizContent {
   title?: string;
@@ -198,6 +215,7 @@ export interface User {
   FEID: string;
   _id: string;
   role: string;
+  forMajor: string;
   timetable: TimelineEvent[];
 }
 

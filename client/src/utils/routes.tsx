@@ -11,6 +11,7 @@ import path from "path";
 import ProtectedRoute from "../ui/errors/ProtectRoute";
 import { useUserStore } from "./zustand/Store";
 import StudentList from "../pages/dashboards/admin/StudentList";
+import { GooglePopupCallback } from "../ui/_elements/Forms/Access/LoginPopUpCallback";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -63,6 +64,19 @@ const AppRouter = () => {
           path: "login",
           element: <LoginPage />,
         },
+        {
+          path: "google",
+          children: [
+            {
+              children: [
+                {
+                  path: "popup",
+                  element: <GooglePopupCallback />,
+                },
+              ],
+            },
+          ],
+        },
       ],
       errorElement: <NotFound />,
     },
@@ -93,7 +107,7 @@ const AppRouter = () => {
           path: ":courseCode",
           children: [
             {
-              path: "lesson/:lessonId/question",
+              path: "lesson/question",
               element: <Question />,
             },
             {
@@ -139,7 +153,7 @@ const AppRouter = () => {
         {
           path: "account",
           element: user ? (
-            <ProtectedRoute user={user} allowedRoles={[1]} />
+            <ProtectedRoute user={user} allowedRoles={[1, 2]} />
           ) : (
             <NotFound />
           ),

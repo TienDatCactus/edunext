@@ -23,20 +23,26 @@ import { Button, Divider, Form, FormProps, message, Spin } from "antd";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { postQuestionSubmission } from "../../../utils/api";
-const QuestionMarkdown: React.FC = () => {
+
+interface QuestionMarkdownProps {
+  qId?: string;
+  lId?: string;
+}
+
+const QuestionMarkdown: React.FC<QuestionMarkdownProps> = ({ qId }) => {
   const ref = React.useRef<MDXEditorMethods>(null);
   const [md, setMd] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const location = useLocation();
   const questionId = location.state?.questionId as string;
-  const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish: FormProps<{
     content?: string;
   }>["onFinish"] = async (values) => {
     try {
       setLoading(true);
-      const resp = await postQuestionSubmission(questionId, values?.content);
+      const resp = await postQuestionSubmission(qId, values?.content);
       if (resp?.isOk) {
         message.success("Nộp bài làm thành công !");
       }

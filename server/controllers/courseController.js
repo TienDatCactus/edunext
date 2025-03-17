@@ -108,8 +108,6 @@ const getUdemyCourses = async (req, res) => {
 const viewAllCourses = async (req, res) => {
   try {
     const resp = await query.getAllCourses();
-    console.log(resp);
-
     if (!resp || resp.length === 0) {
       return res.status(404).json({ message: "Không có" });
     }
@@ -172,66 +170,87 @@ const viewCourseStudents = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+function createTeams(studentList, amount) {
+  const teams = [];
+  const baseSize = Math.floor(studentList.length / amount);
+  const remainder = studentList.length % amount;
+  let currentTeam = [];
+  let teamNumber = 1;
+  for (let i = 0; i < studentList.length; i++) {
+    currentTeam.push(studentList[i]);
+    const isLastTeam =
+      teamNumber === amount ||
+      currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
+    if (
+      isLastTeam ||
+      currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)
+    ) {
+      teams.push({ team: teamNumber, members: currentTeam });
+      currentTeam = [];
+      teamNumber++;
+    }
+  }
+  if (currentTeam.length > 0) {
+    teams.push({ team: teamNumber, members: currentTeam });
+  }
+  return teams;
+}
 const randomGroupForStudent = async (req, res) => {
   try {
-    const courseID = req.query.courseId;
-    const amount = req.query.amount;
-    const studentList = await query.getCourseStudents(courseID);
-    if (!studentList || studentList.length === 0) {
-      return res.status(404).json({ message: "Không có sinh viên nào" });
-    }
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-    function createTeams(studentList, amount) {
-      shuffleArray(studentList);
-      const teams = [];
-      const baseSize = Math.floor(studentList.length / amount);
-      const remainder = studentList.length % amount;
-      let currentTeam = [];
-      let teamNumber = 1;
-      for (let i = 0; i < studentList.length; i++) {
-        currentTeam.push(studentList[i]);
-        const isLastTeam =
-          teamNumber === amount ||
-          currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0);
-        if (
-          isLastTeam ||
-          currentTeam.length === baseSize + (teamNumber <= remainder ? 1 : 0)
-        ) {
-          teams.push({ team: teamNumber, members: currentTeam });
-          currentTeam = [];
-          teamNumber++;
-        }
-      }
-      if (currentTeam.length > 0) {
-        teams.push({ team: teamNumber, members: currentTeam });
-      }
-      return teams;
+    const lessonId = req.query.lessonId;
+    const { amount } = req.body;
+    const lessonCourse = await Lesson.findOne({
+      _id: new mongoose.Types.ObjectId(lessonId),
+    });
+    const courseId = lessonCourse?.course;
+    console.log(courseId);
+    const studentList = await query.getCourseStudents(courseId);
+    if (!studentList || !studentList.length > 0) {
+      return res
+        .status(404)
+        .json({ message: "Không có sinh viên nào", isOk: false });
     }
     const teams = createTeams(studentList, amount);
+    console.log(teams);
     const lessonGroups = [];
     for (let i = 0; i < teams.length; i++) {
       const team = teams[i];
       const userIds = team.members.map((student) => student._id);
       const lessonGroup = new LessonGroup({
         userId: userIds,
-        course: courseID,
+        course: courseId,
         team: team.team,
       });
-      const savedStudentGroup = await lessonGroup.save();
-      lessonGroups.push(savedStudentGroup);
+      await lessonGroup.save().then((newDoc) => {
+        lessonGroups.push(newDoc);
+      });
     }
-    res
-      .status(201)
-      .json({ message: "Teams created successfully", lessonGroups });
+    if (lessonGroups != null) {
+      res.status(201).json({
+        message: "Teams created successfully",
+        isOk: true,
+      });
+    }
   } catch (error) {
     console.error("Lỗi:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: error.message });
+  }
+};
+const viewCourseGroups = async (req, res) => {
+  try {
+    const { lessonId } = req.params;
+    if (!lessonId) {
+      return res.status(500).json({ error: "Lack of lessonId", isOk: false });
+    }
+    const resp = await query.getCourseGroups(lessonId);
+    if (resp) {
+      return res.status(200).json({
+        groups: resp?.groups,
+        isOk: true,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message, isOk: false });
   }
 };
 const addCourse = async (req, res) => {
@@ -361,5 +380,5 @@ module.exports = {
   deleteCourse,
   viewCountStatistics,
   getUdemyCourses,
-  sortCoursesByStatus,
+  viewCourseGroups,
 };
