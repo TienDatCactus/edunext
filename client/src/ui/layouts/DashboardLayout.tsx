@@ -11,7 +11,7 @@ import {
 import type { MenuProps } from "antd";
 import { Button, Divider, Menu, Popover } from "antd";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DASHBOARD_KEY_PROPS } from "../../utils/interfaces";
 import { useUserStore } from "../../utils/zustand/Store";
 import { ROUTE_KEYS } from "./../../utils/routes";
@@ -40,31 +40,33 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: DASHBOARD_KEYS?.account?.key || "1",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.account)
-              window.location.replace(DASHBOARD_KEYS?.account?.path);
-          },
-          label: <p className="text-[14px] font-medium">Tài khoản</p>,
-          icon: (
-            <UserGear
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.account?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <UserGear
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Tài khoản</p>
+            </Link>
           ),
         },
         {
           key: DASHBOARD_KEYS?.timetable?.key || "2",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.timetable)
-              window.location.replace(DASHBOARD_KEYS?.timetable?.path);
-          },
-          label: <p className="text-[14px] font-medium">Thời khóa biểu</p>,
-          icon: (
-            <CalendarDots
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.timetable?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <CalendarDots
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Thời khóa biểu</p>
+            </Link>
           ),
         },
       ],
@@ -79,16 +81,17 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: DASHBOARD_KEYS?.landing?.key || "1",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.landing)
-              window.location.replace(DASHBOARD_KEYS?.landing?.path);
-          },
-          label: <p className="text-[14px] font-medium">Bảng Điều Khiển</p>,
-          icon: (
-            <AppWindow
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.landing?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <AppWindow
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Bảng Điều Khiển</p>
+            </Link>
           ),
         },
       ],
@@ -101,31 +104,33 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: DASHBOARD_KEYS?.timetable?.key || "2",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.timetable)
-              window.location.replace(DASHBOARD_KEYS?.timetable?.path);
-          },
-          label: <p className="text-[14px] font-medium">Thời khóa biểu</p>,
-          icon: (
-            <CalendarDots
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.timetable?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <CalendarDots
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Thời khóa biểu</p>
+            </Link>
           ),
         },
         {
           key: DASHBOARD_KEYS?.account?.key || "3",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.account)
-              window.location.replace(DASHBOARD_KEYS?.account?.path);
-          },
-          label: <p className="text-[14px] font-medium">Thông tin hồ sơ</p>,
-          icon: (
-            <UserGear
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.account?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <UserGear
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Thông tin hồ sơ</p>
+            </Link>
           ),
         },
       ],
@@ -138,31 +143,33 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: DASHBOARD_KEYS?.courses?.key || "4",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.courses)
-              window.location.replace(DASHBOARD_KEYS?.courses?.path);
-          },
-          label: <p className="text-[14px] font-medium">Môn học</p>,
-          icon: (
-            <Chalkboard
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.courses?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <Chalkboard
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Môn học</p>
+            </Link>
           ),
         },
         {
           key: "17",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.lessons)
-              window.location.replace(DASHBOARD_KEYS?.lessons?.path);
-          },
-          label: <p className="text-[14px] font-medium">Bài học</p>,
-          icon: (
-            <Archive
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.lessons?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <Archive
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Bài học</p>
+            </Link>
           ),
         },
       ],
@@ -177,50 +184,51 @@ const DashboardLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
         {
           key: DASHBOARD_KEYS?.course?.key || "1",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.course)
-              window.location.replace(DASHBOARD_KEYS?.course?.path);
-          },
           label: (
-            <p className="text-[14px] font-medium truncate">
-              Danh sách môn học
-            </p>
-          ),
-          icon: (
-            <Chalkboard
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+            <Link
+              to={DASHBOARD_KEYS?.course?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <Chalkboard
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium truncate">
+                Danh sách môn học
+              </p>
+            </Link>
           ),
         },
         {
           key: DASHBOARD_KEYS?.students?.key || "2",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.students)
-              window.location.replace(DASHBOARD_KEYS?.students?.path);
-          },
-          label: <p className="text-[14px] font-medium">Học sinh</p>,
-          icon: (
-            <Archive
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.students?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <Archive
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Học sinh</p>
+            </Link>
           ),
         },
         {
           key: DASHBOARD_KEYS?.teachers?.key || "3",
           className: "py-6",
-          onClick: () => {
-            if (DASHBOARD_KEYS?.teachers)
-              window.location.replace(DASHBOARD_KEYS?.teachers?.path);
-          },
-          label: <p className="text-[14px] font-medium">Giáo viên</p>,
-          icon: (
-            <Archive
-              size={34}
-              className="p-2 bg-white border rounded-md shadow-md"
-            />
+          label: (
+            <Link
+              to={DASHBOARD_KEYS?.teachers?.path || ""}
+              className="flex items-center gap-2"
+            >
+              <Archive
+                size={34}
+                className="p-2 bg-white border rounded-md shadow-md"
+              />
+              <p className="text-[14px] font-medium">Giáo viên</p>
+            </Link>
           ),
         },
       ],

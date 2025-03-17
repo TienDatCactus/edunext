@@ -466,8 +466,8 @@ const getCourseByInstructor = async (userId) => {
     const courses = await Course.find({
       instructor: new mongoose.Types.ObjectId(userId),
     });
-    if (courses.length === 0) {
-      return { error: "Không tìm thấy khóa học", isOk: false };
+    if (courses.length == 0) {
+      return { error: "Không tìm thấy khóa học" };
     }
     const coursesWithLessons = await Promise.all(
       courses.map(async (course) => {
