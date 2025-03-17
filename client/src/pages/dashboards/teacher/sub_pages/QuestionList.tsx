@@ -33,7 +33,6 @@ function LessonDetail() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const lesson = state?.lessonId;
-  const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>();
   const swapper = {
     quiz: "Trắc nghiệm",
@@ -388,23 +387,10 @@ function LessonDetail() {
       label: "Chưa trả lời",
     },
   ];
-  const getQuestion = async () => {
-    try {
-      setLoading(true);
-      const resp = await getQuestionByLesson(lesson);
-      if (resp?.data) {
-        setQuestions(resp?.data);
-      }
-      return null;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
   useEffect(() => {
     return () => {
-      getQuestion();
+      fetchQuestions();
     };
   }, []);
   return (
@@ -425,13 +411,11 @@ function LessonDetail() {
           Thêm câu hỏi
         </Button>
       </div>
-      <Spin spinning={loading}>
-        <Tabs
-          defaultActiveKey="1"
-          items={tabItems}
-          className="[&_.ant-tabs-nav]:m-0 [&_.ant-tabs-content-holder]:bg-white [&_.ant-tabs-content-holder]:shadow-md [&_.ant-tabs-content-holder]:rounded-md [&_.ant-tabs-content-holder]:p-2"
-        />
-      </Spin>
+      <Tabs
+        defaultActiveKey="1"
+        items={tabItems}
+        className="[&_.ant-tabs-nav]:m-0 [&_.ant-tabs-content-holder]:bg-white [&_.ant-tabs-content-holder]:shadow-md [&_.ant-tabs-content-holder]:rounded-md [&_.ant-tabs-content-holder]:p-2"
+      />
     </DashboardLayout>
   );
 }

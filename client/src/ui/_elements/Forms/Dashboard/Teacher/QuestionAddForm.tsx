@@ -60,6 +60,7 @@ import { QuestionQuizContent } from "../../../../../utils/interfaces";
 import { debounce } from "../../../../../utils/customHooks";
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 interface TestCase {
   input: string;
@@ -134,9 +135,7 @@ function QuestionAddForm({ prop }: { prop: any }) {
   };
 
   const addAnswer = (): void => {
-    if (Array.isArray(answers)) {
-      setAnswers([...answers, `New Answer ${answers.length + 1}`]);
-    }
+    setAnswers([...answers, `New Answer ${answers.length + 1}`]);
   };
 
   const deleteAnswer = (index: number): void => {
@@ -245,6 +244,38 @@ function QuestionAddForm({ prop }: { prop: any }) {
     } finally {
       setLoading(false);
     }
+  };
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    const answersObject = answers.reduce<string[]>((acc, answer) => {
+      acc.push(answer);
+      return acc;
+    }, []);
+
+    let correctAnswer;
+
+    if (isMultipleAnswers) {
+      correctAnswer = answers
+        .map((value, index) => (selectedAnswer?.includes(value) ? index : -1))
+        .filter((index) => index !== -1);
+    } else {
+      correctAnswer = answers
+        .map((value, index) => (value === selectedAnswer ? index : -1))
+        .filter((index) => index !== -1);
+    }
+    const question = {
+      content: [
+        {
+          title: content,
+          answers: answersObject,
+          correctAnswer: correctAnswer,
+        },
+      ],
+      status: false,
+      lesson: "",
+      type: type,
+    };
   };
 
   const debouncedUpdate = debounce(handleUpdateQuestion, 1000);

@@ -5,14 +5,21 @@ import LessonDetail from "../../../../ui/_elements/Page/Course/LessonDetail";
 import { useCourseStore } from "../../../../utils/zustand/Store";
 const CourseInfo: React.FC = () => {
   const { detail } = useCourseStore();
+import { CourseInfoProps } from "../../../../utils/interfaces";
+const CourseInfo: React.FC<CourseInfoProps> = ({
+  courseCode,
+  courseName,
+  description,
+  lessons,
+}) => {
   return (
     <>
       <div className="border-b border-[#ccc]">
         <div className="flex justify-between px-8 py-4">
           <div>
-            <h1 className="text-[22px] font-semibold">{detail?.courseName}</h1>
+            <h1 className="text-[22px] font-semibold">{courseName}</h1>
             <p className="w-[80%] text-[12px] text-[#4f6174] leading-5 ">
-              {detail?.description}
+              {description}
             </p>
           </div>
           <div className="flex gap-2 *:shadow-md *:font-semibold">
@@ -23,18 +30,22 @@ const CourseInfo: React.FC = () => {
       </div>
       <div>
         <div className="flex flex-col gap-4 px-8 py-4">
-          {!!detail?.lessons?.length &&
-            detail?.lessons?.map((lesson, index) => {
+          {!!lessons?.length &&
+            lessons?.map((lesson, index) => {
               return (
                 <LessonDetail
                   key={index}
                   lessonId={index + 1}
-                  lesson={lesson}
+                  content={lesson?.content}
+                  deadline={lesson?.deadline}
+                  questions={lesson?.questions}
+                  tag={lesson?.tag || ""}
+                  title={lesson?.title}
                 />
               );
             })}
         </div>
-        {(detail?.lessons ?? []).length === 0 && (
+        {(lessons ?? []).length === 0 && (
           <Empty
             image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
             imageStyle={{

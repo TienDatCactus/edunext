@@ -1,5 +1,7 @@
 const { error } = require("console");
 const query = require("../db/queries");
+const dayjs = require("dayjs");
+const Question = require("../db/model").Question;
 
 const createQuestions = async (req, res) => {
   try {
@@ -158,6 +160,51 @@ const addSubmissionComment = async (req, res) => {
   }
 };
 
+const resetQuestionDeadline = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date, time } = req.body;
+
+    if (!date || !time) {
+      return res.status(400).json({
+        error: "Date and time are required",
+        isOk: false,
+      });
+    }
+
+    const newDeadline = `${date}T${time}`;
+
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      id,
+      {
+        updatedAt: dayjs(newDeadline).toDate(),
+      },
+      { new: true }
+    );
+
+    if (!updatedQuestion) {
+      return res.status(404).json({
+        error: "Question not found",
+        isOk: false,
+      });
+    }
+
+    res.json({
+      updatedQuestion,
+      isOk: true,
+      message: "Question deadline reset successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "Internal server error",
+      isOk: false,
+    });
+  }
+};
+
+
 const submitCode = async (req, res) => {
   const { questionId } = req.params;
   const { code } = req.body;
@@ -180,6 +227,8 @@ module.exports = {
   viewQuestionDetail,
   viewQuestionSubmissions,
   addQuestionSubmission,
+  addSubmissionComment,
+  resetQuestionDeadline
   addSubmissionComment,
   submitCode,
 };

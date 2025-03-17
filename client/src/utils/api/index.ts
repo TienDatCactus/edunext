@@ -34,27 +34,14 @@ const getCourses = async () => {
   try {
     const tokenString = localStorage.getItem("edu-token");
     const user = tokenString ? (JSON.parse(tokenString) as UserToken) : null;
-    if (user?.user?.role == "2") {
-      const resp = await http.get(`${courseApi}/instructor/${user?.user?._id}`);
-      if (resp?.data) return resp?.data;
-    } else {
-      const resp = await http.get(`${homeApi}/${user?.user?._id}`);
-      if (resp?.data) return resp?.data;
-    }
-    return null;
-  } catch (error) {
-    return error;
-  }
-};
-const getQuestionByLesson = async (lessonId: string) => {
-  try {
-    const resp = await http.get(`${questionApi}/getQuestions/${lessonId}`);
+    const resp = await http.get(`${homeApi}/${user?.user?._id}`);
     if (resp?.data) return resp?.data;
     return null;
   } catch (error) {
     return error;
   }
 };
+
 const getCourseDetail = async (courseCode: string) => {
   try {
     const resp = await http.get(`${courseApi}/${courseCode}`);

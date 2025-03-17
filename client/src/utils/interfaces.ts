@@ -16,8 +16,12 @@ export interface CourseSlice {
 }
 
 export interface LessonDetailProps {
+  title?: string;
+  deadline?: string;
+  content?: string;
   lessonId?: number;
-  lesson?: LessonItem;
+  questions?: Question[];
+  tag?: string;
 }
 export interface ErrorHandlerOptions {
   redirectOnUnauthorized?: boolean;
@@ -58,7 +62,6 @@ export interface CourseItem {
     type: string;
     link?: string;
   }>;
-  updatedAt?: string;
   forMajor?: string;
 }
 export interface CourseLayoutProps {
@@ -98,7 +101,6 @@ export interface CodeState {
 }
 export interface CourseState {
   courses: CourseItem[];
-
   detail: CourseItem;
   selectedCourse: CourseItem | null;
   loading: boolean;
@@ -132,10 +134,6 @@ export interface UserState {
   setUser: (user: User) => void;
 }
 export interface LessonItem {
-  _id?: string;
-  courseCode?: string;
-  courseName?: string;
-  questions?: Question[];
   title?: string;
   content?: string;
   deadline?: string;

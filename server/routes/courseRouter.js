@@ -48,6 +48,13 @@ courseRouter.put(
   authenticateToken,
   courseController.changeStatusCourses
 );
+
+courseRouter.get(
+  "/sort/status",
+  authenticateToken,
+  courseController.sortCoursesByStatus
+);
+
 courseRouter.post("/addCourse", courseController.addCourse);
 courseRouter.put("/editCourse/:courseId", courseController.editCourse);
 courseRouter.delete("/deleteCourse/:courseId", courseController.deleteCourse);

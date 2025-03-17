@@ -15,8 +15,9 @@ import pagination from "antd/es/pagination";
 import { getCountStatistics } from "../../../../utils/api";
 
 const QuestionItem: React.FC<{
-  question?: Question;
-  deadline?: string;
+  questionId?: number;
+  status?: boolean;
+  lessonId?: number;
   index?: number;
 }> = ({ question, index, deadline }) => {
   const { detail } = useCourseStore();

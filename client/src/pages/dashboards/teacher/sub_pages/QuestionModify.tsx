@@ -8,6 +8,8 @@ import { addQuestionByTeacher } from "../../../../utils/api";
 import { Question, QuestionQuizContent } from "../../../../utils/interfaces";
 
 function QuestionModify() {
+  const [questions, setQuestions] = useState([1]);
+  const [question, setQuestion] = useState<Question>();
   const location = useLocation();
   const { state } = location;
   const navigate = useNavigate();
@@ -18,17 +20,10 @@ function QuestionModify() {
     (string & any[]) | (QuestionQuizContent & any[]) | undefined
   >();
   useEffect(() => {
-    if (Array.isArray(state?.lesson?.content)) {
-      state &&
-        setQuestions(
-          Array.isArray(state?.lesson?.content) ? state?.lesson?.content : [1]
-        );
-    } else {
-      state && setQuestions([1]);
-    }
+    state && setQuestion(state?.lesson);
   }, []);
   const addQuestion = () => {
-    if (questions) setQuestions([...questions, questions?.length + 1]);
+    setQuestions([...questions, questions.length + 1]);
   };
 
   const handleAddQuestion = (newQuestion: any, index: number | null = null) => {

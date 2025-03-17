@@ -19,19 +19,14 @@ const getCurrentSeason = () => {
 };
 const useErrorBoundary = () => {
   const [error, setError] = useState<ErrorEvent>();
-  const errorRef = useRef<ErrorEvent | null>(null);
 
   useEffect(() => {
     const errorHandler = (event: ErrorEvent | PromiseRejectionEvent) => {
-      errorRef.current =
+      setError(
         event instanceof ErrorEvent
           ? event.error
-          : new Error("An unknown error occurred");
-      setTimeout(() => {
-        if (errorRef.current) {
-          setError(errorRef.current);
-        }
-      }, 0);
+          : new Error("An unknown error occurred")
+      );
     };
 
     window.addEventListener("error", errorHandler);
