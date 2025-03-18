@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface CourseSlice {
   error?: string;
   loading?: boolean;
@@ -215,8 +217,9 @@ export interface User {
   FEID: string;
   _id: string;
   role: string;
-  forMajor: string;
+  major: string;
   timetable: TimelineEvent[];
+  isActive?: boolean;
 }
 
 export interface SubmissionItem {

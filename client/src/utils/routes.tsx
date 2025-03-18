@@ -12,6 +12,7 @@ import ProtectedRoute from "../ui/errors/ProtectRoute";
 import { useUserStore } from "./zustand/Store";
 import StudentList from "../pages/dashboards/admin/StudentList";
 import { GooglePopupCallback } from "../ui/_elements/Forms/Access/LoginPopUpCallback";
+import TeacherList from "../pages/dashboards/admin/TeacherList";
 
 const LoginPage = lazy(() => import("../pages/access/LoginPage"));
 const Detail = lazy(() => import("../pages/course/detail/Detail"));
@@ -232,7 +233,7 @@ const AppRouter = () => {
         },
         {
           path: "teachers",
-          // element: <CourseList />,
+          element: <TeacherList />,
         },
       ],
     },

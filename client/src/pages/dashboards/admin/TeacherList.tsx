@@ -5,7 +5,6 @@ import {
   Row,
   Table,
   Tag,
-  Transfer,
   Modal,
   Form,
   Input,
@@ -20,6 +19,9 @@ import {
   Dropdown,
   Menu,
   Tooltip,
+  Tabs,
+  List,
+  Badge,
 } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import dayjs from "dayjs";
@@ -35,6 +37,9 @@ import {
   Trash,
   Power,
   DotsThreeVertical,
+  BookOpen,
+  ChalkboardTeacher,
+  GraduationCap,
 } from "phosphor-react";
 import type { UploadProps } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
@@ -42,19 +47,10 @@ import * as XLSX from "xlsx";
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
 import { getAllUsers } from "../../../utils/api";
-import { User } from "../../../utils/interfaces";
+import { User, CourseItem } from "../../../utils/interfaces";
 import { useUserStore } from "../../../utils/zustand/Store";
-import type { TransferProps } from "antd";
 
-const { Dragger } = Upload;
-
-interface ClassData {
-  key: string;
-  name: string;
-  students: string[];
-}
-
-interface StudentFormData {
+interface TeacherFormData {
   name: string;
   email: string;
   feid: string;
@@ -63,30 +59,43 @@ interface StudentFormData {
   isActive?: boolean;
 }
 
-const StudentList: React.FC = () => {
+interface ClassData {
+  key: string;
+  name: string;
+  students: string[];
+  courseId: string;
+  teacherId: string;
+}
+
+const TeacherList = (): JSX.Element => {
   const hours = dayjs().hour();
   const isDayTime = hours > 6 && hours < 20;
   const [loading, setLoading] = useState(false);
+  const [teachers, setTeachers] = useState<User[]>([]);
+  const [courses, setCourses] = useState<CourseItem[]>([]);
   const [students, setStudents] = useState<User[]>([]);
   const { user } = useUserStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isClassModalVisible, setIsClassModalVisible] = useState(false);
-  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [selectedTeacher, setSelectedTeacher] = useState<User | null>(null);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [form] = Form.useForm();
   const [classForm] = Form.useForm();
-  const [editingStudent, setEditingStudent] = useState<StudentFormData | null>(
+  const [editingTeacher, setEditingTeacher] = useState<TeacherFormData | null>(
     null
   );
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [importModalVisible, setImportModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState("1");
 
   const getUsers = async () => {
     try {
       setLoading(true);
       const resp = await getAllUsers();
       if (resp) {
-        setStudents(resp.users);
+        // Filter teachers and students
+        setTeachers(resp.users.filter((u: User) => u.role == "2"));
+        setStudents(resp.users.filter((u: User) => u.role == "1"));
       }
     } catch (error) {
       console.error(error);
@@ -99,9 +108,9 @@ const StudentList: React.FC = () => {
     if (user?.role == "3") {
       getUsers();
     }
-  }, []);
+  }, [user]);
 
-  const handlePasswordReset = async (studentId: string) => {
+  const handlePasswordReset = async (teacherId: string) => {
     try {
       // TODO: Implement password reset API call
       message.success("Password has been reset successfully");
@@ -110,15 +119,15 @@ const StudentList: React.FC = () => {
     }
   };
 
-  const handleCreateStudent = async (values: any) => {
+  const handleCreateTeacher = async (values: any) => {
     try {
-      // TODO: Implement create student API call
-      message.success("Student created successfully");
+      // TODO: Implement create teacher API call
+      message.success("Teacher created successfully");
       setIsModalVisible(false);
       form.resetFields();
       getUsers();
     } catch (error) {
-      message.error("Failed to create student");
+      message.error("Failed to create teacher");
     }
   };
 
@@ -127,46 +136,43 @@ const StudentList: React.FC = () => {
       const newClass: ClassData = {
         key: Math.random().toString(36).substr(2, 9),
         name: values.className,
-        students: selectedStudents,
+        students: [],
+        courseId: values.courseId,
+        teacherId: selectedTeacher?._id || "",
       };
       setClasses([...classes, newClass]);
       message.success("Class created successfully");
       setIsClassModalVisible(false);
       classForm.resetFields();
-      setSelectedStudents([]);
     } catch (error) {
       message.error("Failed to create class");
     }
   };
 
-  const handleTransferChange: TransferProps["onChange"] = (newTargetKeys) => {
-    setSelectedStudents(newTargetKeys as string[]);
-  };
-
-  const handleEditStudent = async (values: StudentFormData) => {
+  const handleEditTeacher = async (values: TeacherFormData) => {
     try {
-      // TODO: Implement edit student API call
-      message.success("Student updated successfully");
+      // TODO: Implement edit teacher API call
+      message.success("Teacher updated successfully");
       setIsModalVisible(false);
       form.resetFields();
-      setEditingStudent(null);
+      setEditingTeacher(null);
       getUsers();
     } catch (error) {
-      message.error("Failed to update student");
+      message.error("Failed to update teacher");
     }
   };
 
-  const handleDeleteStudent = async (studentId: string) => {
+  const handleDeleteTeacher = async (teacherId: string) => {
     try {
-      // TODO: Implement delete student API call
-      message.success("Student deleted successfully");
+      // TODO: Implement delete teacher API call
+      message.success("Teacher deleted successfully");
       getUsers();
     } catch (error) {
-      message.error("Failed to delete student");
+      message.error("Failed to delete teacher");
     }
   };
 
-  const handleToggleActive = async (studentId: string, active: boolean) => {
+  const handleToggleActive = async (teacherId: string, active: boolean) => {
     try {
       // TODO: Implement toggle active API call
       message.success(
@@ -181,27 +187,27 @@ const StudentList: React.FC = () => {
   const handleBulkDelete = async () => {
     try {
       // TODO: Implement bulk delete API call
-      message.success("Selected students deleted successfully");
+      message.success("Selected teachers deleted successfully");
       setSelectedRowKeys([]);
       getUsers();
     } catch (error) {
-      message.error("Failed to delete students");
+      message.error("Failed to delete teachers");
     }
   };
 
   const handleExport = () => {
-    const data = students.map((student) => ({
-      Name: student.name,
-      Email: student.email,
-      "Student ID": student.FEID,
-      Major: student.major,
-      Role: student.role === "1" ? "Student" : "Teacher",
+    const data = teachers.map((teacher) => ({
+      Name: teacher.name,
+      Email: teacher.email,
+      "Teacher ID": teacher.FEID,
+      Major: teacher.major,
+      Status: teacher.isActive ? "Active" : "Inactive",
     }));
 
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Students");
-    XLSX.writeFile(wb, `students_${dayjs().format("YYYY-MM-DD")}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "Teachers");
+    XLSX.writeFile(wb, `teachers_${dayjs().format("YYYY-MM-DD")}.xlsx`);
   };
 
   const uploadProps: UploadProps = {
@@ -219,7 +225,7 @@ const StudentList: React.FC = () => {
           const jsonData = XLSX.utils.sheet_to_json(sheet);
 
           // TODO: Implement bulk import API call
-          message.success(`${jsonData.length} students imported successfully`);
+          message.success(`${jsonData.length} teachers imported successfully`);
           setImportModalVisible(false);
           getUsers();
         };
@@ -227,18 +233,19 @@ const StudentList: React.FC = () => {
         onSuccess?.("ok");
       } catch (error) {
         onError?.(error as Error);
-        message.error("Failed to import students");
+        message.error("Failed to import teachers");
       }
     },
   };
 
-  const dataSource = students?.map((student) => ({
-    key: student._id,
-    email: student.email,
-    name: student.name,
-    feid: student.FEID,
-    role: student.role === "1" ? "Sinh viên" : "Giáo viên",
-    major: student.major,
+  const dataSource = teachers?.map((teacher) => ({
+    key: teacher._id,
+    email: teacher.email,
+    name: teacher.name,
+    feid: teacher.FEID,
+    role: "Giáo viên",
+    major: teacher.major,
+    isActive: teacher.isActive,
   }));
 
   const columns = [
@@ -253,32 +260,21 @@ const StudentList: React.FC = () => {
       key: "email",
     },
     {
-      title: "Mã sinh viên",
+      title: "Mã giáo viên",
       dataIndex: "feid",
       key: "feid",
       render: (text: string) => (
-        <Tag
-          className="code"
-          color={text === "IT" ? "blue" : text === "MKT" ? "green" : "default"}
-        >
+        <Tag className="code" color="blue">
           #{text}
         </Tag>
       ),
-    },
-    {
-      title: "Vai trò",
-      dataIndex: "role",
-      key: "role",
     },
     {
       title: "Chuyên ngành",
       dataIndex: "major",
       key: "major",
       render: (text: string) => (
-        <Tag
-          className="code"
-          color={text === "IT" ? "blue" : text === "MKT" ? "green" : "default"}
-        >
+        <Tag className="code" color={text === "IT" ? "blue" : "green"}>
           {text}
         </Tag>
       ),
@@ -309,7 +305,7 @@ const StudentList: React.FC = () => {
                   icon: <Pencil />,
                   label: "Edit",
                   onClick: () => {
-                    setEditingStudent(record);
+                    setEditingTeacher(record);
                     setIsModalVisible(true);
                   },
                 },
@@ -321,10 +317,19 @@ const StudentList: React.FC = () => {
                 },
                 {
                   key: "3",
+                  icon: <BookOpen />,
+                  label: "Manage Courses",
+                  onClick: () => {
+                    setSelectedTeacher(record);
+                    setActiveTab("2");
+                  },
+                },
+                {
+                  key: "4",
                   icon: <Trash />,
                   label: "Delete",
                   danger: true,
-                  onClick: () => handleDeleteStudent(record.key),
+                  onClick: () => handleDeleteTeacher(record.key),
                 },
               ],
             }}
@@ -343,69 +348,69 @@ const StudentList: React.FC = () => {
     },
   };
 
-  return (
-    <DashboardLayout>
-      <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-lg">
+  const items = [
+    {
+      key: "1",
+      label: "Danh sách giáo viên",
+      icon: <Users />,
+      children: (
         <div>
-          <h1 className="text-[2.125rem] font-semibold">Danh sách học sinh</h1>
-          <div className="flex items-center gap-1">
-            <CalendarDots size={18} />
-            <span className="text-[#727272] text-[14px]">
-              Hôm nay: {dayjs().format("dddd - MMMM/YYYY")}
-            </span>
-          </div>
-        </div>
-        <Space>
-          <Button
-            type="primary"
-            icon={<UserPlus />}
-            onClick={() => {
-              setEditingStudent(null);
-              setIsModalVisible(true);
-            }}
-          >
-            Thêm học sinh
-          </Button>
-          <Button
-            icon={<UploadIcon />}
-            onClick={() => setImportModalVisible(true)}
-          >
-            Import
-          </Button>
-          <Button icon={<Download />} onClick={handleExport}>
-            Export
-          </Button>
-          {selectedRowKeys.length > 0 && (
-            <Popconfirm
-              title={`Delete ${selectedRowKeys.length} selected students?`}
-              onConfirm={handleBulkDelete}
-            >
-              <Button danger icon={<Trash />}>
-                Delete Selected
+          <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-lg mb-4">
+            <div>
+              <h1 className="text-[2.125rem] font-semibold">
+                Danh sách giáo viên
+              </h1>
+              <div className="flex items-center gap-1">
+                <CalendarDots size={18} />
+                <span className="text-[#727272] text-[14px]">
+                  Hôm nay: {dayjs().format("dddd - MMMM/YYYY")}
+                </span>
+              </div>
+            </div>
+            <Space>
+              <Button
+                type="primary"
+                icon={<UserPlus />}
+                onClick={() => {
+                  setEditingTeacher(null);
+                  setIsModalVisible(true);
+                }}
+              >
+                Thêm giáo viên
               </Button>
-            </Popconfirm>
-          )}
-          <Button icon={<Users />} onClick={() => setIsClassModalVisible(true)}>
-            Tạo lớp học
-          </Button>
-          <ButtonGroup>
-            <Button
-              className={isDayTime ? "bg-[#ffebc7] w-12" : "w-12"}
-              icon={<Sun color={isDayTime ? "#ffb700" : "#000"} />}
-            />
-            <Button
-              className={!isDayTime ? "text-white bg-[#2C3E50] w-12" : "w-12"}
-              icon={<Moon />}
-            />
-          </ButtonGroup>
-        </Space>
-      </div>
-
-      <Row
-        className="p-2 my-2 bg-white rounded-lg shadow-md min-h-[400px]"
-        gutter={[6, 16]}
-      >
-        <Col span={18}>
+              <Button
+                icon={<UploadIcon />}
+                onClick={() => setImportModalVisible(true)}
+              >
+                Import
+              </Button>
+              <Button icon={<Download />} onClick={handleExport}>
+                Export
+              </Button>
+              {selectedRowKeys.length > 0 && (
+                <Popconfirm
+                  title={`Delete ${selectedRowKeys.length} selected teachers?`}
+                  onConfirm={handleBulkDelete}
+                >
+                  <Button danger icon={<Trash />}>
+                    Delete Selected
+                  </Button>
+                </Popconfirm>
+              )}
+              <ButtonGroup>
+                <Button
+                  className={isDayTime ? "bg-[#ffebc7] w-12" : "w-12"}
+                  icon={<Sun color={isDayTime ? "#ffb700" : "#000"} />}
+                />
+                <Button
+                  className={
+                    !isDayTime ? "text-white bg-[#2C3E50] w-12" : "w-12"
+                  }
+                  icon={<Moon />}
+                />
+              </ButtonGroup>
+            </Space>
+          </div>
           <Table
             rowSelection={rowSelection}
             dataSource={dataSource}
@@ -413,43 +418,113 @@ const StudentList: React.FC = () => {
             columns={columns}
             pagination={{ pageSize: 10 }}
           />
-        </Col>
-        <Col span={6}>
-          <Card title="Danh sách lớp học" className="h-full">
-            {classes.map((classData) => (
-              <div key={classData.key} className="mb-4">
-                <h3 className="font-semibold">{classData.name}</h3>
-                <p className="text-gray-500">
-                  {classData.students.length} học sinh
-                </p>
-                <Divider />
+        </div>
+      ),
+    },
+    {
+      key: "2",
+      label: "Quản lý khóa học",
+      icon: <BookOpen />,
+      children: selectedTeacher ? (
+        <div>
+          <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-lg mb-4">
+            <div>
+              <h1 className="text-[2.125rem] font-semibold">
+                Khóa học của {selectedTeacher.name}
+              </h1>
+              <div className="flex items-center gap-1">
+                <ChalkboardTeacher size={18} />
+                <span className="text-[#727272] text-[14px]">
+                  {selectedTeacher.email}
+                </span>
               </div>
-            ))}
-          </Card>
-        </Col>
-      </Row>
+            </div>
+            <Space>
+              <Button
+                type="primary"
+                icon={<Plus />}
+                onClick={() => setIsClassModalVisible(true)}
+              >
+                Thêm lớp học
+              </Button>
+            </Space>
+          </div>
+          <Row gutter={[16, 16]}>
+            {classes
+              .filter((c) => c.teacherId === selectedTeacher._id)
+              .map((classData) => (
+                <Col span={8} key={classData.key}>
+                  <Card
+                    title={classData.name}
+                    extra={
+                      <Space>
+                        <Button icon={<Pencil />} />
+                        <Button danger icon={<Trash />} />
+                      </Space>
+                    }
+                  >
+                    <p>Số học sinh: {classData.students.length}</p>
+                    <p>
+                      Khóa học:{" "}
+                      {
+                        courses.find((c) => c._id === classData.courseId)
+                          ?.courseName
+                      }
+                    </p>
+                    <Divider />
+                    <List
+                      size="small"
+                      dataSource={classData.students}
+                      renderItem={(studentId) => (
+                        <List.Item>
+                          {students.find((s) => s._id === studentId)?.name}
+                        </List.Item>
+                      )}
+                    />
+                  </Card>
+                </Col>
+              ))}
+          </Row>
+        </div>
+      ) : (
+        <div className="text-center p-8">
+          <GraduationCap size={48} className="mx-auto mb-4" />
+          <p className="text-lg">Vui lòng chọn một giáo viên để xem khóa học</p>
+        </div>
+      ),
+    },
+  ];
 
-      {/* Student Modal */}
+  return (
+    <DashboardLayout>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={items}
+        className="bg-white rounded-lg shadow-lg p-4"
+      />
+
+      {/* Teacher Modal */}
       <Modal
-        title={editingStudent ? "Edit Student" : "Add New Student"}
+        title={editingTeacher ? "Edit Teacher" : "Add New Teacher"}
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
-          setEditingStudent(null);
+          setEditingTeacher(null);
           form.resetFields();
         }}
         footer={null}
       >
         <Form
           form={form}
-          onFinish={editingStudent ? handleEditStudent : handleCreateStudent}
+          onFinish={editingTeacher ? handleEditTeacher : handleCreateTeacher}
           layout="vertical"
-          initialValues={editingStudent || {}}
+          initialValues={editingTeacher || {}}
         >
           <Form.Item
             name="name"
-            label="Tên học sinh"
-            rules={[{ required: true, message: "Please input student name!" }]}
+            label="Tên giáo viên"
+            rules={[{ required: true, message: "Please input teacher name!" }]}
           >
             <Input />
           </Form.Item>
@@ -465,8 +540,8 @@ const StudentList: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="feid"
-            label="Mã sinh viên"
-            rules={[{ required: true, message: "Please input student ID!" }]}
+            label="Mã giáo viên"
+            rules={[{ required: true, message: "Please input teacher ID!" }]}
           >
             <Input />
           </Form.Item>
@@ -498,14 +573,14 @@ const StudentList: React.FC = () => {
               <Button
                 onClick={() => {
                   setIsModalVisible(false);
-                  setEditingStudent(null);
+                  setEditingTeacher(null);
                   form.resetFields();
                 }}
               >
                 Cancel
               </Button>
               <Button type="primary" htmlType="submit">
-                {editingStudent ? "Update" : "Create"}
+                {editingTeacher ? "Update" : "Create"}
               </Button>
             </Space>
           </Form.Item>
@@ -514,12 +589,12 @@ const StudentList: React.FC = () => {
 
       {/* Import Modal */}
       <Modal
-        title="Import Students"
+        title="Import Teachers"
         open={importModalVisible}
         onCancel={() => setImportModalVisible(false)}
         footer={null}
       >
-        <Dragger {...uploadProps}>
+        <Upload.Dragger {...uploadProps}>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
@@ -530,17 +605,16 @@ const StudentList: React.FC = () => {
             Support for single Excel or CSV file upload. Please ensure your file
             has the correct format.
           </p>
-        </Dragger>
+        </Upload.Dragger>
         <div className="mt-4">
           <Button
             type="link"
             onClick={() => {
-              // Generate template for download
               const template = [
                 {
                   Name: "",
                   Email: "",
-                  "Student ID": "",
+                  "Teacher ID": "",
                   Major: "IT/MKT",
                   "Force Password Reset": "Yes/No",
                   Active: "Yes/No",
@@ -549,7 +623,7 @@ const StudentList: React.FC = () => {
               const ws = XLSX.utils.json_to_sheet(template);
               const wb = XLSX.utils.book_new();
               XLSX.utils.book_append_sheet(wb, ws, "Template");
-              XLSX.writeFile(wb, "student_import_template.xlsx");
+              XLSX.writeFile(wb, "teacher_import_template.xlsx");
             }}
           >
             Download template
@@ -573,22 +647,18 @@ const StudentList: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Chọn học sinh">
-            <Transfer
-              dataSource={students.map((s) => ({
-                key: s._id,
-                title: s.name,
-                description: s.email,
-              }))}
-              titles={["Danh sách học sinh", "Học sinh đã chọn"]}
-              targetKeys={selectedStudents}
-              onChange={handleTransferChange}
-              render={(item) => item.title}
-              listStyle={{
-                width: 300,
-                height: 300,
-              }}
-            />
+          <Form.Item
+            name="courseId"
+            label="Khóa học"
+            rules={[{ required: true, message: "Please select course!" }]}
+          >
+            <Select>
+              {courses.map((course) => (
+                <Select.Option key={course._id} value={course._id}>
+                  {course.courseName}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
           <Form.Item className="mb-0 text-right">
             <Space>
@@ -606,4 +676,4 @@ const StudentList: React.FC = () => {
   );
 };
 
-export default StudentList;
+export default TeacherList;

@@ -27,7 +27,6 @@ const loginControl = async (req, res) => {
     }
     // Handle regular email/password login
     else if (email && password) {
-      console.log(email, password, campus);
       user = await query.loginWithEmail(campus, email, password);
       if (user?.isOk === false) {
         return res.json({ error: user?.error, isOk: user?.isOk });

@@ -147,8 +147,7 @@ const viewCourseByInstructor = async (req, res) => {
   try {
     const { userId } = req.params;
     const resp = await query.getCourseByInstructor(userId);
-
-    if (!resp || resp.length === 0) {
+    if (resp.length == 0) {
       return res.status(404).json({ message: "Không có môn nào", isOk: false });
     }
     res.status(200).json({ courses: resp, isOk: true });
