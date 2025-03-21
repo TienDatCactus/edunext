@@ -1,6 +1,7 @@
 const { trusted } = require("mongoose");
 const query = require("../db/queries");
 const jwt = require("jsonwebtoken");
+const { User } = require('../db/model');
 
 let refreshTokens = [];
 
@@ -109,4 +110,55 @@ const getUserById = async (req, res) => {
     res.status(500).json({ error: "Internal server error", isOk: false });
   }
 };
-module.exports = { loginControl, logoutControl, getUserById, getCampuses };
+
+exports.registerStudent = async (req, res) => {
+  try {
+    // Sử dụng trực tiếp từ req.body và gán role = 1 (student)
+    const userData = {
+      ...req.body,
+      role: 1
+    };
+
+    const newUser = new User(userData);
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Student registered successfully",
+      data: newUser
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to register student",
+      error: error.message
+    });
+  }
+};
+
+exports.registerTeacher = async (req, res) => {
+  try {
+    // Sử dụng trực tiếp từ req.body và gán role = 2 (teacher)
+    const userData = {
+      ...req.body,
+      role: 2
+    };
+
+    const newUser = new User(userData);
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Teacher registered successfully",
+      data: newUser
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to register teacher",
+      error: error.message
+    });
+  }
+};
+
+module.exports = { loginControl, logoutControl, getUserById, getCampuses, registerStudent, registerTeacher };

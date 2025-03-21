@@ -78,4 +78,7 @@ accessRouter.get("/google/callback", (req, res, next) => {
   )(req, res, next);
 });
 
+accessRouter.post('/register/student', accessController.registerStudent);
+accessRouter.post('/register/teacher', accessController.registerTeacher);
+
 module.exports = accessRouter;
