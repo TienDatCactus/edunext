@@ -43,7 +43,7 @@ const CourseCard: React.FC<{ item: CourseItem }> = ({ item }) => {
             <DotsThree />
           </Button>
         </div>
-        <div className="flex items-center justify-between ">
+        <div className="flex items-center justify-between w-full">
           <Tooltip title={item?.description}>
             <h1 className="text-white text-[1rem] font-semibold">
               {item?.courseName}

@@ -1,0 +1,152 @@
+[
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dba"
+    },
+    "name": "Nguyễn Văn An",
+    "email": "an.nv@fpt.edu.vn",
+    "password": "$2y$10$6TfxJOhzCaVAKx/vAH.NaudleIsj36Hnw20lcdGprIwqDKnSWP0kq",
+    "FEID": "IT180123",
+    "timetable": {
+      "$oid": "6788be800862e875d6ac1dd4"
+    },
+    "campus": {
+      "$oid": "6788be800862e875d6ac1db2"
+    },
+    "courseClass": {
+      "$oid": "6788be800862e875d6ac1db6"
+    },
+    "role": 1,
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.972Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:33.000Z"
+    },
+    "__v": 1,
+    "major": "IT",
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "67e0b0bc1cc1ca1ea5ac8fe6"
+    },
+    "name": "TS. Trần Thị Bình",
+    "email": "binh.tt@fpt.edu.vn",
+    "password": "$2y$10$6TfxJOhzCaVAKx/vAH.NaudleIsj36Hnw20lcdGprIwqDKnSWP0kq",
+    "FEID": "GV001",
+    "timetable": {
+      "$oid": "6788be800862e875d6ac1dd4"
+    },
+    "campus": {
+      "$oid": "6788be800862e875d6ac1db2"
+    },
+    "courseClass": {
+      "$oid": "6788be800862e875d6ac1db6"
+    },
+    "role": 2,
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.972Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:33.000Z"
+    },
+    "__v": 1,
+    "major": "IT",
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "67e0b47a1cc1ca1ea5ac8fee"
+    },
+    "name": "ThS. Lê Văn Cường",
+    "email": "cuong.lv@fpt.edu.vn",
+    "password": "$2y$10$6TfxJOhzCaVAKx/vAH.NaudleIsj36Hnw20lcdGprIwqDKnSWP0kq",
+    "FEID": "GV002",
+    "timetable": {
+      "$oid": "6788be800862e875d6ac1dd4"
+    },
+    "campus": {
+      "$oid": "6788be800862e875d6ac1db2"
+    },
+    "courseClass": {
+      "$oid": "6788be800862e875d6ac1db6"
+    },
+    "role": 2,
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.972Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:33.000Z"
+    },
+    "__v": 1,
+    "major": "MC",
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "67e0b47a1cc1ca1ea5ac8fef"
+    },
+    "name": "Nguyễn Thị Dung",
+    "email": "dung.nt@fpt.edu.vn",
+    "password": "$2y$10$6TfxJOhzCaVAKx/vAH.NaudleIsj36Hnw20lcdGprIwqDKnSWP0kq",
+    "FEID": "MC180456",
+    "timetable": {
+      "$oid": "6788be800862e875d6ac1dd4"
+    },
+    "campus": {
+      "$oid": "6788be800862e875d6ac1db2"
+    },
+    "courseClass": {
+      "$oid": "6788be800862e875d6ac1db6"
+    },
+    "role": 1,
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.972Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:33.000Z"
+    },
+    "__v": 1,
+    "major": "MC",
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "67e0b47a1cc1ca1ea5ac8ff0"
+    },
+    "name": "Admin",
+    "email": "admin@fpt.edu.vn",
+    "password": "$2y$10$6TfxJOhzCaVAKx/vAH.NaudleIsj36Hnw20lcdGprIwqDKnSWP0kq",
+    "FEID": "AD001",
+    "timetable": {
+      "$oid": "6788be800862e875d6ac1dd4"
+    },
+    "campus": {
+      "$oid": "6788be800862e875d6ac1db2"
+    },
+    "courseClass": {
+      "$oid": "6788be800862e875d6ac1db6"
+    },
+    "role": 3,
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.972Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:33.000Z"
+    },
+    "__v": 1,
+    "major": "IT",
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    }
+  }
+]

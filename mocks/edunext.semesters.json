@@ -1,0 +1,66 @@
+[
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    },
+    "semesterName": "Spring 2024",
+    "year": "2024",
+    "courses": [
+      {
+        "$oid": "6788be800862e875d6ac1dc4"
+      }
+    ],
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.980Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:32.985Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc1"
+    },
+    "semesterName": "Summer 2024",
+    "year": "2024",
+    "courses": [],
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.980Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:32.985Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc2"
+    },
+    "semesterName": "Fall 2024",
+    "year": "2024",
+    "courses": [],
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.980Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:32.985Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc3"
+    },
+    "semesterName": "Spring 2025",
+    "year": "2025",
+    "courses": [],
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.980Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-16T08:08:32.985Z"
+    },
+    "__v": 1
+  }
+]

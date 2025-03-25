@@ -118,7 +118,7 @@ const QuestionItem: React.FC<{
               {!question?.status ? "chưa hoàn thành" : "đã hoàn thành"}
             </Tag>
             <Link
-              to={`/course/${detail?.courseCode}/lesson/${question?.lesson}/question`}
+              to={`/course/${detail?.courseCode}/lesson/question`}
               state={{
                 questionId: question?._id,
               }}

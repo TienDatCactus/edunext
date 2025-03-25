@@ -10,7 +10,7 @@ const parseTimeline = (data: any) => {
   const timelineMap = new Map<string, TimelineEvent[]>();
   console.log(data);
   data?.forEach((event: TimelineEvent) => {
-    const date = new Date(event.timeline.time);
+    const date = new Date(event?.timeline?.time);
     const day = date.getDate().toString();
     const month = (date.getMonth() + 1).toString(); // Months are zero-indexed
     const year = date.getFullYear().toString();

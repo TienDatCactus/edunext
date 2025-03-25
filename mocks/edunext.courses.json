@@ -1,0 +1,162 @@
+[
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc4"
+    },
+    "courseName": "Kỹ thuật lập trình",
+    "description": "Học về các kỹ thuật lập trình cơ bản, cấu trúc dữ liệu và giải thuật",
+    "courseCode": "PRF192",
+    "assignments": [
+      {
+        "$oid": "6788be800862e875d6ac1dd0"
+      }
+    ],
+    "instructor": {
+      "$oid": "67e0b0bc1cc1ca1ea5ac8fe6"
+    },
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    },
+    "lessons": ["6788be800862e875d6ac1dca"],
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1,
+    "forMajor": "IT",
+    "questionTypes": [
+      {
+        "type": "multiple_choice",
+        "description": "Câu hỏi trắc nghiệm nhiều lựa chọn"
+      },
+      {
+        "type": "coding",
+        "description": "Câu hỏi lập trình"
+      },
+      {
+        "type": "essay",
+        "description": "Câu hỏi tự luận"
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc5"
+    },
+    "courseName": "Lập trình Web",
+    "description": "Phát triển ứng dụng web với các công nghệ hiện đại",
+    "courseCode": "PRJ301",
+    "assignments": [],
+    "instructor": {
+      "$oid": "67e0b0bc1cc1ca1ea5ac8fe6"
+    },
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    },
+    "lessons": [],
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1,
+    "forMajor": "IT",
+    "questionTypes": [
+      {
+        "type": "multiple_choice",
+        "description": "Câu hỏi trắc nghiệm nhiều lựa chọn"
+      },
+      {
+        "type": "coding",
+        "description": "Câu hỏi lập trình"
+      },
+      {
+        "type": "project",
+        "description": "Dự án thực tế"
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc6"
+    },
+    "courseName": "Thiết kế đồ họa",
+    "description": "Học về nguyên tắc thiết kế và sử dụng công cụ thiết kế đồ họa",
+    "courseCode": "GDD201",
+    "assignments": [],
+    "instructor": {
+      "$oid": "67e0b47a1cc1ca1ea5ac8fee"
+    },
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    },
+    "lessons": [],
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1,
+    "forMajor": "GD",
+    "questionTypes": [
+      {
+        "type": "multiple_choice",
+        "description": "Câu hỏi trắc nghiệm nhiều lựa chọn"
+      },
+      {
+        "type": "design",
+        "description": "Bài tập thiết kế"
+      },
+      {
+        "type": "portfolio",
+        "description": "Tập hợp tác phẩm"
+      }
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dc7"
+    },
+    "courseName": "Marketing Quốc tế",
+    "description": "Học về chiến lược marketing trong môi trường kinh doanh quốc tế",
+    "courseCode": "MKT201",
+    "assignments": [],
+    "instructor": {
+      "$oid": "67e0b47a1cc1ca1ea5ac8fee"
+    },
+    "semester": {
+      "$oid": "6788be800862e875d6ac1dc0"
+    },
+    "lessons": [],
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1,
+    "forMajor": "MC",
+    "questionTypes": [
+      {
+        "type": "multiple_choice",
+        "description": "Câu hỏi trắc nghiệm nhiều lựa chọn"
+      },
+      {
+        "type": "case_study",
+        "description": "Phân tích tình huống"
+      },
+      {
+        "type": "presentation",
+        "description": "Thuyết trình"
+      }
+    ]
+  }
+]

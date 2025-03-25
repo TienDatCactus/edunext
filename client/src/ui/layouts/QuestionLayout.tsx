@@ -20,6 +20,7 @@ import {
   useCodeStore,
   useCourseStore,
   useQuestionStore,
+  useUserStore,
 } from "../../utils/zustand/Store";
 import QuestionSidebar from "../_elements/Layout/QuestionSidebar";
 import MainLayout from "./MainLayout";
@@ -35,12 +36,11 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   const location = useLocation();
   const questionId = location.state?.questionId;
   const { fetchQuestionById, question, loading } = useQuestionStore();
-  const [remainQuestions, setRemainQuestions] = useState<
-    {
-      questionId?: number;
-      status?: boolean;
-    }[]
-  >();
+  const { user } = useUserStore();
+  const [dataSource, setDataSource] = useState<
+    { key: number; input: any; output: any; status: string }[]
+  >([]);
+  console.log(question);
 
   const { actualOutput, codeloading } = useCodeStore();
   const swapper = {
@@ -56,6 +56,7 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
   useEffect(() => {
     fetchQuestionById(questionId);
   }, [questionId]);
+
   const onFinish = (values: any) => {
     console.log(values.date.$d.toISOString());
     console.log(values.time);
@@ -95,9 +96,6 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
       ),
     },
   ];
-  const [dataSource, setDataSource] = useState<
-    { key: number; input: any; output: any; status: string }[]
-  >([]);
 
   useEffect(() => {
     setDataSource(
@@ -186,87 +184,92 @@ const QuestionLayout: React.FC<React.PropsWithChildren<{}>> = ({
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-between">
-                  <Badge dot>
-                    <div className="flex items-center gap-2 *:text-[#878787] *:text-[0.875rem]">
-                      <p>
-                        {dayjs(question?.createdAt).format(
-                          "hh:mm ddd MMMM YYYY"
-                        )}
-                      </p>
-                      <span>-</span>
-                      <>
-                        {dayjs(question?.createdAt).format(
-                          "hh:mm ddd MMMM YYYY"
-                        )}
-                      </>
-                    </div>
-                  </Badge>
-                  <Popconfirm
-                    title="Đặt lại hạn nộp"
-                    okText="Lưu"
-                    okButtonProps={{ onClick: form.submit, htmlType: "submit" }}
-                    description={
-                      <Form
-                        className="flex flex-col gap-2 [&_.ant-form-item]:mb-0"
-                        form={form}
-                        onFinish={onFinish}
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        initialValues={{
-                          date: dayjs(question?.updatedAt),
-                          time: dayjs(question?.updatedAt),
-                        }}
-                      >
-                        <Form.Item
-                          label="Ngày"
-                          name="date"
-                          getValueProps={(value) => ({
-                            value: value && dayjs(Number(value)),
-                          })}
-                          normalize={(value) =>
-                            value && `${dayjs(value).valueOf()}`
-                          }
+                {user?.role == "2" && (
+                  <div className="flex items-center justify-between">
+                    <Badge dot>
+                      <div className="flex items-center gap-2 *:text-[#878787] *:text-[0.875rem]">
+                        <p>
+                          {dayjs(question?.createdAt).format(
+                            "hh:mm ddd MMMM YYYY"
+                          )}
+                        </p>
+                        <span>-</span>
+                        <>
+                          {dayjs(question?.createdAt).format(
+                            "hh:mm ddd MMMM YYYY"
+                          )}
+                        </>
+                      </div>
+                    </Badge>
+                    <Popconfirm
+                      title="Đặt lại hạn nộp"
+                      okText="Lưu"
+                      okButtonProps={{
+                        onClick: form.submit,
+                        htmlType: "submit",
+                      }}
+                      description={
+                        <Form
+                          className="flex flex-col gap-2 [&_.ant-form-item]:mb-0"
+                          form={form}
+                          onFinish={onFinish}
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          initialValues={{
+                            date: dayjs(question?.updatedAt),
+                            time: dayjs(question?.updatedAt),
+                          }}
                         >
-                          <DatePicker
-                            format={{
-                              format: "YYYY-MM-DD",
-                              type: "mask",
-                            }}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          label="Giờ"
-                          name="time"
-                          getValueProps={(value) => ({
-                            value: value && dayjs(Number(value)),
-                          })}
-                          normalize={(value) =>
-                            value && `${dayjs(value).valueOf()}`
-                          }
-                        >
-                          <TimePicker
-                            defaultValue={dayjs(question?.updatedAt)}
-                            format={format}
-                          />
-                        </Form.Item>
-                      </Form>
-                    }
-                    onConfirm={confirm}
-                    onOpenChange={() => console.log("open change")}
-                  >
-                    <Button color="danger" variant="solid">
-                      Đặt lại thời gian
-                    </Button>
-                  </Popconfirm>
-                </div>
+                          <Form.Item
+                            label="Ngày"
+                            name="date"
+                            getValueProps={(value) => ({
+                              value: value && dayjs(Number(value)),
+                            })}
+                            normalize={(value) =>
+                              value && `${dayjs(value).valueOf()}`
+                            }
+                          >
+                            <DatePicker
+                              format={{
+                                format: "YYYY-MM-DD",
+                                type: "mask",
+                              }}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            label="Giờ"
+                            name="time"
+                            getValueProps={(value) => ({
+                              value: value && dayjs(Number(value)),
+                            })}
+                            normalize={(value) =>
+                              value && `${dayjs(value).valueOf()}`
+                            }
+                          >
+                            <TimePicker
+                              defaultValue={dayjs(question?.updatedAt)}
+                              format={format}
+                            />
+                          </Form.Item>
+                        </Form>
+                      }
+                      onConfirm={confirm}
+                      onOpenChange={() => console.log("open change")}
+                    >
+                      <Button color="danger" variant="solid">
+                        Đặt lại thời gian
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                )}
               </div>
             </div>
             <main className="">{children}</main>
           </div>
           <QuestionSidebar
             meetings={detail?.meetings || []}
-            remainQuestions={remainQuestions || []}
+            questions={question.remainingQuestions || []}
           />
         </div>
       </Spin>

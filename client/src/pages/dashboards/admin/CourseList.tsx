@@ -12,13 +12,14 @@ import {
   Spin,
   Table,
   Tag,
+  Typography,
 } from "antd";
 
 import { Bell } from "@phosphor-icons/react/dist/ssr";
 import type { FormProps } from "antd";
 import ButtonGroup from "antd/es/button/button-group";
 import { FadersHorizontal, FunnelSimple, Plus } from "phosphor-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../../ui/layouts/DashboardLayout";
 import {
@@ -32,179 +33,143 @@ import {
   getAllUsers,
   logout,
 } from "../../../utils/api";
-import { User } from "../../../utils/interfaces";
+import { CourseItem, LessonItem, User } from "../../../utils/interfaces";
 import { useUserStore } from "../../../utils/zustand/Store";
 
-interface DataType {
-  key: string;
-  name: string;
-  description: string;
-  code: string;
-  status: string;
-}
-
 type FieldType = {
-  courseName?: String;
-  description?: String;
-  courseCode?: String;
-  assignments?: String[];
-  instructor?: String;
-  semester?: String;
-  lessons?: String[];
-  forMajor?: String;
-  status?: String;
+  courseId?: string;
+  courseName: string;
+  description: string;
+  courseCode: string;
+  assignments: string[];
+  instructor: string;
+  semester: string;
+  lessons: string[];
+  forMajor: string;
+  status: string;
 };
 
+const { Title } = Typography;
+
 function CourseList() {
-  const [courseList, setCourseList] = useState([]);
+  const [courseList, setCourseList] = useState<CourseItem[]>([]);
   const [lessonList, setLessonList] = useState([]);
   const [assignmentList, setAssignmentList] = useState([]);
   const [userList, setUserList] = useState([]);
   const [semesterList, setSemesterList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [course, setCourse] = useState({
-    courseId: "",
-    courseName: "",
-    description: "",
-    courseCode: "",
-    assignments: [],
-    instructor: "",
-    semester: "",
-    lessons: [],
-    forMajor: "",
-    status: "",
-  });
-
+  const [searchText, setSearchText] = useState("");
+  const [course, setCourse] = useState<CourseItem>();
+  console.log(course);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const fetchLessons = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const lessons = await getAllLessons();
-      if (lessons) {
-        setLessonList(lessons?.lessons);
-      } else {
-        message.error("Không có dữ liệu");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      const [courses, lessons, assignments, users, semesters] =
+        await Promise.all([
+          getAllCourses(),
+          getAllLessons(),
+          getAllAssignment(),
+          getAllUsers(),
+          getAllSemester(),
+        ]);
 
-  const fetchAssignment = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllAssignment();
-      if (res) {
-        setAssignmentList(res?.assignment);
-      } else {
-        message.error("Không có dữ liệu");
-      }
+      if (courses?.course) setCourseList(courses?.course);
+      if (lessons?.lessons) setLessonList(lessons?.lessons);
+      if (assignments?.assignment) setAssignmentList(assignments.assignment);
+      if (users?.users)
+        setUserList(users.users.filter((user: any) => user.role == "2"));
+      if (semesters?.semester) setSemesterList(semesters.semester);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching data:", error);
+      message.error("Không thể tải dữ liệu. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetChUser = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllUsers();
-      if (res) {
-        setUserList(res?.users);
-      } else {
-        message.error("Không có dữ liệu");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetSemester = async () => {
-    try {
-      setLoading(true);
-      const res = await getAllSemester();
-      if (res) {
-        setSemesterList(res?.semester);
-      } else {
-        message.error("Không có dữ liệu");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const fetchCourses = async () => {
-    try {
-      setLoading(true);
-      const courses = await getAllCourses();
-      if (courses) {
-        setCourseList(courses?.course);
-      } else {
-        message.error("Không có dữ liệu");
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchCourses();
-    fetchLessons();
-    fetchAssignment();
-    fetChUser();
-    fetSemester();
   }, []);
 
   useEffect(() => {
-    form.setFieldsValue(course);
-  }, [course]);
+    fetchData();
+  }, [fetchData]);
 
-  const columns: TableProps<DataType>["columns"] = [
+  useEffect(() => {
+    form.setFieldsValue(course);
+  }, [course, form]);
+
+  const columns: TableProps<CourseItem>["columns"] = [
     {
       title: "Tên khóa học",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "courseName",
+      key: "courseName",
+      render: (text) => <p>{text}</p>,
+      // sorter: (a: DataType, b: DataType) => a.name.localeCompare(b.name),
+      // filteredValue: [searchText],
+      // onFilter: (value: boolean | Key, record: DataType) => {
+      //   return (
+      //     record.name.toLowerCase().includes(value.toString().toLowerCase()) ||
+      //     record.code.toLowerCase().includes(value.toString().toLowerCase()) ||
+      //     record.description
+      //       ?.toLowerCase()
+      //       .includes(value.toString().toLowerCase())
+      //   );
+      // },
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
+      ellipsis: true,
     },
     {
       title: "Mã",
-      dataIndex: "code",
+      dataIndex: "courseCode",
+      key: "courseCode",
       render: (text) => (
         <Tag className="quick-sand" color="blue">
           #{text}
         </Tag>
       ),
-      key: "code",
+    },
+    {
+      title: "Giảng viên",
+      dataIndex: "instructor",
+      key: "instructor",
+      render: (text) => <p className="quick-sand">{text?.name}</p>,
+    },
+    {
+      title: "Kỳ học",
+      dataIndex: "semester",
+      key: "semester",
+      render: (text) => (
+        <Tag className="quick-sand" color="yellow">
+          #{text?.semesterName}
+        </Tag>
+      ),
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
+      key: "status",
       render: (text) => (
         <Tag className="quick-sand" color={text === "active" ? "green" : "red"}>
           {text === "active" ? "Hoạt động" : "Không hoạt động"}
         </Tag>
       ),
-      key: "status",
+      filters: [
+        { text: "Hoạt động", value: "active" },
+        { text: "Không hoạt động", value: "inactive" },
+      ],
+      onFilter: (value, record) => record.status === value,
     },
     {
-      title: "",
+      title: "Hành động",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
+        <Space size="small">
           <Button type="primary" onClick={() => handleFillDataUpdate(record)}>
             Sửa
           </Button>
@@ -216,168 +181,105 @@ function CourseList() {
     },
   ];
 
-  const data: DataType[] = courseList?.map((course: any) => {
-    return {
-      key: course._id,
-      id: course._id,
-      name: course.courseName,
-      description: course.description,
-      instructor: course.instructor,
-      semester: course.semester,
-      assignments: course.assignments[0],
-      lessons: course.lessons[0],
-      major: course.forMajor,
-      code: course.courseCode,
-      status: course.status,
-    };
-  });
+  const handleSubmit = async (values: FieldType) => {
+    try {
+      setSubmitting(true);
+      if (isUpdate) {
+        if (!course?._id) {
+          message.error("ID khóa học không hợp lệ");
+          return;
+        }
+        const res = await editCourse(course._id, values);
+        if (res) {
+          message.success("Cập nhật khóa học thành công");
+          fetchData();
+          setIsModalOpen(false);
+        }
+      } else {
+        const res = await addCourse(values);
+        if (res) {
+          message.success("Thêm khóa học thành công");
+          fetchData();
+          setIsModalOpen(false);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting course:", error);
+      message.error("Có lỗi xảy ra. Vui lòng thử lại.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-  const showModal = () => {
+  const handleDelete = async (record: CourseItem) => {
+    try {
+      const confirmed = Modal.confirm({
+        title: "Xác nhận xóa khóa học",
+        content: `Bạn có chắc chắn muốn xóa khóa học "${record.courseName}" không?`,
+        okText: "Xóa",
+        okType: "danger",
+        cancelText: "Hủy",
+      });
+
+      if (confirmed) {
+        const res = await deleteCourse(record._id || "");
+        if (res) {
+          message.success("Xóa khóa học thành công");
+          fetchData();
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      message.error("Có lỗi xảy ra khi xóa khóa học");
+    }
+  };
+
+  const handleFillDataUpdate = (record: CourseItem) => {
+    setIsUpdate(true);
+    setCourse({
+      _id: record._id,
+      courseName: record.courseName,
+      description: record.description,
+      courseCode: record.courseCode,
+      assignments: record.assignments,
+      instructor: record.instructor,
+      lessons:
+        record.lessons?.map((lesson: LessonItem) => ({
+          _id: lesson._id,
+          courseCode: lesson.courseCode,
+          courseName: lesson.courseName,
+          questions: lesson.questions || [],
+          title: lesson.title,
+          content: lesson.content,
+          deadline: lesson.deadline,
+          course: lesson.course,
+          tag: lesson.tag,
+          lessonGroups: lesson.lessonGroups || [],
+          question: lesson.question || [],
+        })) || [],
+      forMajor: record.forMajor,
+      status: record.status,
+    });
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
-    if (isUpdate) {
-      editCourse(course?.courseId, course).then((res) => {
-        if (res) {
-          message.success("Cập nhật thành công");
-          fetchCourses();
-        } else {
-          message.error("Cập nhật thất bại");
-        }
-      });
-    } else {
-      addCourse(course).then((res) => {
-        if (res) {
-          message.success("Thêm thành công");
-          fetchCourses();
-        } else {
-          message.error("Thêm thất bại");
-        }
-      });
-    }
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleChangeInput = (e: any) => {
-    setCourse({ ...course, [e.target.name]: e.target.value });
-  };
-  const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const doLogout = async () => {
-      try {
-        setLoading(true);
-        await logout();
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    return (
-      <div className="min-w-[200px]">
-        <div className="p-2 px-4 pb-0">
-          <h1 className="font-bold text-[16px]">
-            {user?.name} #{user?.FEID}
-          </h1>
-          <p className="my-0 text-[12px]">{user?.email}</p>
-        </div>
-        <Divider className="my-2 border-[#ccc]" />
-        <Spin spinning={loading}>
-          <ul className="p-2 pt-0">
-            <li>
-              <Button
-                className="border-none shadow-none hover:bg-[#ededed]"
-                block
-                onClick={() => navigate("/dashboard/account")}
-              >
-                Cài đặt
-              </Button>
-            </li>
-            <li>
-              <Button
-                className="border-none shadow-none hover:bg-[#ededed]"
-                block
-                onClick={doLogout}
-              >
-                Đăng xuất
-              </Button>
-            </li>
-          </ul>
-        </Spin>
-      </div>
-    );
-  };
-  const handleOpenAddModal = () => {
-    setIsUpdate(false);
-    setCourse({
-      courseId: "",
-      courseName: "",
-      description: "",
-      courseCode: "",
-      assignments: [],
-      instructor: "",
-      semester: "",
-      lessons: [],
-      forMajor: "",
-      status: "",
-    });
-    showModal();
-  };
-
-  const handleFillDataUpdate = (course: any) => {
-    setIsUpdate(true);
-    setCourse({
-      courseId: course?.id,
-      courseName: course?.name,
-      description: course?.description,
-      courseCode: course?.code,
-      assignments: course?.assignments?.title,
-      instructor: course?.instructor?.name,
-      semester: course?.semester?.semesterName,
-      lessons: course?.lessons?.title,
-      forMajor: course?.major,
-      status: course?.status,
-    });
-    showModal();
-  };
-
-  const handleDelete = (course: any) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa khóa học này không?")) {
-      deleteCourse(course.id).then((res) => {
-        if (res) {
-          message.success("Xóa thành công");
-          fetchCourses();
-        } else {
-          message.error("Xóa thất bại");
-        }
-      });
-    }
-  };
-
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-    console.log("Success:", values);
-  };
-
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
   const { user } = useUserStore();
 
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between p-4 my-2 bg-white rounded-lg shadow-md">
-        <h1 className="text-[2.5rem] font-semibold">Danh sách môn</h1>
+        <Title level={2} className="!mb-0">
+          Quản lý khóa học
+        </Title>
         <div className="flex items-center gap-4">
-          <Input.Search classNames={{ input: "quick-sand" }} />
-          <Bell size={24} />
+          <Input.Search
+            placeholder="Tìm kiếm khóa học..."
+            allowClear
+            className="w-64"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <Bell size={24} className="cursor-pointer" />
           <Popover
             overlayInnerStyle={{ padding: 0 }}
             content={<AccountMenu user={user} />}
@@ -387,190 +289,242 @@ function CourseList() {
             <img
               loading="lazy"
               src={`https://api.dicebear.com/9.x/notionists/svg?seed=${user?.FEID}`}
-              alt="dat"
+              alt="avatar"
               className="w-8 h-8 bg-white rounded-full border-[#ccc] shadow-md cursor-pointer active:shadow-none"
             />
           </Popover>
         </div>
       </div>
-      <div className=" bg-white rounded-lg shadow-md border border-[#d9d9d9]">
+
+      <div className="bg-white rounded-lg shadow-md border border-[#d9d9d9]">
         <div className="flex items-center justify-between px-4 py-2 my-2">
           <div>
-            <h1 className="font-semibold">Danh sách môn học</h1>
+            <Title level={4} className="!mb-0">
+              Danh sách khóa học
+            </Title>
             <span className="flex items-baseline gap-1">
-              <p className="text-[0.875rem]">Tổng số :</p>
-              <p className="text-[1rem] font-semibold">
-                {data ? data?.length : 0}
-              </p>
+              <Typography.Text>Tổng số:</Typography.Text>
+              <Typography.Text strong>
+                {courseList?.length || 0}
+              </Typography.Text>
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Input.Search
-              placeholder="Tìm kiếm khóa học"
-              classNames={{ input: "quick-sand" }}
-            />
             <ButtonGroup>
               <Button icon={<FunnelSimple size={20} />}>Sắp xếp</Button>
               <Button icon={<FadersHorizontal size={20} />} type="primary">
                 Lọc
               </Button>
             </ButtonGroup>
-            <Button type="dashed" icon={<Plus />} onClick={handleOpenAddModal}>
-              Thêm môn học
+            <Button
+              type="primary"
+              icon={<Plus />}
+              onClick={() => {
+                setIsUpdate(false);
+                form.resetFields();
+                setIsModalOpen(true);
+              }}
+            >
+              Thêm khóa học
             </Button>
           </div>
         </div>
 
-        <Table<DataType>
+        <Table<CourseItem>
           columns={columns}
+          dataSource={courseList}
           loading={loading}
-          dataSource={data}
           className="[&_.ant-table-thead_.ant-table-cell]:bg-[#f8f8f8] [&_.ant-table-tbody]:bg-[#fff]"
         />
       </div>
-      <Modal
-        title="Thêm khóa học"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <div>
-          <Form
-            form={form}
-            name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
-          >
-            <Form.Item<FieldType>
-              label="Tên khóa học"
-              name="courseName"
-              rules={[{ required: true, message: "Nhập tên khóa học" }]}
-            >
-              <Input name="courseName" onChange={handleChangeInput} />
-            </Form.Item>
 
-            <Form.Item<FieldType>
-              label="Mô tả"
-              name="description"
-              rules={[{ required: true, message: "Nhập mô tả chi tiết" }]}
-            >
-              <Input name="description" onChange={handleChangeInput} />
-            </Form.Item>
-            <Form.Item<FieldType>
+      <Modal
+        title={isUpdate ? "Cập nhật khóa học" : "Thêm khóa học mới"}
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+        width={800}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={course}
+          className="mt-4"
+        >
+          <Form.Item
+            label="Tên khóa học"
+            name="courseName"
+            rules={[{ required: true, message: "Vui lòng nhập tên khóa học" }]}
+          >
+            <Input placeholder="Nhập tên khóa học" />
+          </Form.Item>
+
+          <Form.Item
+            label="Mô tả"
+            name="description"
+            rules={[
+              { required: true, message: "Vui lòng nhập mô tả khóa học" },
+            ]}
+          >
+            <Input.TextArea
+              placeholder="Nhập mô tả chi tiết về khóa học"
+              rows={4}
+            />
+          </Form.Item>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
               label="Mã khóa học"
               name="courseCode"
-              rules={[{ required: true, message: "Nhập mã khóa học" }]}
+              rules={[{ required: true, message: "Vui lòng nhập mã khóa học" }]}
             >
-              <Input name="courseCode" onChange={handleChangeInput} />
+              <Input placeholder="Ví dụ: PRF192" />
             </Form.Item>
 
-            <Form.Item<FieldType> label="Assignments" name="assignments">
-              {isUpdate ? (
-                <Input
-                  name="assignments"
-                  onChange={handleChangeInput}
-                  disabled={isUpdate}
-                />
-              ) : (
-                <Select
-                  onChange={(value) =>
-                    setCourse({ ...course, assignments: value })
-                  }
-                  placeholder="Chọn assignment"
-                >
-                  {assignmentList?.map((assignment: any) => (
-                    <Select.Option value={assignment._id} key={assignment._id}>
-                      {assignment.title}
-                    </Select.Option>
-                  ))}
-                </Select>
-              )}
-            </Form.Item>
-
-            <Form.Item<FieldType> label="Instructor" name="instructor">
-              {isUpdate ? (
-                <Input onChange={handleChangeInput} disabled={isUpdate} />
-              ) : (
-                <Select
-                  onChange={(value) =>
-                    setCourse({ ...course, instructor: value })
-                  }
-                  placeholder="Chọn người hướng dẫn"
-                >
-                  {userList?.map((user: any) => (
-                    <Select.Option value={user._id} key={user._id}>
-                      {user.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              )}
-            </Form.Item>
-
-            <Form.Item<FieldType> label="Kỳ học" name="semester">
-              {isUpdate ? (
-                <Input
-                  name="semester"
-                  onChange={handleChangeInput}
-                  disabled={isUpdate}
-                />
-              ) : (
-                <Select
-                  onChange={(value) =>
-                    setCourse({ ...course, semester: value })
-                  }
-                  placeholder="Chọn kỳ học"
-                >
-                  {semesterList?.map((semester: any) => (
-                    <Select.Option value={semester._id} key={semester._id}>
-                      {semester.semesterName}
-                    </Select.Option>
-                  ))}
-                </Select>
-              )}
-            </Form.Item>
-
-            <Form.Item<FieldType> label="Lessons" name="lessons">
-              {isUpdate ? (
-                <Input
-                  name="lessons"
-                  onChange={handleChangeInput}
-                  disabled={isUpdate}
-                />
-              ) : (
-                <Select
-                  onChange={(value) => setCourse({ ...course, lessons: value })}
-                  placeholder="Chọn bài học"
-                >
-                  {lessonList?.map((lesson: any) => (
-                    <Select.Option value={lesson._id} key={lesson._id}>
-                      {lesson.title}
-                    </Select.Option>
-                  ))}
-                </Select>
-              )}
-            </Form.Item>
-            <Form.Item<FieldType> label="Status" name="status">
-              <Select
-                onChange={(value) => setCourse({ ...course, status: value })}
-                placeholder="Chọn trạng thái"
-              >
-                <Select.Option value="active">Hoạt động</Select.Option>
-                <Select.Option value="inactive">Ngừng hoạt động</Select.Option>
+            <Form.Item
+              label="Chuyên ngành"
+              name="forMajor"
+              rules={[
+                { required: true, message: "Vui lòng chọn chuyên ngành" },
+              ]}
+            >
+              <Select placeholder="Chọn chuyên ngành">
+                <Select.Option value="SE">Kỹ thuật phần mềm</Select.Option>
+                <Select.Option value="AI">Trí tuệ nhân tạo</Select.Option>
+                <Select.Option value="IB">Kinh doanh quốc tế</Select.Option>
+                <Select.Option value="GD">Thiết kế đồ họa</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item<FieldType> label="Chuyên ngành" name="forMajor">
-              <Input name="forMajor" onChange={handleChangeInput} />
+
+            <Form.Item
+              label="Giảng viên"
+              name="instructor"
+              rules={[{ required: true, message: "Vui lòng chọn giảng viên" }]}
+            >
+              <Select placeholder="Chọn giảng viên">
+                {userList?.map((user: any) => (
+                  <Select.Option key={user._id} value={user._id}>
+                    {user.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
-          </Form>
-        </div>
+
+            <Form.Item
+              label="Kỳ học"
+              name="semester"
+              rules={[{ required: true, message: "Vui lòng chọn kỳ học" }]}
+            >
+              <Select placeholder="Chọn kỳ học">
+                {semesterList?.map((semester: any) => (
+                  <Select.Option key={semester._id} value={semester._id}>
+                    {semester.semesterName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Bài tập" name="assignments">
+              <Select
+                mode="multiple"
+                placeholder="Chọn bài tập"
+                optionFilterProp="children"
+              >
+                {assignmentList?.map((assignment: any) => (
+                  <Select.Option key={assignment._id} value={assignment._id}>
+                    {assignment.title}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item label="Bài học" name="lessons">
+              <Select
+                mode="multiple"
+                placeholder="Chọn bài học"
+                optionFilterProp="children"
+              >
+                {lessonList?.map((lesson: any) => (
+                  <Select.Option key={lesson._id} value={lesson._id}>
+                    {lesson.content}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
+
+          <Form.Item
+            label="Trạng thái"
+            name="status"
+            rules={[{ required: true, message: "Vui lòng chọn trạng thái" }]}
+          >
+            <Select placeholder="Chọn trạng thái">
+              <Select.Option value="active">Hoạt động</Select.Option>
+              <Select.Option value="inactive">Không hoạt động</Select.Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item className="flex justify-end mb-0">
+            <Space>
+              <Button onClick={() => setIsModalOpen(false)}>Hủy</Button>
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                {isUpdate ? "Cập nhật" : "Thêm mới"}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </DashboardLayout>
   );
 }
+
+const AccountMenu: React.FC<{ user?: User }> = ({ user }) => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const doLogout = async () => {
+    try {
+      setLoading(true);
+      await logout();
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+  return (
+    <div className="min-w-[200px]">
+      <div className="p-2 px-4 pb-0">
+        <h1 className="font-bold text-[16px]">
+          {user?.name} #{user?.FEID}
+        </h1>
+        <p className="my-0 text-[12px]">{user?.email}</p>
+      </div>
+      <Divider className="my-2 border-[#ccc]" />
+      <Spin spinning={loading}>
+        <ul className="p-2 pt-0">
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={() => navigate("/dashboard/account")}
+            >
+              Cài đặt
+            </Button>
+          </li>
+          <li>
+            <Button
+              className="border-none shadow-none hover:bg-[#ededed]"
+              block
+              onClick={doLogout}
+            >
+              Đăng xuất
+            </Button>
+          </li>
+        </ul>
+      </Spin>
+    </div>
+  );
+};
 
 export default CourseList;

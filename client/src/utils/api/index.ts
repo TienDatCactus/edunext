@@ -68,7 +68,14 @@ const getCourseDetail = async (courseCode: string) => {
 const getQuestionDetail = async (questionId: string) => {
   try {
     const resp = await http.get(`${questionApi}/${questionId}`);
-    if (resp?.data) return resp?.data;
+    if (resp?.data) {
+      const { question, remainingQuestions, isOk } = resp.data;
+      return {
+        question,
+        remainingQuestions,
+        isOk,
+      };
+    }
     return null;
   } catch (error) {
     return error;

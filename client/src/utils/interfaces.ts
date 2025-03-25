@@ -165,6 +165,7 @@ export interface Question {
   lesson?: string;
   status?: boolean;
   createdAt?: string;
+  remainingQuestions?: Question[];
   updatedAt?: string;
   type?: "quiz" | "code" | "response";
 }

@@ -355,7 +355,7 @@ const TeacherList = (): JSX.Element => {
       icon: <Users />,
       children: (
         <div>
-          <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-lg mb-4">
+          <div className="flex items-center justify-between p-2 mb-4 bg-white rounded-lg shadow-lg">
             <div>
               <h1 className="text-[2.125rem] font-semibold">
                 Danh sách giáo viên
@@ -427,7 +427,7 @@ const TeacherList = (): JSX.Element => {
       icon: <BookOpen />,
       children: selectedTeacher ? (
         <div>
-          <div className="flex items-center justify-between p-2 bg-white rounded-lg shadow-lg mb-4">
+          <div className="flex items-center justify-between p-2 mb-4 bg-white rounded-lg shadow-lg">
             <div>
               <h1 className="text-[2.125rem] font-semibold">
                 Khóa học của {selectedTeacher.name}
@@ -487,7 +487,7 @@ const TeacherList = (): JSX.Element => {
           </Row>
         </div>
       ) : (
-        <div className="text-center p-8">
+        <div className="p-8 text-center">
           <GraduationCap size={48} className="mx-auto mb-4" />
           <p className="text-lg">Vui lòng chọn một giáo viên để xem khóa học</p>
         </div>
@@ -501,7 +501,7 @@ const TeacherList = (): JSX.Element => {
         activeKey={activeTab}
         onChange={setActiveTab}
         items={items}
-        className="bg-white rounded-lg shadow-lg p-4"
+        className="p-4 bg-white rounded-lg shadow-lg"
       />
 
       {/* Teacher Modal */}

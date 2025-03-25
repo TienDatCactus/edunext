@@ -94,7 +94,11 @@ const viewQuestionDetail = async (req, res) => {
     if (question?.isOk === false) {
       return res.status(400).json({ error: question?.error, isOk: false });
     }
-    res.json({ question: question?.question, isOk: true });
+    res.json({
+      question: question?.question,
+      remainingQuestions: question?.remainingQuestions,
+      isOk: true,
+    });
   } catch (error) {
     console.error("Question fetch error:", error);
     res.status(500).json({ error: "Internal server error", isOk: false });

@@ -258,61 +258,194 @@ const addCourse = async (req, res) => {
       courseName,
       description,
       courseCode,
-      instructor = "",
-      semester = "",
+      assignments,
+      instructor,
+      semester,
+      lessons,
       forMajor,
-      status = "active",
-      assignments = [],
-      lessons = [],
+      status,
     } = req.body;
-    const newCourse = new Course({
+
+    // Validate required fields
+    if (!courseName || !courseCode || !instructor || !semester || !forMajor) {
+      return res.status(400).json({
+        error: "Vui lòng điền đầy đủ thông tin bắt buộc",
+        isOk: false,
+      });
+    }
+
+    // Check if course code already exists
+    const existingCourse = await Course.findOne({ courseCode });
+    if (existingCourse) {
+      return res.status(400).json({
+        error: "Mã khóa học đã tồn tại",
+        isOk: false,
+      });
+    }
+
+    // Create new course
+    const course = new Course({
       courseName,
       description,
       courseCode,
+      assignments: assignments || [],
       instructor,
       semester,
+      lessons: lessons || [],
       forMajor,
-      status,
-      assignments,
-      lessons,
+      status: status || "active",
     });
-    if (!newCourse) {
-      return res.status(404).json({ error: "Lỗi máy chủ" });
-    }
-    const saveCourse = await newCourse.save();
-    res.status(201).json({ message: "Add successfully", saveCourse });
+
+    await course.save();
+
+    // Add course to semester
+    await Semester.findByIdAndUpdate(
+      semester,
+      { $push: { courses: course._id } },
+      { new: true }
+    );
+
+    res.status(201).json({
+      message: "Thêm khóa học thành công",
+      course,
+      isOk: true,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error adding course:", error);
+    res.status(500).json({
+      error: "Lỗi khi thêm khóa học",
+      isOk: false,
+    });
   }
 };
 const editCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { courseName, description, courseCode, forMajor } = req.body;
-    const newCourse = await Course.findByIdAndUpdate(courseId, {
+    const {
       courseName,
       description,
       courseCode,
+      assignments,
+      instructor,
+      semester,
+      lessons,
       forMajor,
-    });
-    if (!newCourse) {
-      return res.status(404).json({ error: "Lỗi máy chủ" });
+      status,
+    } = req.body;
+
+    // Validate required fields
+    if (!courseName || !courseCode || !instructor || !semester || !forMajor) {
+      return res.status(400).json({
+        error: "Vui lòng điền đầy đủ thông tin bắt buộc",
+        isOk: false,
+      });
     }
-    res.status(200).json({ newCourse, isOk: true });
+
+    // Check if course exists
+    const existingCourse = await Course.findById(courseId);
+    if (!existingCourse) {
+      return res.status(404).json({
+        error: "Không tìm thấy khóa học",
+        isOk: false,
+      });
+    }
+
+    // Check if new course code conflicts with other courses
+    const codeConflict = await Course.findOne({
+      courseCode,
+      _id: { $ne: courseId },
+    });
+    if (codeConflict) {
+      return res.status(400).json({
+        error: "Mã khóa học đã tồn tại",
+        isOk: false,
+      });
+    }
+
+    // If semester changed, update semester references
+    if (existingCourse.semester.toString() !== semester) {
+      // Remove course from old semester
+      await Semester.findByIdAndUpdate(existingCourse.semester, {
+        $pull: { courses: courseId },
+      });
+
+      // Add course to new semester
+      await Semester.findByIdAndUpdate(semester, {
+        $push: { courses: courseId },
+      });
+    }
+
+    // Update course
+    const updatedCourse = await Course.findByIdAndUpdate(
+      courseId,
+      {
+        courseName,
+        description,
+        courseCode,
+        assignments,
+        instructor,
+        semester,
+        lessons,
+        forMajor,
+        status,
+      },
+      { new: true }
+    );
+
+    res.json({
+      message: "Cập nhật khóa học thành công",
+      course: updatedCourse,
+      isOk: true,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating course:", error);
+    res.status(500).json({
+      error: "Lỗi khi cập nhật khóa học",
+      isOk: false,
+    });
   }
 };
 const deleteCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const course = await Course.findByIdAndDelete(courseId);
+
+    // Check if course exists
+    const course = await Course.findById(courseId);
     if (!course) {
-      return res.status(404).json({ error: "Lỗii máy chủ" });
+      return res.status(404).json({
+        error: "Không tìm thấy khóa học",
+        isOk: false,
+      });
     }
-    res.status(200).json({ message: "Delete successfully", isOk: true });
+
+    // Remove course from semester
+    await Semester.findByIdAndUpdate(course.semester, {
+      $pull: { courses: courseId },
+    });
+
+    // Delete associated lessons
+    if (course.lessons && course.lessons.length > 0) {
+      await Lesson.deleteMany({ _id: { $in: course.lessons } });
+    }
+
+    // Delete associated assignments
+    if (course.assignments && course.assignments.length > 0) {
+      await Assignment.deleteMany({ _id: { $in: course.assignments } });
+    }
+
+    // Delete the course
+    await Course.findByIdAndDelete(courseId);
+
+    res.json({
+      message: "Xóa khóa học thành công",
+      isOk: true,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting course:", error);
+    res.status(500).json({
+      error: "Lỗi khi xóa khóa học",
+      isOk: false,
+    });
   }
 };
 
@@ -337,15 +470,15 @@ module.exports = {
   viewCourseDetail,
   viewCourseMeetings,
   getCourseraCourses,
+  getUdemyCourses,
   viewAllCourses,
   changeStatusCourses,
   viewCourseByInstructor,
   viewCourseStudents,
   randomGroupForStudent,
+  viewCourseGroups,
   addCourse,
   editCourse,
   deleteCourse,
   viewCountStatistics,
-  getUdemyCourses,
-  viewCourseGroups,
 };

@@ -46,6 +46,7 @@ const items: MenuProps["items"] = [
 
 const HomePage: React.FC = () => {
   const { courses, error, loading, fetchCourses } = useCourseStore();
+  console.log(courses);
   useEffect(() => {
     if (error) message.error(error);
     return () => {
@@ -79,15 +80,16 @@ const HomePage: React.FC = () => {
         <div className="">
           <Spin spinning={loading}>
             <Row className="flex flex-wrap items-center gap-10">
-              {courses?.map((item, index) => {
-                return (
-                  <Col key={index} span={6}>
-                    <CourseCard item={item} />
-                  </Col>
-                );
-              })}
+              {!!courses?.length &&
+                courses?.map((item, index) => {
+                  return (
+                    <Col key={index} span={6}>
+                      <CourseCard item={item} />
+                    </Col>
+                  );
+                })}
             </Row>
-            {courses?.length === 0 && (
+            {courses?.length == 0 && (
               <Empty
                 image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                 imageStyle={{

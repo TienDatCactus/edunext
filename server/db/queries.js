@@ -192,7 +192,19 @@ const getQuestionById = async (questionId) => {
         isOk: false,
       };
     }
-    return { question: question, isOk: true };
+
+    // Get remaining questions from the same lesson
+    const remainingQuestions = await Question.find({
+      lesson: question.lesson,
+      _id: { $ne: questionId },
+    });
+    return {
+      question: {
+        ...question._doc,
+        isOk: true,
+      },
+      remainingQuestions: remainingQuestions,
+    };
   } catch (error) {
     return {
       error: "Lỗi lấy thông tin câu hỏi",

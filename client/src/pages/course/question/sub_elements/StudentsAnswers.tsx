@@ -92,8 +92,8 @@ const StudentsAnswers: React.FC = () => {
           </div>
         </Dropdown>
       </div>
-      <ul className="flex flex-col gap-4">
-        {allSubmissions?.length == 0 && (
+      <ul className="">
+        {allSubmissions?.length == 0 ? (
           <Empty
             image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
             imageStyle={{
@@ -106,22 +106,23 @@ const StudentsAnswers: React.FC = () => {
               <p className="py-2 text-[16px]">Chưa có câu trả lời nào</p>
             }
           />
+        ) : (
+          <Spin spinning={loading}>
+            {!!allSubmissions.length &&
+              allSubmissions?.map((submission, index) => (
+                <Answer
+                  _id={submission?._id}
+                  key={index}
+                  content={submission?.content}
+                  createdAt={submission?.createdAt}
+                  user={submission?.user}
+                  comments={submission?.comments}
+                  setLoading={setLoading}
+                  setAllSubmissions={setAllSubmissions}
+                />
+              ))}
+          </Spin>
         )}
-        <Spin spinning={loading}>
-          {!!allSubmissions.length &&
-            allSubmissions?.map((submission, index) => (
-              <Answer
-                _id={submission?._id}
-                key={index}
-                content={submission?.content}
-                createdAt={submission?.createdAt}
-                user={submission?.user}
-                comments={submission?.comments}
-                setLoading={setLoading}
-                setAllSubmissions={setAllSubmissions}
-              />
-            ))}
-        </Spin>
       </ul>
     </div>
   );

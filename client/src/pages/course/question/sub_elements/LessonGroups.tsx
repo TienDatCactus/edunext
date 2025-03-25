@@ -13,7 +13,10 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { useQuestionStore } from "../../../../utils/zustand/Store";
+import {
+  useQuestionStore,
+  useUserStore,
+} from "../../../../utils/zustand/Store";
 import { arrangeGroup, getCourseGroup } from "../../../../utils/api";
 import { useLocation } from "react-router-dom";
 import { DotsThreeVertical } from "phosphor-react";
@@ -23,6 +26,7 @@ import { s } from "framer-motion/dist/types.d-6pKw1mTI";
 import dayjs from "dayjs";
 const { Text, Link } = Typography;
 const Group: React.FC = () => {
+  const { user } = useUserStore();
   const [openModal, setOpenModal] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [groups, setGroups] = useState<
@@ -139,67 +143,71 @@ const Group: React.FC = () => {
                 justifyContent: "center",
                 margin: "auto",
               }}
-              className="pt-20"
+              className="col-span-12 pt-20"
               description={
                 <div>
                   <p className="py-2 text-[16px]">Môn học chưa có nhóm nào</p>
-                  <Badge dot>
-                    <Button onClick={showModal} type="dashed">
-                      Ấn để tạo nhóm
-                    </Button>
-                    <Modal
-                      title="Tạo nhóm"
-                      open={openModal}
-                      onOk={handleOk}
-                      confirmLoading={confirmLoading}
-                      onCancel={handleCancel}
-                    >
-                      <h1 className="my-2 font-semibold text-center">
-                        HE180012
-                      </h1>
-                      <div className="flex items-center justify-center">
-                        <Text keyboard>Tạo ngẫu nhiên</Text>
-                      </div>
-                      <div className="border-2 rounded-lg min-h-[100px] border-[#ccc] border-dashed my-2">
-                        <div className="flex items-center justify-center gap-1 py-3 border-b-2 border-dashed">
-                          <p>Sĩ số lớp : </p>
-                          <span className="font-semibold text-amber-500">
-                            30
-                          </span>
-                          <p>sinh viên</p>
+                  {user?.role == "2" && (
+                    <Badge dot>
+                      <Button onClick={showModal} type="dashed">
+                        Ấn để tạo nhóm
+                      </Button>
+                      <Modal
+                        title="Tạo nhóm"
+                        open={openModal}
+                        onOk={handleOk}
+                        confirmLoading={confirmLoading}
+                        onCancel={handleCancel}
+                      >
+                        <h1 className="my-2 font-semibold text-center">
+                          HE180012
+                        </h1>
+                        <div className="flex items-center justify-center">
+                          <Text keyboard>Tạo ngẫu nhiên</Text>
                         </div>
-                        <Form className="flex flex-col items-center justify-center py-4">
-                          <h1 className="mb-2">
-                            Bạn muốn chia bao nhiêu nhóm?
-                          </h1>
-                          <Form.Item
-                            className="flex flex-col items-center justify-center"
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
-                            help={
-                              <p className="text-[12px]">
-                                *Giá trị với sai số lớn có thể khiến việc xếp
-                                lớp khó khăn hơn.
-                              </p>
-                            }
-                          >
-                            <div className="flex justify-center">
-                              <InputNumber
-                                max={10}
-                                className="min-w-[140px] mb-2 "
-                                status={30 % Number(number) != 0 ? "error" : ""}
-                                value={number}
-                                onChange={setNumber}
-                              />
-                            </div>
-                          </Form.Item>
-                        </Form>
-                      </div>
-                    </Modal>
-                  </Badge>
+                        <div className="border-2 rounded-lg min-h-[100px] border-[#ccc] border-dashed my-2">
+                          <div className="flex items-center justify-center gap-1 py-3 border-b-2 border-dashed">
+                            <p>Sĩ số lớp : </p>
+                            <span className="font-semibold text-amber-500">
+                              30
+                            </span>
+                            <p>sinh viên</p>
+                          </div>
+                          <Form className="flex flex-col items-center justify-center py-4">
+                            <h1 className="mb-2">
+                              Bạn muốn chia bao nhiêu nhóm?
+                            </h1>
+                            <Form.Item
+                              className="flex flex-col items-center justify-center"
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
+                              help={
+                                <p className="text-[12px]">
+                                  *Giá trị với sai số lớn có thể khiến việc xếp
+                                  lớp khó khăn hơn.
+                                </p>
+                              }
+                            >
+                              <div className="flex justify-center">
+                                <InputNumber
+                                  max={10}
+                                  className="min-w-[140px] mb-2 "
+                                  status={
+                                    30 % Number(number) != 0 ? "error" : ""
+                                  }
+                                  value={number}
+                                  onChange={setNumber}
+                                />
+                              </div>
+                            </Form.Item>
+                          </Form>
+                        </div>
+                      </Modal>
+                    </Badge>
+                  )}
                 </div>
               }
             />

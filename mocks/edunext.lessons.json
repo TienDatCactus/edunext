@@ -1,0 +1,122 @@
+[
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dca"
+    },
+    "lessonName": "Giới thiệu về lập trình",
+    "description": "Tổng quan về lập trình và các khái niệm cơ bản",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc4"
+    },
+    "content": "Nội dung bài học về giới thiệu lập trình...",
+    "order": 1,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dcb"
+    },
+    "lessonName": "Cấu trúc dữ liệu cơ bản",
+    "description": "Học về các cấu trúc dữ liệu cơ bản trong lập trình",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc4"
+    },
+    "content": "Nội dung bài học về cấu trúc dữ liệu...",
+    "order": 2,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dcc"
+    },
+    "lessonName": "Spring Framework cơ bản",
+    "description": "Giới thiệu về Spring Framework và các thành phần cơ bản",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc5"
+    },
+    "content": "Nội dung bài học về Spring Framework...",
+    "order": 1,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dcd"
+    },
+    "lessonName": "RESTful API với Spring Boot",
+    "description": "Xây dựng RESTful API sử dụng Spring Boot",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc5"
+    },
+    "content": "Nội dung bài học về RESTful API...",
+    "order": 2,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dce"
+    },
+    "lessonName": "Nguyên tắc thiết kế đồ họa",
+    "description": "Các nguyên tắc cơ bản trong thiết kế đồ họa",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc6"
+    },
+    "content": "Nội dung bài học về nguyên tắc thiết kế...",
+    "order": 1,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  },
+  {
+    "_id": {
+      "$oid": "6788be800862e875d6ac1dcf"
+    },
+    "lessonName": "Công cụ thiết kế đồ họa",
+    "description": "Hướng dẫn sử dụng các công cụ thiết kế đồ họa phổ biến",
+    "course": {
+      "$oid": "6788be800862e875d6ac1dc6"
+    },
+    "content": "Nội dung bài học về công cụ thiết kế...",
+    "order": 2,
+    "status": "active",
+    "createdAt": {
+      "$date": "2024-01-16T08:08:32.983Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-24T01:19:13.189Z"
+    },
+    "__v": 1
+  }
+]

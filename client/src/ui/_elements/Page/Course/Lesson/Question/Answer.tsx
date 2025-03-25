@@ -42,7 +42,7 @@ const Answer: React.FC<SubmissionItem> = ({
     }
   };
   return (
-    <li>
+    <li className="my-4">
       <div className="grid items-start grid-cols-12 gap-2">
         <div className="flex justify-center">
           <img

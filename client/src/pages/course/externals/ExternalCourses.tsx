@@ -1,7 +1,7 @@
 import { Archive, CaretDown } from "@phosphor-icons/react";
 import { Button, Col, Dropdown, Row, Skeleton, Space, Spin } from "antd";
 import { MenuProps } from "antd/es/menu";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import coursera from "../../../assets/icons/coursera-svgrepo-com.svg";
 import udemy from "../../../assets/icons/udemy-svgrepo-com.svg";
 import MainLayout from "../../../ui/layouts/MainLayout";
@@ -11,6 +11,7 @@ import {
 } from "../../../utils/zustand/Store";
 import ExternalCourseCard from "./elements/ExternalCourseCard";
 import { X } from "phosphor-react";
+import ExternalCourseSidebar from "../../../ui/_elements/Layout/ExternalCourseSidebar";
 const items: MenuProps["items"] = [
   {
     key: "1",
@@ -49,12 +50,16 @@ const ExternalCourses: React.FC = () => {
       fetchCourseraCourses(keyword);
     };
   }, []);
+  const [filter, setFilter] = useState<any>({});
+  const handleFilterChange = (filters: any) => {
+    setFilter(filters);
+  };
   return (
     <MainLayout>
       <div className="px-4 py-2 shadow-lg border border-[#d9d9d9] bg-white min-h-screen">
         <Row gutter={[6, 16]}>
           <Col className="" span={6}>
-            dat
+            <ExternalCourseSidebar onFilterChange={handleFilterChange} />
           </Col>
           <Col span={18}>
             <div className="flex items-center justify-between">

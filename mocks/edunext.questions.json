@@ -1,0 +1,152 @@
+[{
+  "_id": {
+    "$oid": "67c05f6706cde174f3c7da86"
+  },
+  "content": [
+    {
+      "title": "daasdasdasddsaddadasd",
+      "answers": [
+        "ad",
+        "dddassa"
+      ],
+      "correctAnswer": null
+    }
+  ],
+  "status": false,
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  },
+  "type": "quiz",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-02-27T12:49:43.089Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-07T01:59:27.949Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c0684706cde174f3c7da9d"
+  },
+  "content": [
+    {
+      "title": "dasdasdadasdasd",
+      "answers": [
+        "Answer 1",
+        "Answer 2"
+      ],
+      "correctAnswer": null
+    }
+  ],
+  "status": false,
+  "lesson": {
+    "$oid": "6788be800862e875d6ac1dca"
+  },
+  "type": "quiz",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-02-27T13:27:35.800Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-09T15:29:20.711Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e0b2b2155629ccd9e94194"
+  },
+  "content": [
+    {
+      "title": "Câu lệnh nào dùng để lặp vô hạn trong ngôn ngữ C?",
+      "answers": [
+        "for(;;)",
+        "while(false)",
+        "do {} while(false)",
+        "if(true)"
+      ],
+      "correctAnswer": 0
+    }
+  ],
+  "status": false,
+  "lesson": "6788be800862e875d6ac1dca",
+  "type": "quiz",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-24T01:17:38.547Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T01:17:38.547Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e0b2b2155629ccd9e94195"
+  },
+  "content": [
+    {
+      "title": "HTML viết tắt của cụm từ nào?",
+      "answers": [
+        "Hyper Text Markup Language",
+        "High Text Machine Language",
+        "Hyper Tabular Markup Language",
+        "None of these"
+      ],
+      "correctAnswer": null
+    }
+  ],
+  "status": false,
+  "lesson": "6788be800862e875d6ac1dca",
+  "type": "quiz",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-24T01:17:38.547Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T01:17:38.547Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e0b2e4155629ccd9e94199"
+  },
+  "content": "Trình bày sự khác biệt giữa lập trình hướng đối tượng (OOP) và lập trình hướng thủ tục (Procedural Programming). Lấy ví dụ minh họa cho từng mô hình.",
+  "status": false,
+  "lesson": "6788be800862e875d6ac1dca",
+  "type": "response",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-24T01:18:28.960Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T01:18:28.960Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67e0b305155629ccd9e9419d"
+  },
+  "content": {
+    "cases": [
+      {
+        "input": "1+1",
+        "expectedOutput": "2"
+      },
+      {
+        "input": "2+2",
+        "expectedOutput": "4",
+        "isHidden": false
+      }
+    ]
+  },
+  "status": false,
+  "lesson": "6788be800862e875d6ac1dca",
+  "type": "code",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-03-24T01:19:01.616Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-24T01:19:01.616Z"
+  }
+}]

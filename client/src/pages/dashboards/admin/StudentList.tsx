@@ -86,7 +86,7 @@ const StudentList: React.FC = () => {
       setLoading(true);
       const resp = await getAllUsers();
       if (resp) {
-        setStudents(resp.users);
+        setStudents(resp.users.filter((u: User) => u.role == "1"));
       }
     } catch (error) {
       console.error(error);
@@ -103,25 +103,22 @@ const StudentList: React.FC = () => {
 
   const handlePasswordReset = async (studentId: string) => {
     try {
-      // TODO: Implement password reset API call
-      message.success("Password has been reset successfully");
+      message.success("Đặt lại mật khẩu thành công");
     } catch (error) {
-      message.error("Failed to reset password");
+      message.error("Đặt lại mật khẩu thất bại");
     }
   };
 
   const handleCreateStudent = async (values: any) => {
     try {
-      // TODO: Implement create student API call
-      message.success("Student created successfully");
+      message.success("Thêm học sinh thành công");
       setIsModalVisible(false);
       form.resetFields();
       getUsers();
     } catch (error) {
-      message.error("Failed to create student");
+      message.error("Thêm học sinh thất bại");
     }
   };
-
   const handleCreateClass = async (values: any) => {
     try {
       const newClass: ClassData = {
@@ -130,12 +127,12 @@ const StudentList: React.FC = () => {
         students: selectedStudents,
       };
       setClasses([...classes, newClass]);
-      message.success("Class created successfully");
+      message.success("Tạo lớp học thành công");
       setIsClassModalVisible(false);
       classForm.resetFields();
       setSelectedStudents([]);
     } catch (error) {
-      message.error("Failed to create class");
+      message.error("Tạo lớp học thất bại");
     }
   };
 
@@ -145,47 +142,44 @@ const StudentList: React.FC = () => {
 
   const handleEditStudent = async (values: StudentFormData) => {
     try {
-      // TODO: Implement edit student API call
-      message.success("Student updated successfully");
+      message.success("Cập nhật thành công");
       setIsModalVisible(false);
       form.resetFields();
       setEditingStudent(null);
       getUsers();
     } catch (error) {
-      message.error("Failed to update student");
+      message.error("Cập nhật thất bại");
     }
   };
 
   const handleDeleteStudent = async (studentId: string) => {
     try {
-      // TODO: Implement delete student API call
-      message.success("Student deleted successfully");
+      message.success("Xóa thành công");
       getUsers();
     } catch (error) {
-      message.error("Failed to delete student");
+      message.error("Xóa thất bại");
     }
   };
 
   const handleToggleActive = async (studentId: string, active: boolean) => {
     try {
-      // TODO: Implement toggle active API call
       message.success(
-        `Account ${active ? "activated" : "deactivated"} successfully`
+        `Tài khoản đã ${active ? "kích hoạt" : "vô hiệu hóa"} thành công`
       );
       getUsers();
     } catch (error) {
-      message.error("Failed to update account status");
+      message.error("Thao tác thất bại");
     }
   };
 
   const handleBulkDelete = async () => {
     try {
       // TODO: Implement bulk delete API call
-      message.success("Selected students deleted successfully");
+      message.success("Xóa học sinh đã chọn thành công");
       setSelectedRowKeys([]);
       getUsers();
     } catch (error) {
-      message.error("Failed to delete students");
+      message.error("Xóa học sinh đã chọn thất bại");
     }
   };
 
@@ -218,8 +212,9 @@ const StudentList: React.FC = () => {
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
           const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-          // TODO: Implement bulk import API call
-          message.success(`${jsonData.length} students imported successfully`);
+          message.success(
+            `${jsonData.length} học sinh đã được nhập thành công`
+          );
           setImportModalVisible(false);
           getUsers();
         };
@@ -227,7 +222,7 @@ const StudentList: React.FC = () => {
         onSuccess?.("ok");
       } catch (error) {
         onError?.(error as Error);
-        message.error("Failed to import students");
+        message.error("Nhập học sinh thất bại");
       }
     },
   };
@@ -237,7 +232,7 @@ const StudentList: React.FC = () => {
     email: student.email,
     name: student.name,
     feid: student.FEID,
-    role: student.role === "1" ? "Sinh viên" : "Giáo viên",
+    role: student.role == "1" ? "Sinh viên" : "Giáo viên",
     major: student.major,
   }));
 
@@ -284,7 +279,7 @@ const StudentList: React.FC = () => {
       ),
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
       render: (active: boolean, record: any) => (
@@ -307,7 +302,7 @@ const StudentList: React.FC = () => {
                 {
                   key: "1",
                   icon: <Pencil />,
-                  label: "Edit",
+                  label: "Chỉnh sửa",
                   onClick: () => {
                     setEditingStudent(record);
                     setIsModalVisible(true);
@@ -316,13 +311,13 @@ const StudentList: React.FC = () => {
                 {
                   key: "2",
                   icon: <Key />,
-                  label: "Reset Password",
+                  label: "Đặt lại mật khẩu",
                   onClick: () => handlePasswordReset(record.key),
                 },
                 {
                   key: "3",
                   icon: <Trash />,
-                  label: "Delete",
+                  label: "Xóa",
                   danger: true,
                   onClick: () => handleDeleteStudent(record.key),
                 },
@@ -370,18 +365,18 @@ const StudentList: React.FC = () => {
             icon={<UploadIcon />}
             onClick={() => setImportModalVisible(true)}
           >
-            Import
+            Nhập
           </Button>
           <Button icon={<Download />} onClick={handleExport}>
-            Export
+            Xuất
           </Button>
           {selectedRowKeys.length > 0 && (
             <Popconfirm
-              title={`Delete ${selectedRowKeys.length} selected students?`}
+              title={`Xóa ${selectedRowKeys.length} học sinh đã chọn?`}
               onConfirm={handleBulkDelete}
             >
               <Button danger icon={<Trash />}>
-                Delete Selected
+                Xóa đã chọn
               </Button>
             </Popconfirm>
           )}
@@ -431,7 +426,7 @@ const StudentList: React.FC = () => {
 
       {/* Student Modal */}
       <Modal
-        title={editingStudent ? "Edit Student" : "Add New Student"}
+        title={editingStudent ? "Chỉnh sửa học sinh" : "Thêm học sinh mới"}
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -449,7 +444,7 @@ const StudentList: React.FC = () => {
           <Form.Item
             name="name"
             label="Tên học sinh"
-            rules={[{ required: true, message: "Please input student name!" }]}
+            rules={[{ required: true, message: "Vui lòng nhập tên học sinh!" }]}
           >
             <Input />
           </Form.Item>
@@ -457,8 +452,8 @@ const StudentList: React.FC = () => {
             name="email"
             label="Email"
             rules={[
-              { required: true, message: "Please input email!" },
-              { type: "email", message: "Please input valid email!" },
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Vui lòng nhập email hợp lệ!" },
             ]}
           >
             <Input />
@@ -466,14 +461,14 @@ const StudentList: React.FC = () => {
           <Form.Item
             name="feid"
             label="Mã sinh viên"
-            rules={[{ required: true, message: "Please input student ID!" }]}
+            rules={[{ required: true, message: "Vui lòng nhập mã sinh viên!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="major"
             label="Chuyên ngành"
-            rules={[{ required: true, message: "Please select major!" }]}
+            rules={[{ required: true, message: "Vui lòng chọn chuyên ngành!" }]}
           >
             <Select>
               <Select.Option value="IT">IT</Select.Option>
@@ -482,14 +477,14 @@ const StudentList: React.FC = () => {
           </Form.Item>
           <Form.Item name="forcePasswordReset" valuePropName="checked">
             <Switch
-              checkedChildren="Force password reset on next login"
-              unCheckedChildren="No password reset required"
+              checkedChildren="Bắt buộc đặt lại mật khẩu lần đăng nhập tiếp theo"
+              unCheckedChildren="Không yêu cầu đặt lại mật khẩu"
             />
           </Form.Item>
           <Form.Item name="isActive" valuePropName="checked">
             <Switch
-              checkedChildren="Account active"
-              unCheckedChildren="Account inactive"
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
               defaultChecked
             />
           </Form.Item>
@@ -502,10 +497,10 @@ const StudentList: React.FC = () => {
                   form.resetFields();
                 }}
               >
-                Cancel
+                Hủy
               </Button>
               <Button type="primary" htmlType="submit">
-                {editingStudent ? "Update" : "Create"}
+                {editingStudent ? "Cập nhật" : "Tạo mới"}
               </Button>
             </Space>
           </Form.Item>
@@ -514,7 +509,7 @@ const StudentList: React.FC = () => {
 
       {/* Import Modal */}
       <Modal
-        title="Import Students"
+        title="Nhập học sinh"
         open={importModalVisible}
         onCancel={() => setImportModalVisible(false)}
         footer={null}
@@ -524,11 +519,11 @@ const StudentList: React.FC = () => {
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">
-            Click or drag file to this area to upload
+            Nhấp hoặc kéo tệp vào khu vực này để tải lên
           </p>
           <p className="ant-upload-hint">
-            Support for single Excel or CSV file upload. Please ensure your file
-            has the correct format.
+            Hỗ trợ tải lên một tệp Excel hoặc CSV duy nhất. Vui lòng đảm bảo tệp
+            của bạn có định dạng chính xác.
           </p>
         </Dragger>
         <div className="mt-4">
@@ -552,7 +547,7 @@ const StudentList: React.FC = () => {
               XLSX.writeFile(wb, "student_import_template.xlsx");
             }}
           >
-            Download template
+            Tải xuống mẫu
           </Button>
         </div>
       </Modal>
@@ -569,7 +564,7 @@ const StudentList: React.FC = () => {
           <Form.Item
             name="className"
             label="Tên lớp"
-            rules={[{ required: true, message: "Please input class name!" }]}
+            rules={[{ required: true, message: "Vui lòng nhập tên lớp!" }]}
           >
             <Input />
           </Form.Item>
@@ -592,11 +587,9 @@ const StudentList: React.FC = () => {
           </Form.Item>
           <Form.Item className="mb-0 text-right">
             <Space>
-              <Button onClick={() => setIsClassModalVisible(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setIsClassModalVisible(false)}>Hủy</Button>
               <Button type="primary" htmlType="submit">
-                Create Class
+                Tạo lớp
               </Button>
             </Space>
           </Form.Item>

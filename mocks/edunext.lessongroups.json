@@ -1,0 +1,84 @@
+[{
+  "_id": {
+    "$oid": "67d3f9617adbe7eca604d1ab"
+  },
+  "userId": [
+    {
+      "$oid": "6788be800862e875d6ac1dba"
+    }
+  ],
+  "course": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "team": "1",
+  "createdAt": {
+    "$date": "2025-03-14T09:39:45.662Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-14T09:39:45.662Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d3f9617adbe7eca604d1ad"
+  },
+  "userId": [
+    {
+      "$oid": "67a30ca0a89cfc0d276e9aa7"
+    }
+  ],
+  "course": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "team": "2",
+  "createdAt": {
+    "$date": "2025-03-14T09:39:45.669Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-14T09:39:45.669Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d3f9617adbe7eca604d1af"
+  },
+  "userId": [
+    {
+      "$oid": "67a30ca0a89cfc0d276e9aa8"
+    }
+  ],
+  "course": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "team": "3",
+  "createdAt": {
+    "$date": "2025-03-14T09:39:45.671Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-14T09:39:45.671Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67d3f9617adbe7eca604d1b1"
+  },
+  "userId": [
+    {
+      "$oid": "67a30ca0a89cfc0d276e9aa9"
+    }
+  ],
+  "course": {
+    "$oid": "6788be800862e875d6ac1dc4"
+  },
+  "team": "4",
+  "createdAt": {
+    "$date": "2025-03-14T09:39:45.673Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-14T09:39:45.673Z"
+  },
+  "__v": 0
+}]

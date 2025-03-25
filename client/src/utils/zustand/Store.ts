@@ -128,8 +128,20 @@ export const useQuestionStore = create<QuestionState>((set) => ({
     set({ loading: true, error: null });
     try {
       const resp = await getQuestionDetail(questionId);
-      if (resp?.isOk) {
-        set({ question: resp.question });
+      if (resp && typeof resp === "object" && resp !== null) {
+        const typedResp = resp as {
+          question: any;
+          remainingQuestions: any[];
+          isOk: boolean;
+        };
+        if (typedResp.isOk) {
+          set({
+            question: {
+              ...typedResp.question,
+              remainingQuestions: typedResp.remainingQuestions,
+            },
+          });
+        }
       }
     } catch (error) {
       console.error(error);
